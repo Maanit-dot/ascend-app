@@ -1,6 +1,8 @@
 import { firebaseAuth } from "@/lib/firebase";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const cleanApiUrl = rawApiUrl.replace(/\/+$/, "").replace(/\/api\/v1\/?$/, "");
+const API_BASE = `${cleanApiUrl}/api/v1`;
 
 export class ApiError extends Error {
   status: number;
@@ -32,7 +34,7 @@ interface RequestOptions {
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const authHeader = await getAuthHeader();
 
-  const response = await fetch(`${API_URL}/api/v1${path}`, {
+  const response = await fetch(`${API_BASE}${path}`, {
     method: options.method ?? "GET",
     headers: {
       "Content-Type": "application/json",
