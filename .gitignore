@@ -1,0 +1,32 @@
+# Node
+node_modules/
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.development
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Databases
+*.db
+*.db-journal
+*.db.bak
+ascend.db
+
+# OS
+.DS_Store
+Thumbs.db
