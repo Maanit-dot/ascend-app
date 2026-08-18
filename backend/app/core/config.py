@@ -45,9 +45,10 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str = ""
 
     # --- AI ---
-    AI_PROVIDER: str = "anthropic"
+    AI_PROVIDER: str = "openrouter"
+    OPENROUTER_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
-    AI_MODEL: str = "claude-3-5-sonnet-20241022"
+    AI_MODEL: str = "anthropic/claude-3.5-sonnet"
 
     # --- Misc ---
     ENVIRONMENT: str = "local"
