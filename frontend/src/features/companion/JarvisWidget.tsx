@@ -184,6 +184,9 @@ export function JarvisWidget() {
         } else if (response.action.action_name === "OPTIMIZE_WORKLOAD" && response.action.time_budget_minutes) {
           optimizeWorkload(response.action.time_budget_minutes);
           fetchToday();
+        } else if (response.action.action_name === "ADD_QUEST" && response.action.board_refresh) {
+          // Refresh the quest board so the new custom quest appears immediately
+          fetchToday();
         }
       }
 

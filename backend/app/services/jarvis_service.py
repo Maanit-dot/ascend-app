@@ -50,6 +50,14 @@ EXAMPLES:
 
 3. User: "I only have 90 minutes today. Optimize my workload."
    Response: {"reply": "Optimization matrix applied for a 90-minute timeframe, Hunter. Daily workloads scaled down for maximum efficiency.", "action": {"type": "QUEST_MUTATION", "action_name": "OPTIMIZE_WORKLOAD", "time_budget_minutes": 90}}
+
+4. User: "Add a new quest: Meditation for 20 minutes."
+   Response: {"reply": "New custom quest 'Meditation' added to your board for today, Hunter. Target: 20 minutes.", "action": {"type": "QUEST_MUTATION", "action_name": "ADD_QUEST", "quest_title": "Meditation", "new_target": 20}}
+
+IMPORTANT — When the user says things like:
+- "add a quest", "create a quest", "new quest", "I want to do X", "add X for N reps/minutes/km"
+Always use action_name: "ADD_QUEST" with quest_title = the name and new_target = the number.
+YOU decide the XP reward automatically based on difficulty. NEVER ask the user for XP.
 """
 
 
@@ -241,7 +249,196 @@ def _execute_tool_action(
             "summary": "\n".join(updated_items),
         }
 
+    elif action_name == "ADD_QUEST":
+        quest_title = action.get("quest_title", "Custom Quest")
+        new_target = int(action.get("new_target", 10))
+        result = _create_custom_quest(db, user, quest_title, new_target)
+        return result
+
     return action
+
+
+def _infer_quest_meta(name: str, target: int) -> Dict[str, Any]:
+    """
+    Autonomously infers category, unit, XP, primary_stat and icon from
+    a free-form quest name + numeric target. The hunter never needs to
+    specify these — JARVIS works them out from keywords.
+    """
+    n = name.lower()
+
+    # --- Category + unit + stat inference ---
+    if any(k in n for k in ("run", "jog", "sprint", "km", "mile")):
+        category, unit, stat = QuestCategory.CARDIO, QuestUnit.KM, "stamina"
+    elif any(k in n for k in ("walk", "step", "footstep")):
+        category, unit, stat = QuestCategory.CARDIO, QuestUnit.STEPS, "stamina"
+    elif any(k in n for k in ("push", "pullup", "pull-up", "squat", "lunge", "dip", "curl", "deadlift", "lift", "bench")):
+        category, unit, stat = QuestCategory.STRENGTH, QuestUnit.REPS, "strength"
+    elif any(k in n for k in ("sit-up", "situp", "crunch", "plank", "mountain climber", "core", "ab ")):
+        category, unit, stat = QuestCategory.CORE, QuestUnit.REPS, "strength"
+    elif any(k in n for k in ("stretch", "yoga", "mobility", "flexibility", "cobra", "hang")):
+        category, unit, stat = QuestCategory.MOBILITY, QuestUnit.SETS, "agility"
+    elif any(k in n for k in ("sleep", "rest", "nap")):
+        category, unit, stat = QuestCategory.RECOVERY, QuestUnit.HOURS, "recovery"
+    elif any(k in n for k in ("study", "read", "book", "chapter", "revision", "homework", "notes", "physics", "chem", "math", "question", "solve")):
+        category, unit, stat = QuestCategory.STUDY, QuestUnit.MINUTES, "knowledge"
+    elif any(k in n for k in ("meditat", "breathe", "breathing", "mindful", "calm")):
+        category, unit, stat = QuestCategory.RECOVERY, QuestUnit.MINUTES, "mental_fortitude"
+    elif any(k in n for k in ("swim", "cycle", "bike", "row", "sport", "basketball", "badminton", "football", "cricket")):
+        category, unit, stat = QuestCategory.SPORT, QuestUnit.MINUTES, "stamina"
+    else:
+        # Generic fallback
+        category, unit, stat = QuestCategory.STRENGTH, QuestUnit.REPS, "discipline"
+
+    # --- Auto XP: proportional to target, bounded to reasonable ranges ---
+    # Rough XP bands: reps(1–150) → 30–200 XP, minutes(5–120) → 25–300 XP, etc.
+    BASE_RATES = {
+        QuestUnit.REPS: 1.2,
+        QuestUnit.MINUTES: 2.0,
+        QuestUnit.HOURS: 50.0,
+        QuestUnit.KM: 60.0,
+        QuestUnit.STEPS: 0.004,
+        QuestUnit.SETS: 20.0,
+        QuestUnit.SECONDS: 0.3,
+        QuestUnit.QUESTIONS: 2.0,
+        QuestUnit.ROUNDS: 5.0,
+    }
+    rate = BASE_RATES.get(unit, 1.5)
+    xp = max(25, min(500, round(target * rate)))
+
+    # --- Icon key (reuses existing icon keys from the app) ---
+    if "run" in n or "jog" in n:
+        icon = "running"
+    elif "push" in n:
+        icon = "pushups"
+    elif "squat" in n:
+        icon = "squats"
+    elif "sleep" in n:
+        icon = "sleep"
+    elif "walk" in n or "step" in n:
+        icon = "walking"
+    elif "plank" in n or "core" in n or "crunch" in n or "sit" in n:
+        icon = "core"
+    elif "stretch" in n or "mobility" in n or "yoga" in n:
+        icon = "mobility"
+    elif "study" in n or "read" in n:
+        icon = "study_time"
+    elif "meditat" in n:
+        icon = "recovery_token"
+    else:
+        icon = "default"
+
+    return {
+        "category": category,
+        "unit": unit,
+        "primary_stat": stat,
+        "xp": xp,
+        "icon": icon,
+    }
+
+
+def _create_custom_quest(
+    db: Session,
+    user: User,
+    name: str,
+    target: int,
+) -> Dict[str, Any]:
+    """
+    Creates a brand-new QuestTemplate (if one doesn't exist) and
+    a QuestInstance for today — all from just a name + target number.
+    XP, category, unit, and stat are inferred autonomously.
+    """
+    from datetime import date as _date
+
+    meta = _infer_quest_meta(name, target)
+    today = _date.today()
+
+    # Sanitize key: lowercase, replace spaces with underscores, strip special chars
+    import re as _re
+    safe_key = "custom_" + _re.sub(r"[^a-z0-9_]", "", name.lower().replace(" ", "_"))[:40]
+    # Make key user-specific so two users can have their own custom quests
+    unique_key = f"{safe_key}_{str(user.id)[:8]}"
+
+    # Upsert template (idempotent: if user re-adds same quest, reuse template)
+    template = db.query(QuestTemplate).filter(QuestTemplate.key == unique_key).first()
+    if not template:
+        template = QuestTemplate(
+            key=unique_key,
+            name=name,
+            description=f"Custom quest created by {user.display_name} via JARVIS.",
+            category=meta["category"],
+            quest_type=QuestType.OPTIONAL,
+            unit=meta["unit"],
+            sort_order=99,
+            base_target=float(target),
+            min_target=float(max(1, target // 2)),
+            max_target=float(target * 2),
+            base_xp_reward=meta["xp"],
+            primary_stat=meta["primary_stat"],
+            secondary_stat=None,
+            icon_key=meta["icon"],
+            is_active=True,
+        )
+        db.add(template)
+        db.flush()
+
+    # Check if an instance already exists for today
+    existing_instance = (
+        db.query(QuestInstance)
+        .filter(
+            QuestInstance.user_id == user.id,
+            QuestInstance.template_id == template.id,
+            QuestInstance.assigned_date == today,
+        )
+        .first()
+    )
+
+    if existing_instance:
+        # Quest already on board — just update target
+        existing_instance.target_value = float(target)
+        existing_instance.xp_reward = meta["xp"]
+        db.commit()
+        db.refresh(existing_instance)
+        return {
+            "type": "QUEST_MUTATION",
+            "action_name": "ADD_QUEST",
+            "quest_id": str(existing_instance.id),
+            "quest_title": name,
+            "new_target": target,
+            "xp_reward": meta["xp"],
+            "category": meta["category"].value,
+            "unit": meta["unit"].value,
+            "board_refresh": True,
+        }
+
+    # Create fresh instance for today
+    instance = QuestInstance(
+        user_id=user.id,
+        template_id=template.id,
+        assigned_date=today,
+        quest_type=QuestType.OPTIONAL,
+        target_value=float(target),
+        xp_reward=meta["xp"],
+        difficulty_snapshot=user.character.difficulty_multiplier,
+        current_value=0.0,
+        is_completed=False,
+    )
+    db.add(instance)
+    db.commit()
+    db.refresh(instance)
+
+    return {
+        "type": "QUEST_MUTATION",
+        "action_name": "ADD_QUEST",
+        "quest_id": str(instance.id),
+        "quest_title": name,
+        "new_target": target,
+        "xp_reward": meta["xp"],
+        "category": meta["category"].value,
+        "unit": meta["unit"].value,
+        "board_refresh": True,
+    }
+
+
 
 
 def _execute_deterministic_fallback(
@@ -319,7 +516,44 @@ def _execute_deterministic_fallback(
                 },
             }
 
-    # 2. Time-Based Workload Optimization
+    # 2. Create Custom Quest — fires on "add quest", "create quest", "new quest", "add X for N"
+    create_match = re.search(
+        r"(?:add|create|new|make)\s+(?:a\s+)?(?:quest\s+(?:called|named|for)?\s*)?['\"]?([a-z][a-z\s\-]+?)['\"]?\s+(?:for\s+)?(\d+)\s*(?:reps?|minutes?|mins?|hours?|hrs?|km|steps?|sets?|questions?|rounds?)?",
+        cmd_lower,
+    )
+    if create_match or ("add" in cmd_lower and "quest" in cmd_lower) or ("create" in cmd_lower and "quest" in cmd_lower) or ("new quest" in cmd_lower):
+        if create_match:
+            quest_name_raw = create_match.group(1).strip().title()
+            new_target = int(create_match.group(2))
+        else:
+            # Try to extract number if pattern didn't match cleanly
+            num_match = re.search(r"(\d+)", cmd_lower)
+            new_target = int(num_match.group(1)) if num_match else 10
+            # Grab quest name from command
+            quest_name_raw = re.sub(
+                r"\b(add|create|new|make|a|quest|for|called|named|reps?|minutes?|mins?|hours?|km|steps?|sets?|today|me|my)\b",
+                "",
+                cmd_lower,
+            ).strip().title() or "Custom Quest"
+            quest_name_raw = re.sub(r"\s+", " ", quest_name_raw).strip()
+            if not quest_name_raw:
+                quest_name_raw = "Custom Quest"
+
+        result = _create_custom_quest(db, user, quest_name_raw, new_target)
+        meta = _infer_quest_meta(quest_name_raw, new_target)
+        return {
+            "reply": (
+                f"**New Quest Added ✅**\n\n"
+                f"Quest: **{quest_name_raw}**\n"
+                f"Target: **{new_target} {meta['unit'].value}**\n"
+                f"Category: **{meta['category'].value.title()}**\n"
+                f"XP Reward: **{meta['xp']} XP**\n\n"
+                f"Head to your Quest Board to track and complete it, Hunter {user.display_name}!"
+            ),
+            "action": result,
+        }
+
+    # 3. Time-Based Workload Optimization
     time_match = re.search(r"(\d+)\s*(?:minutes|mins|hours|hrs|hr)", cmd_lower)
     if "optimize" in cmd_lower or "lighter" in cmd_lower or "workload" in cmd_lower or time_match:
         minutes = 90
@@ -346,6 +580,7 @@ def _execute_deterministic_fallback(
                 "time_budget_minutes": minutes,
             },
         }
+
 
     # 3. ASCEND Status & Level Queries (Grounded in Live DB values)
     # Use word-boundary checks to avoid matching 'explain' as 'xp', etc.
