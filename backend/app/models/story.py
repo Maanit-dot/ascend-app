@@ -50,6 +50,7 @@ class NotificationType(str, enum.Enum):
     ACHIEVEMENT_UNLOCK = "achievement_unlock"
     AI_MESSAGE = "ai_message"
     BURNOUT_WARNING = "burnout_warning"
+    SOCIAL_MESSAGE = "social_message"
     SYSTEM = "system"
 
 

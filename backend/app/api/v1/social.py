@@ -283,9 +283,25 @@ def send_chat_message(
         is_read=msg.is_read,
     )
 
+    # Create notification for receiver
+    from app.models.story import Notification, NotificationType
+    notif = Notification(
+        user_id=receiver_uuid,
+        type=NotificationType.SOCIAL_MESSAGE,
+        title=f"Hunter {current_user.display_name}",
+        body=payload.message_text.strip(),
+    )
+    db.add(notif)
+    db.commit()
+
     # Deliver via WebSocket if receiver is connected
+    ws_payload = {
+        "type": "CHAT_MESSAGE",
+        "sender_name": current_user.display_name,
+        "data": out.model_dump(),
+    }
     import asyncio
-    asyncio.create_task(manager.send_personal_message(out.model_dump(), str(receiver_uuid)))
+    asyncio.create_task(manager.send_personal_message(ws_payload, str(receiver_uuid)))
 
     return out
 

@@ -225,6 +225,7 @@ export type NotificationType =
   | "achievement_unlock"
   | "ai_message"
   | "burnout_warning"
+  | "social_message"
   | "system";
 
 export interface AppNotification {

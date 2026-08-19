@@ -15,6 +15,7 @@ const TYPE_DOT: Record<NotificationType, string> = {
   achievement_unlock: "bg-amber-400",
   ai_message: "bg-cyan-400",
   burnout_warning: "bg-crimson-500",
+  social_message: "bg-purple-400",
   system: "bg-ink-faint",
 };
 
@@ -27,7 +28,12 @@ export function NotificationBell() {
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   useEffect(() => {
-    notificationApi.list().then(setNotifications);
+    const fetchNotifications = () => {
+      notificationApi.list().then(setNotifications).catch(() => {});
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
