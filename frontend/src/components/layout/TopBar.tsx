@@ -7,14 +7,15 @@ import { NotificationBell } from "@/features/companion/NotificationBell";
 import { cn } from "@/lib/utils";
 
 const PAGE_LABELS: Record<string, { title: string; subtitle: string }> = {
-  "/dashboard":    { title: "DASHBOARD",    subtitle: "Welcome back, %NAME%. Your progress defines your future." },
-  "/quests":       { title: "DAILY QUESTS", subtitle: "Complete your quests and level up, %NAME%." },
-  "/bosses":       { title: "BOSSES & RAIDS", subtitle: "Active threat matrix overview." },
-  "/inventory":    { title: "INVENTORY",    subtitle: "Your equipped items and consumables." },
-  "/achievements": { title: "ACHIEVEMENTS", subtitle: "Milestones earned through discipline." },
-  "/story":        { title: "STORY MODE",   subtitle: "The ASCEND narrative unfolds." },
-  "/statistics":   { title: "STATISTICS",   subtitle: "Character analysis and progression." },
-  "/settings":     { title: "SETTINGS",     subtitle: "System configuration and profile." },
+  "/dashboard":    { title: "DASHBOARD",       subtitle: "Welcome back, %NAME%. Your progress defines your future." },
+  "/character":    { title: "CHARACTER SHEET", subtitle: "Full 12-attribute stats, vitals, and rank breakdown." },
+  "/quests":       { title: "DAILY QUESTS",    subtitle: "Complete your quests and level up, %NAME%." },
+  "/bosses":       { title: "BOSSES & RAIDS",   subtitle: "Active threat matrix overview." },
+  "/inventory":    { title: "INVENTORY",       subtitle: "Your equipped items and consumables." },
+  "/achievements": { title: "ACHIEVEMENTS",    subtitle: "Milestones earned through discipline." },
+  "/story":        { title: "STORY MODE",      subtitle: "The ASCEND narrative unfolds." },
+  "/statistics":   { title: "STATISTICS",      subtitle: "Character analysis and progression." },
+  "/settings":     { title: "SETTINGS",        subtitle: "System configuration and profile." },
 };
 
 /** Small icon button used in the header controls row */

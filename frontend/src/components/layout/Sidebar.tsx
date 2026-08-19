@@ -23,15 +23,16 @@ import { getHunterTitle, getHunterRank } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",    label: "Dashboard",      icon: LayoutDashboard },
-  { href: "/quests",       label: "Daily Quests",   icon: Swords },
-  { href: "/social",       label: "Hunter Network", icon: Users },
-  { href: "/bosses",       label: "Bosses & Raids", icon: Skull },
-  { href: "/inventory",   label: "Inventory",      icon: Package },
-  { href: "/achievements", label: "Achievements",   icon: Trophy },
-  { href: "/story",        label: "Story Mode",     icon: BookOpen },
-  { href: "/statistics",  label: "Statistics",     icon: BarChart3 },
-  { href: "/settings",    label: "Settings",       icon: Settings },
+  { href: "/dashboard",    label: "Dashboard",       icon: LayoutDashboard },
+  { href: "/character",    label: "Character Sheet", icon: Shield },
+  { href: "/quests",       label: "Daily Quests",    icon: Swords },
+  { href: "/social",       label: "Hunter Network",  icon: Users },
+  { href: "/bosses",       label: "Bosses & Raids",  icon: Skull },
+  { href: "/inventory",   label: "Inventory",       icon: Package },
+  { href: "/achievements", label: "Achievements",    icon: Trophy },
+  { href: "/story",        label: "Story Mode",      icon: BookOpen },
+  { href: "/statistics",  label: "Statistics",      icon: BarChart3 },
+  { href: "/settings",    label: "Settings",        icon: Settings },
 ];
 
 /** Compact stat pill for the sidebar character panel */
