@@ -197,6 +197,38 @@ ITEMS = [
          description="Contains multiple rare items and guarantees a Luck point.",
          rarity=ItemRarity.LEGENDARY, effect_type=ItemEffectType.CHEST_LEGENDARY, effect_value=1,
          icon_key="legendary_chest"),
+    dict(key="hyper_focus_elixir", name="Hyper Focus Elixir",
+         description="Increases Focus and Discipline gains by 50% for 2 hours.",
+         rarity=ItemRarity.RARE, effect_type=ItemEffectType.FOCUS_BOOST, effect_value=2,
+         duration_minutes=120, icon_key="focus_crystal"),
+    dict(key="recovery_infusion", name="Herbal Recovery Infusion",
+         description="Accelerates recovery rate and reduces burnout risk score by 30%.",
+         rarity=ItemRarity.UNCOMMON, effect_type=ItemEffectType.RECOVERY_RESTORE, effect_value=2,
+         icon_key="recovery_token"),
+    dict(key="iron_will_pendant", name="Pendant of Iron Will",
+         description="Permanently raises Mental Fortitude attribute by +2.",
+         rarity=ItemRarity.EPIC, effect_type=ItemEffectType.FOCUS_BOOST, effect_value=2,
+         icon_key="focus_crystal"),
+    dict(key="scholar_scroll", name="Scroll of the Ancient Scholar",
+         description="Instantly grants +500 XP to study and knowledge progression.",
+         rarity=ItemRarity.EPIC, effect_type=ItemEffectType.XP_MULTIPLIER, effect_value=1.5,
+         icon_key="xp_boost"),
+    dict(key="titan_essence", name="Essence of the Titan",
+         description="Permanently raises Strength and Stamina attributes by +2.",
+         rarity=ItemRarity.LEGENDARY, effect_type=ItemEffectType.FOCUS_BOOST, effect_value=3,
+         icon_key="focus_crystal"),
+    dict(key="shadowstride_boots", name="Shadowstride Boots",
+         description="Permanently increases Agility and Speed attributes by +1.",
+         rarity=ItemRarity.RARE, effect_type=ItemEffectType.FOCUS_BOOST, effect_value=1,
+         icon_key="focus_crystal"),
+    dict(key="talisman_serendipity", name="Talisman of Serendipity",
+         description="Permanently increases Luck attribute by +2.",
+         rarity=ItemRarity.EPIC, effect_type=ItemEffectType.FOCUS_BOOST, effect_value=2,
+         icon_key="focus_crystal"),
+    dict(key="discipline_ring", name="Ring of Unbroken Discipline",
+         description="Protects active daily streak from breaking for 24 hours.",
+         rarity=ItemRarity.LEGENDARY, effect_type=ItemEffectType.QUEST_SKIP, effect_value=1,
+         icon_key="quest_voucher"),
 ]
 
 ACHIEVEMENTS = [
@@ -204,29 +236,81 @@ ACHIEVEMENTS = [
          xp_reward=50, unlock_condition_key="first_quest"),
     dict(key="streak_7", name="One Week Standing", description="Reach a 7-day streak.",
          xp_reward=150, unlock_condition_key="streak_7"),
+    dict(key="streak_14", name="Fortnight of Will", description="Reach a 14-day streak.",
+         xp_reward=300, unlock_condition_key="streak_14"),
     dict(key="streak_30", name="The Long Discipline", description="Reach a 30-day streak.",
          xp_reward=500, unlock_condition_key="streak_30"),
+    dict(key="streak_60", name="Bi-Monthly Master", description="Reach a 60-day streak.",
+         xp_reward=1000, unlock_condition_key="streak_60"),
     dict(key="streak_100", name="Unbroken", description="Reach a 100-day streak.",
          xp_reward=2000, unlock_condition_key="streak_100", is_hidden=True),
+    dict(key="streak_180", name="Half-Year Ascendant", description="Reach a 180-day streak.",
+         xp_reward=5000, unlock_condition_key="streak_180", is_hidden=True),
+    dict(key="level_5", name="Rising Hunter", description="Reach character level 5.",
+         xp_reward=100, unlock_condition_key="level_5"),
     dict(key="level_10", name="Threshold Crossed", description="Reach character level 10.",
          xp_reward=200, unlock_condition_key="level_10"),
+    dict(key="level_15", name="Veteran Ascender", description="Reach character level 15.",
+         xp_reward=350, unlock_condition_key="level_15"),
     dict(key="level_25", name="Ascendant Form", description="Reach character level 25.",
          xp_reward=600, unlock_condition_key="level_25"),
+    dict(key="level_30", name="Master of Self", description="Reach character level 30.",
+         xp_reward=800, unlock_condition_key="level_30"),
     dict(key="level_50", name="Apex Discipline", description="Reach character level 50.",
          xp_reward=1500, unlock_condition_key="level_50", is_hidden=True),
+    dict(key="level_75", name="Mythic Form", description="Reach character level 75.",
+         xp_reward=3000, unlock_condition_key="level_75", is_hidden=True),
+    dict(key="level_100", name="God of Discipline", description="Reach character level 100.",
+         xp_reward=10000, unlock_condition_key="level_100", is_hidden=True),
     dict(key="boss_slayer", name="Boss Slayer", description="Defeat your first boss.",
          xp_reward=300, unlock_condition_key="boss_slayer"),
+    dict(key="boss_slayer_5", name="Raid Commander", description="Defeat 5 bosses.",
+         xp_reward=1000, unlock_condition_key="boss_slayer_5"),
+    dict(key="boss_slayer_10", name="Nullveil Nemesis", description="Defeat 10 bosses.",
+         xp_reward=2500, unlock_condition_key="boss_slayer_10", is_hidden=True),
+    dict(key="quest_50", name="Half-Century", description="Complete 50 total quests.",
+         xp_reward=400, unlock_condition_key="quest_50"),
+    dict(key="quest_100", name="Centurion", description="Complete 100 total quests.",
+         xp_reward=800, unlock_condition_key="quest_100"),
+    dict(key="quest_500", name="Legend of Discipline", description="Complete 500 total quests.",
+         xp_reward=5000, unlock_condition_key="quest_500", is_hidden=True),
+    dict(key="max_focus", name="Mind Like Diamond", description="Reach 50 Focus points.",
+         xp_reward=750, unlock_condition_key="max_focus"),
+    dict(key="max_strength", name="Iron Titan", description="Reach 50 Strength points.",
+         xp_reward=750, unlock_condition_key="max_strength"),
+    dict(key="max_knowledge", name="Archmage of Science", description="Reach 50 Knowledge points.",
+         xp_reward=750, unlock_condition_key="max_knowledge"),
+    dict(key="social_butterfly", name="Hunter Connection", description="Connect with 5 Hunters on the Network.",
+         xp_reward=300, unlock_condition_key="social_butterfly"),
 ]
 
 TITLES = [
     dict(key="the_initiate", display_text="The Initiate", description="Awarded at the start of the journey.",
          required_level=1),
+    dict(key="the_awakened", display_text="The Awakened", description="Awarded at level 5.",
+         required_level=5),
+    dict(key="the_focused", display_text="The Focused", description="Awarded at level 15.",
+         required_level=15),
     dict(key="the_relentless", display_text="The Relentless", description="Awarded at level 30.",
          required_level=30),
+    dict(key="the_unstoppable", display_text="The Unstoppable", description="Awarded at level 40.",
+         required_level=40),
+    dict(key="the_sovereign", display_text="The Sovereign", description="Awarded at level 60.",
+         required_level=60),
+    dict(key="the_immortal", display_text="The Immortal", description="Awarded at level 80.",
+         required_level=80),
     dict(key="ascendant", display_text="Ascendant", description="Awarded at level 100.",
          required_level=100),
     dict(key="boss_slayer_title", display_text="Slayer of Static",
          description="Awarded for defeating a boss.", required_achievement_key="boss_slayer"),
+    dict(key="titan_of_iron", display_text="Titan of Iron",
+         description="Awarded for reaching 50 Strength points.", required_achievement_key="max_strength"),
+    dict(key="mind_of_diamond", display_text="Mind of Diamond",
+         description="Awarded for reaching 50 Focus points.", required_achievement_key="max_focus"),
+    dict(key="centurion_hunter", display_text="Centurion Hunter",
+         description="Awarded for completing 100 total quests.", required_achievement_key="quest_100"),
+    dict(key="nullveil_conqueror", display_text="Conqueror of Nullveil",
+         description="Awarded for defeating 5 bosses.", required_achievement_key="boss_slayer_5"),
 ]
 
 STORY_CHAPTERS = [
@@ -261,6 +345,36 @@ STORY_CHAPTERS = [
              "was never the obstacle. The climb was the character sheet, filling in, one stat at a time."
          ),
          unlock_level=75),
+    dict(order_index=5, key="chapter_5_veil_of_doubt", title="Veil of Doubt",
+         body_text=(
+             "Level 90. The static attempts one final deception — convincing you that discipline is "
+             "a temporary constraint rather than your true form. You step beyond the veil unbroken."
+         ),
+         unlock_level=90),
+    dict(order_index=6, key="chapter_6_forging_the_will", title="Forging the Will",
+         body_text=(
+             "Level 100. Century mark achieved. Your habit loops are no longer effortful — they are "
+             "second nature. You are no longer training to become someone. You are that someone."
+         ),
+         unlock_level=100),
+    dict(order_index=7, key="chapter_7_shatter_the_ceiling", title="Shatter the Ceiling",
+         body_text=(
+             "Level 125. The conventional limits of human capacity were written by those who accepted "
+             "friction. You have replaced friction with momentum."
+         ),
+         unlock_level=125),
+    dict(order_index=8, key="chapter_8_realm_of_mastery", title="Realm of Mastery",
+         body_text=(
+             "Level 150. Mastery is not the absence of struggle — it is the quiet confidence that "
+             "whatever struggle arrives tomorrow will yield to the system."
+         ),
+         unlock_level=150),
+    dict(order_index=9, key="chapter_9_eternal_ascension", title="Eternal Ascension",
+         body_text=(
+             "Level 200. The apex of the ASCEND system. You have built a fortress of character that "
+             "time, fatigue, and distraction can never tear down."
+         ),
+         unlock_level=200),
 ]
 
 
