@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     AI_PROVIDER: str = "openrouter"
     OPENROUTER_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
-    AI_MODEL: str = "anthropic/claude-3.5-sonnet"
+    AI_MODEL: str = "anthropic/claude-3-5-sonnet"
 
     # --- Misc ---
     ENVIRONMENT: str = "local"
