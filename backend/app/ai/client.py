@@ -52,8 +52,8 @@ async def call_ai(
             "Content-Type": "application/json",
         }
         model = settings.AI_MODEL.strip()
-        if model in ("openrouter/free", "claude-3-5-sonnet-20241022", "auto", ""):
-            model = "meta-llama/llama-3.3-70b-instruct:free"
+        if model in ("openrouter/free", "meta-llama/llama-3.3-70b-instruct:free", "claude-3-5-sonnet-20241022", "auto", ""):
+            model = "anthropic/claude-3.5-sonnet"
 
         payload = {
             "model": model,
