@@ -30,3 +30,6 @@ ascend.db
 # OS
 .DS_Store
 Thumbs.db
+# Firebase Admin SDK private key
+*.json
+backend/ascend-b9ba2-*.json

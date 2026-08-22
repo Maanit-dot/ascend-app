@@ -10,6 +10,10 @@ export interface JarvisAction {
   time_budget_minutes?: number;
   summary?: string;
   target?: string;
+  board_refresh?: boolean;
+  xp_reward?: number;
+  category?: string;
+  unit?: string;
 }
 
 export interface JarvisResponse {

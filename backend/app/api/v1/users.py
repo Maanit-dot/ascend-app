@@ -84,3 +84,59 @@ def update_profile(
         created_at=current_user.created_at,
         character=to_character_profile_out(current_user.character),
     )
+
+
+class LeaderboardEntry(OnboardingRequest.__bases__[0]):  # pydantic BaseModel
+    pass
+
+
+from pydantic import BaseModel as _BaseModel
+
+class LeaderboardEntryOut(_BaseModel):
+    rank: int
+    user_id: str
+    display_name: str
+    avatar_url: str | None
+    level: int
+    total_xp: int
+    title: str
+    is_current_user: bool = False
+
+
+@router.get("/leaderboard", response_model=list[LeaderboardEntryOut])
+def get_leaderboard(
+    limit: int = 10,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Returns top hunters ranked by total XP earned."""
+    from app.models.user import User as UserModel
+    from app.models.character import CharacterProfile
+    from app.services.jarvis_service import get_hunter_title
+    from sqlalchemy import desc
+
+    # Join users with character profiles and sort by total_xp_earned desc
+    results = (
+        db.query(UserModel)
+        .join(CharacterProfile, CharacterProfile.user_id == UserModel.id)
+        .filter(UserModel.is_onboarded == True)
+        .order_by(desc(CharacterProfile.total_xp_earned))
+        .limit(max(1, min(limit, 50)))
+        .all()
+    )
+
+    leaderboard = []
+    for i, u in enumerate(results):
+        leaderboard.append(
+            LeaderboardEntryOut(
+                rank=i + 1,
+                user_id=str(u.id),
+                display_name=u.display_name,
+                avatar_url=u.avatar_url,
+                level=u.character.level,
+                total_xp=u.character.total_xp_earned,
+                title=get_hunter_title(u.character.level),
+                is_current_user=(u.id == current_user.id),
+            )
+        )
+    return leaderboard
