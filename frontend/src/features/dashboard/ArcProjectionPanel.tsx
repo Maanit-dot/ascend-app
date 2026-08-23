@@ -8,23 +8,22 @@ export function ArcProjectionPanel() {
   const growthRate = character ? Math.min(99, Math.round(character.xp_progress_percent || 78)) : 78;
 
   return (
-    <div className="hud-panel relative overflow-hidden p-3 h-full flex flex-col justify-between">
-      {/* Background cyber grid */}
+    <div className="hud-panel relative overflow-hidden p-2 h-full flex flex-col justify-between">
       <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
 
       {/* Top Header */}
       <div className="relative z-10 flex items-center justify-between">
-        <h3 className="font-display text-xs font-bold tracking-wider text-ink-primary">
+        <h3 className="font-display text-[10px] font-bold tracking-wider text-white">
           ARC PROJECTION
         </h3>
-        <span className="font-mono text-[9px] text-arc-400 font-semibold">{growthRate}%</span>
+        <span className="font-mono text-[9px] text-arc-400 font-bold text-glow-arc">{growthRate}%</span>
       </div>
 
-      {/* Center Holographic Figure / Wave */}
-      <div className="relative z-10 my-2 flex items-center justify-between gap-3">
-        <div className="flex-1">
-          <p className="font-mono text-[10px] text-ink-muted">Learning / Adapting / Evolving</p>
-          <div className="mt-1.5 h-1.5 w-full rounded-full bg-void-deep overflow-hidden">
+      {/* Center Holographic Figure & Progress */}
+      <div className="relative z-10 my-0.5 flex items-center justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-[8px] text-ink-muted truncate">Learning / Adapting / Evolving</p>
+          <div className="mt-1 h-1 w-full rounded-full bg-void-deep overflow-hidden">
             <div
               className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
               style={{ width: `${growthRate}%` }}
@@ -33,12 +32,12 @@ export function ArcProjectionPanel() {
         </div>
 
         {/* Small holographic silhouette art with purple glow */}
-        <div className="relative flex h-12 w-16 items-center justify-center flex-shrink-0">
-          <div className="absolute inset-0 bg-arc-500/20 blur-md rounded-full animate-pulse-slow" />
-          <svg viewBox="0 0 60 40" className="h-full w-full drop-shadow-[0_0_8px_rgba(139,92,246,0.8)]" fill="none">
+        <div className="relative flex h-10 w-12 items-center justify-center flex-shrink-0">
+          <div className="absolute inset-0 bg-arc-500/25 blur-md rounded-full animate-pulse-slow" />
+          <svg viewBox="0 0 60 40" className="h-full w-full drop-shadow-[0_0_8px_rgba(139,92,246,0.9)]" fill="none">
             <path
               d="M10 30 Q25 5 40 20 T55 10"
-              stroke="rgba(162,143,255,0.8)"
+              stroke="rgba(162,143,255,0.9)"
               strokeWidth="1.5"
               fill="none"
             />
@@ -46,16 +45,10 @@ export function ArcProjectionPanel() {
             <circle cx="55" cy="10" r="2.5" fill="rgba(162,143,255,1)" />
             <path
               d="M30 15 C32 10 38 10 40 15 L42 25 L28 25 Z"
-              fill="rgba(109,40,217,0.6)"
+              fill="rgba(109,40,217,0.7)"
             />
           </svg>
         </div>
-      </div>
-
-      {/* Bottom status */}
-      <div className="relative z-10 flex items-center justify-between font-mono text-[8px] text-ink-faint">
-        <span>Trajectory: Exponential</span>
-        <span className="text-emerald-400">Optimal Sync</span>
       </div>
     </div>
   );

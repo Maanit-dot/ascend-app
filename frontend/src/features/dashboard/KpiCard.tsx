@@ -10,9 +10,9 @@ interface KpiCardProps {
   icon: LucideIcon;
   trend?: string;
   trendUp?: boolean;
-  accentClass?: string;     // text color class for value
-  glowClass?: string;       // shadow class for icon area
-  iconBgClass?: string;     // bg gradient class for icon pill
+  accentClass?: string;
+  glowClass?: string;
+  iconBgClass?: string;
 }
 
 export function KpiCard({
@@ -27,42 +27,42 @@ export function KpiCard({
   iconBgClass = "from-arc-700 to-arc-900",
 }: KpiCardProps) {
   return (
-    <div className="kpi-card group hover:border-arc-500/40 transition-all duration-200">
+    <div className="hud-panel relative flex flex-col justify-between p-2 h-full group hover:border-arc-500/40 transition-all duration-200 overflow-hidden">
       {/* Top: label + icon */}
-      <div className="flex items-center justify-between mb-2">
-        <span className="system-label">{label}</span>
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[8px] uppercase tracking-wider text-arc-500/60 truncate max-w-[80%]">{label}</span>
         <div className={cn(
-          "flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br",
+          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-gradient-to-br",
           iconBgClass,
           glowClass,
         )}>
-          <Icon className="h-3.5 w-3.5 text-white opacity-90" />
+          <Icon className="h-3 w-3 text-white opacity-90" />
         </div>
       </div>
 
-      {/* Main value */}
-      <div className="flex items-baseline gap-1.5">
-        <span className={cn("font-display text-2xl font-bold leading-none tabular-nums", accentClass)}>
-          {value}
-        </span>
-        {subValue && (
-          <span className="font-mono text-[10px] text-ink-faint">{subValue}</span>
+      {/* Main value + trend */}
+      <div className="flex items-baseline justify-between gap-1 leading-none mt-0.5">
+        <div className="flex items-baseline gap-1 min-w-0">
+          <span className={cn("font-display text-base font-bold tabular-nums truncate", accentClass)}>
+            {value}
+          </span>
+          {subValue && (
+            <span className="font-mono text-[8px] text-ink-faint flex-shrink-0">{subValue}</span>
+          )}
+        </div>
+
+        {trend && (
+          <span className={cn(
+            "font-mono text-[8px] font-medium flex-shrink-0 truncate max-w-[45%]",
+            trendUp ? "text-emerald-400" : "text-ink-faint"
+          )}>
+            {trendUp ? "↑" : "→"} {trend}
+          </span>
         )}
       </div>
 
-      {/* Trend line */}
-      {trend && (
-        <div className={cn(
-          "mt-1.5 flex items-center gap-1 font-mono text-[9px]",
-          trendUp ? "text-emerald-400" : "text-ink-faint"
-        )}>
-          <span>{trendUp ? "↑" : "→"}</span>
-          <span>{trend}</span>
-        </div>
-      )}
-
-      {/* Bottom glow line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Hover bottom edge glow */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
     </div>
   );
 }

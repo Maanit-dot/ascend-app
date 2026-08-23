@@ -17,14 +17,10 @@ import { useQuestBoardStore } from "@/store/useQuestBoardStore";
 import { LevelUpModal } from "@/features/quests/LevelUpModal";
 import { HeroBanner } from "@/features/dashboard/HeroBanner";
 import { KpiCard } from "@/features/dashboard/KpiCard";
-import {
-  SystemOverviewPanel,
-  RecentAchievementPanel,
-} from "@/features/dashboard/SystemOverviewPanel";
+import { SystemOverviewPanel } from "@/features/dashboard/SystemOverviewPanel";
 import { OnlineFriendsPanel } from "@/features/dashboard/OnlineFriendsPanel";
 import { LeaderboardMiniPanel } from "@/features/dashboard/LeaderboardMiniPanel";
 import { ChatMiniPanel } from "@/features/dashboard/ChatMiniPanel";
-import { ArcProjectionPanel } from "@/features/dashboard/ArcProjectionPanel";
 import { resolveIcon } from "@/lib/icon-map";
 import { formatQuestValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -70,32 +66,30 @@ function DashboardQuestRow({
   return (
     <div
       className={cn(
-        "relative group rounded-lg border border-arc-500/15 bg-gradient-to-r p-2.5 transition-all duration-200 hover:border-arc-500/35",
+        "relative group rounded border border-arc-500/15 bg-gradient-to-r px-2 py-1.5 transition-all duration-200 hover:border-arc-500/35",
         gradClass,
         catClass,
         quest.is_completed && "opacity-80"
       )}
     >
-      <div className="flex items-center gap-2.5">
-        {/* Icon */}
+      <div className="flex items-center gap-2">
         <div
           className={cn(
-            "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border",
+            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border",
             quest.is_completed
               ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
               : "border-arc-500/25 bg-void/50 text-ink-muted"
           )}
         >
           {quest.is_completed ? (
-            <CheckCircle className="h-3.5 w-3.5" />
+            <CheckCircle className="h-3 w-3" />
           ) : (
-            <Icon className="h-3.5 w-3.5" />
+            <Icon className="h-3 w-3" />
           )}
         </div>
 
-        {/* Title + progress */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-1.5">
             <p
               className={cn(
                 "font-body text-xs font-semibold truncate",
@@ -109,8 +103,7 @@ function DashboardQuestRow({
             </span>
           </div>
 
-          {/* Progress bar */}
-          <div className="mt-1 h-1 w-full rounded-full bg-void-deep/80 overflow-hidden">
+          <div className="mt-0.5 h-1 w-full rounded-full bg-void-deep/80 overflow-hidden">
             <div
               className={cn(
                 "h-full rounded-full transition-all duration-500",
@@ -130,13 +123,13 @@ function DashboardQuestRow({
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => onLog(quest.id, 1)}
-                  className="rounded px-1.5 py-0.2 font-mono text-[8px] border border-arc-500/25 text-arc-300 hover:bg-arc-500/15 transition-colors"
+                  className="rounded px-1 font-mono text-[8px] border border-arc-500/25 text-arc-300 hover:bg-arc-500/15"
                 >
                   +1
                 </button>
                 <button
                   onClick={() => onLog(quest.id, quest.target_value - quest.current_value)}
-                  className="rounded px-1.5 py-0.2 font-mono text-[8px] bg-arc-500/15 text-arc-300 hover:bg-arc-500/25 transition-colors"
+                  className="rounded px-1 font-mono text-[8px] bg-arc-500/15 text-arc-300 hover:bg-arc-500/25"
                 >
                   Done
                 </button>
@@ -172,18 +165,19 @@ export default function DashboardPage() {
   if (!user) return null;
   const { character } = user;
 
-  // Flatten all mandatory quests for the dashboard preview
   const allMandatory = board?.categories.flatMap((s) => s.quests) ?? [];
   const completedCount = allMandatory.filter((q) => q.is_completed).length;
   const totalCount = allMandatory.length;
 
   return (
-    <div className="mx-auto max-w-full space-y-3.5">
-      {/* ── Row 1: Hero Banner ──────────────────────────────── */}
-      <HeroBanner user={user} board={board} />
+    <div className="h-full w-full flex flex-col justify-between overflow-hidden gap-2">
+      {/* ── ROW 1: HERO BANNER (Fixed ~165px) ───────────────── */}
+      <div className="h-[165px] flex-shrink-0">
+        <HeroBanner user={user} board={board} />
+      </div>
 
-      {/* ── Row 2: 5 KPI Metric Cards (Reference Image Layout) ─ */}
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+      {/* ── ROW 2: 5 KPI METRIC CARDS (Fixed ~60px) ─────────── */}
+      <div className="h-[60px] flex-shrink-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         <KpiCard
           label="QUESTS COMPLETED"
           value={completedCount}
@@ -240,14 +234,14 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* ── Row 3: Main Core Grid — Daily Quests & System Overview ── */}
-      <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3">
+      {/* ── ROW 3: DAILY QUESTS (2/3) + SYSTEM OVERVIEW (1/3) (Flex 1) ─ */}
+      <div className="flex-1 min-h-[180px] grid grid-cols-1 lg:grid-cols-3 gap-2 overflow-hidden">
         {/* Daily Quests Panel — 2/3 width */}
-        <div className="lg:col-span-2 hud-panel p-3.5 space-y-2.5 flex flex-col justify-between" id="daily-quests">
-          <div>
-            <div className="flex items-center justify-between">
+        <div className="lg:col-span-2 hud-panel p-2.5 flex flex-col justify-between min-h-0 overflow-hidden" id="daily-quests">
+          <div className="flex flex-col flex-1 min-h-0">
+            <div className="flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="font-display text-xs font-bold tracking-wider text-ink-primary">
+                <h2 className="font-display text-xs font-bold tracking-wider text-white">
                   DAILY QUESTS
                 </h2>
                 <p className="font-mono text-[8px] text-arc-400/60 mt-0.5">
@@ -260,15 +254,14 @@ export default function DashboardPage() {
                 </span>
                 <Link
                   href="/quests"
-                  className="flex items-center gap-1 rounded border border-arc-500/25 bg-arc-500/10 px-2 py-0.5 font-mono text-[8px] text-arc-300 hover:bg-arc-500/20 transition-colors"
+                  className="flex items-center gap-1 rounded border border-arc-500/25 bg-arc-500/10 px-2 py-0.5 font-mono text-[8px] text-arc-300 hover:bg-arc-500/20"
                 >
                   FULL LOG <ArrowRight className="h-2 w-2" />
                 </Link>
               </div>
             </div>
 
-            {/* Completion progress bar */}
-            <div className="mt-2 h-1 w-full rounded-full bg-void-deep overflow-hidden">
+            <div className="mt-1.5 h-1 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden">
               <div
                 className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                 style={{ width: `${board?.completion_percent ?? 0}%` }}
@@ -277,33 +270,33 @@ export default function DashboardPage() {
 
             {/* Quest list */}
             {isLoading && !board ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-arc-400" />
+              <div className="flex items-center justify-center flex-1">
+                <Loader2 className="h-4 w-4 animate-spin text-arc-400" />
               </div>
             ) : allMandatory.length > 0 ? (
-              <div className="mt-2.5 space-y-1.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
-                {allMandatory.slice(0, 5).map((quest) => (
+              <div className="mt-1.5 flex-1 min-h-0 space-y-1 overflow-y-auto pr-1 scrollbar-thin">
+                {allMandatory.map((quest) => (
                   <DashboardQuestRow key={quest.id} quest={quest} onLog={handleLog} />
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 gap-1.5">
-                <BarChart2 className="h-6 w-6 text-arc-500/30" />
-                <p className="font-mono text-[9px] text-ink-faint">No quests available today.</p>
+              <div className="flex flex-col items-center justify-center flex-1 gap-1">
+                <BarChart2 className="h-5 w-5 text-arc-500/30" />
+                <p className="font-mono text-[8px] text-ink-faint">No quests available today.</p>
               </div>
             )}
           </div>
 
           <Link
             href="/quests"
-            className="block text-center font-mono text-[9px] text-arc-400 hover:text-arc-300 transition-colors pt-2 border-t border-arc-500/10"
+            className="block text-center font-mono text-[8px] text-arc-400 hover:text-arc-300 pt-1.5 border-t border-arc-500/10 flex-shrink-0"
           >
             VIEW ALL QUESTS →
           </Link>
         </div>
 
-        {/* Right column: ASCEND CORE System Overview */}
-        <div className="h-full">
+        {/* System Overview Panel — 1/3 width */}
+        <div className="lg:col-span-1 hud-panel min-h-0 overflow-hidden">
           <SystemOverviewPanel
             xpProgressPercent={character.xp_progress_percent}
             activeBoost="2.1x XP"
@@ -311,35 +304,25 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Row 4: 4-Panel Living System Sub-Grid ───────────────── */}
-      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Panel 1: Online Friends */}
-        <div className="h-48">
+      {/* ── ROW 4: 3 BOTTOM CARDS (Fixed ~145px) ──────────────── */}
+      <div className="h-[145px] flex-shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-2 overflow-hidden">
+        {/* Card 1: Online Friends */}
+        <div className="h-full overflow-hidden">
           <OnlineFriendsPanel />
         </div>
 
-        {/* Panel 2: Hunter Connect Chat */}
-        <div className="h-48">
+        {/* Card 2: Hunter Connect Chat */}
+        <div className="h-full overflow-hidden">
           <ChatMiniPanel />
         </div>
 
-        {/* Panel 3: Mini Leaderboard */}
-        <div className="h-48">
+        {/* Card 3: Mini Leaderboard */}
+        <div className="h-full overflow-hidden">
           <LeaderboardMiniPanel />
-        </div>
-
-        {/* Panel 4: Achievements & ARC Projection column */}
-        <div className="h-48 flex flex-col gap-2">
-          <div className="flex-1">
-            <RecentAchievementPanel />
-          </div>
-          <div className="h-20">
-            <ArcProjectionPanel />
-          </div>
         </div>
       </div>
 
-      {/* Level-Up Modal (existing, untouched) */}
+      {/* Level-Up Modal */}
       <LevelUpModal
         isOpen={!!lastCompletionResult?.leveledUp}
         newLevel={lastCompletionResult?.newLevel ?? character.level}
