@@ -693,9 +693,51 @@ def _execute_deterministic_fallback(
             "action": {"type": "QUERY_RESULT", "target": "BOSSES"},
         }
 
-    # Fallback explanation if no API key is set
+    # 4. Natural Companion Greetings & Conversational Handling
+    greetings = {"hi", "hello", "hey", "yo", "sup", "good morning", "good evening", "good afternoon", "jarvis", "greetings"}
+    if cmd_lower in greetings or any(cmd_lower.startswith(g + " ") for g in greetings):
+        hunter_title = get_hunter_title(character.level)
+        return {
+            "reply": f"Greetings, Hunter **{user.display_name}**! JARVIS online and monitoring your vitals. You are currently **Level {character.level} ({hunter_title})** with a **{character.current_streak_days}-day streak**. How can I assist your ascent today?",
+            "action": {"type": "GENERAL_CHAT"},
+        }
+
+    if any(phrase in cmd_lower for phrase in ["how are you", "who are you", "what are you", "status report", "system status"]):
+        return {
+            "reply": f"All sub-systems operational, Hunter **{user.display_name}**. Neural matrix synchronized at 100%. Daily quest board tracking {completed_count}/{total_quests_count} ({completion_percent}%) completed.",
+            "action": {"type": "GENERAL_CHAT"},
+        }
+
+    if any(phrase in cmd_lower for phrase in ["motivate", "quote", "inspire", "push me"]):
+        quotes = [
+            "\"The boss doesn't care how you feel this morning. Neither should you.\"",
+            "\"Discipline stat doesn't rise from good days — it rises from the days you almost skipped.\"",
+            "\"Small targets, hit consistently, outscale big targets hit rarely.\"",
+            "\"Every rep, every study hour, every quest logged is another point in your stat sheet. Execute.\"",
+        ]
+        import random
+        selected_quote = random.choice(quotes)
+        return {
+            "reply": f"{selected_quote}\n\n— *JARVIS System Directive*",
+            "action": {"type": "GENERAL_CHAT"},
+        }
+
+    if any(phrase in cmd_lower for phrase in ["help", "commands", "what can you do"]):
+        return {
+            "reply": (
+                f"**JARVIS System Capabilities:**\n\n"
+                f"• **Quest Target Modification**: *\"Change today's Study quest to 5 hours\"*\n"
+                f"• **Add Custom Quests**: *\"Add quest Meditation for 20 minutes\"*\n"
+                f"• **Optimize Workload**: *\"Optimize my workload to 60 minutes\"*\n"
+                f"• **Stats & Level Inquiries**: *\"What is my level?\"*, *\"Show my quests\"*, *\"What is my weakest stat?\"*\n"
+                f"• **Network & Threats**: *\"Show my friends\"*, *\"Active bosses\"*, *\"My achievements\"*"
+            ),
+            "action": {"type": "GENERAL_CHAT"},
+        }
+
+    # Friendly conversational fallback
     return {
-        "reply": f"JARVIS System Notice: `ANTHROPIC_API_KEY` is not configured in `backend/.env`. Set your API key in `backend/.env` to unlock dynamic AI answers for questions like '{command}'. Quest control commands remain fully active.",
+        "reply": f"Command received, Hunter **{user.display_name}**. I'm actively tracking your progression. You can adjust quest targets, add new quests, optimize your workload, or check stats anytime.",
         "action": {"type": "GENERAL_CHAT"},
     }
 

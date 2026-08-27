@@ -57,14 +57,18 @@ async def call_ai(
         candidates = []
         if configured_model and configured_model != "auto" and configured_model != "openrouter/auto":
             candidates.append(configured_model)
-        else:
-            candidates.extend([
-                "meta-llama/llama-3.3-70b-instruct:free",
-                "google/gemini-2.0-flash-exp:free",
-                "deepseek/deepseek-r1:free",
-                "mistralai/mistral-7b-instruct:free",
-                "openrouter/auto",
-            ])
+        
+        # Always append top free models as fallback options
+        free_fallbacks = [
+            "google/gemini-2.0-flash-exp:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "deepseek/deepseek-r1:free",
+            "qwen/qwen-2.5-72b-instruct:free",
+            "mistralai/mistral-7b-instruct:free",
+        ]
+        for m in free_fallbacks:
+            if m not in candidates:
+                candidates.append(m)
 
         last_error = None
         data = None
