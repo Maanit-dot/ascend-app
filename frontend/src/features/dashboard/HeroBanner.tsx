@@ -76,7 +76,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         <div className="w-[38%] h-full pointer-events-none flex-shrink-0" />
 
         {/* ── RIGHT ZONE (30-35% Width): Dynamic Hunter Info & Level Ring ───── */}
-        <div className="flex items-center justify-end gap-3 w-[34%] min-w-0">
+        <div className="flex items-center justify-end gap-3 w-[34%] min-w-0 self-center">
           {/* User Name, XP & Stats column */}
           <div className="flex flex-col justify-center gap-1 min-w-[130px] flex-1">
             <div>
@@ -120,13 +120,16 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
             </div>
           </div>
 
-          {/* Dynamic Circular Level Showcase Indicator Overlaid inside Glowing Background Ring */}
-          <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 84, height: 84 }}>
-            {/* Concentric rotating accent ring overlay */}
+          {/* Dynamic Level Ring — self-center so it aligns exactly with the background ring artwork */}
+          <div
+            className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
+            style={{ width: 84, height: 84, marginTop: "-2px" }}
+          >
+            {/* Concentric rotating accent rings */}
             <svg className="absolute inset-0" width="84" height="84" viewBox="0 0 84 84">
-              <circle cx="42" cy="42" r="39" stroke="rgba(168,85,247,0.4)" strokeWidth="1" fill="none"
+              <circle cx="42" cy="42" r="39" stroke="rgba(168,85,247,0.45)" strokeWidth="1.5" fill="none"
                 strokeDasharray="4 4" style={{ animation: "energy-rotate 20s linear infinite", transformOrigin: "42px 42px" }} />
-              <circle cx="42" cy="42" r="28" stroke="rgba(192,178,255,0.25)" strokeWidth="1" fill="none"
+              <circle cx="42" cy="42" r="32" stroke="rgba(192,178,255,0.2)" strokeWidth="1" fill="none"
                 style={{ animation: "energy-rotate-r 15s linear infinite", transformOrigin: "42px 42px" }} />
             </svg>
 
@@ -136,6 +139,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

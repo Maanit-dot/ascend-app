@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { Search, Flame, Menu, BarChart2, Settings } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Search, Flame, Menu, BarChart2, Settings, X } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { NotificationBell } from "@/features/companion/NotificationBell";
+import { cn } from "@/lib/utils";
 
 const PAGE_LABELS: Record<string, { title: string; subtitle: string }> = {
   "/dashboard":    { title: "DASHBOARD",       subtitle: "YOUR JOURNEY. YOUR LEGACY. YOUR ASCENT." },
@@ -21,10 +22,29 @@ const PAGE_LABELS: Record<string, { title: string; subtitle: string }> = {
   "/social":       { title: "HUNTER NETWORK",  subtitle: "Connect, inspect, and coordinate with fellow Hunters." },
 };
 
+const SEARCH_PAGES = [
+  { href: "/dashboard",    label: "Dashboard",      description: "Your main command center" },
+  { href: "/character",    label: "Character Sheet", description: "Stats, vitals, rank breakdown" },
+  { href: "/quests",       label: "Daily Quests",    description: "Complete quests and level up" },
+  { href: "/social",       label: "Hunter Network",  description: "Connect with fellow Hunters" },
+  { href: "/bosses",       label: "Bosses & Raids",  description: "Active threat matrix" },
+  { href: "/inventory",    label: "Inventory",       description: "Equipped items and consumables" },
+  { href: "/achievements", label: "Achievements",    description: "Milestones earned through discipline" },
+  { href: "/leaderboard",  label: "Leaderboards",    description: "Global XP rankings" },
+  { href: "/statistics",   label: "Statistics",      description: "Character analysis and progression" },
+  { href: "/calendar",     label: "Calendar",        description: "Quest history and discipline log" },
+  { href: "/story",        label: "Story Mode",      description: "The ASCEND narrative" },
+  { href: "/settings",     label: "Settings",        description: "System configuration and profile" },
+];
+
 export function TopBar() {
   const user = useUserStore((s) => s.user);
   const pathname = usePathname();
+  const router = useRouter();
   const [timeStr, setTimeStr] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function tick() {
@@ -38,6 +58,41 @@ export function TopBar() {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Click-outside dismiss for search
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filteredPages = searchQuery.trim()
+    ? SEARCH_PAGES.filter(
+        (p) =>
+          p.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : SEARCH_PAGES;
+
+  function handleSelectPage(href: string) {
+    router.push(href);
+    setSearchQuery("");
+    setIsSearchOpen(false);
+  }
+
+  function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && filteredPages.length > 0) {
+      handleSelectPage(filteredPages[0]!.href);
+    }
+    if (e.key === "Escape") {
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  }
 
   if (!user) return null;
   const { character } = user;
@@ -75,17 +130,77 @@ export function TopBar() {
 
       {/* Right control cluster */}
       <div className="ml-auto flex items-center gap-2">
-        {/* Search Input Bar */}
-        <div className="hidden items-center gap-2 rounded-lg border border-arc-500/20 bg-panel/60 px-2.5 py-1 text-xs md:flex">
-          <Search className="h-3 w-3 text-arc-400/70" />
-          <input
-            type="text"
-            placeholder="Search anything..."
-            className="w-28 xl:w-36 bg-transparent font-mono text-[10px] text-ink-primary placeholder:text-ink-faint focus:outline-none"
-          />
-          <kbd className="rounded border border-arc-500/30 bg-void px-1 font-mono text-[8px] text-arc-400">
-            CTRL K
-          </kbd>
+        {/* ── Live Search Bar ── */}
+        <div ref={searchRef} className="relative hidden md:block">
+          <div className={cn(
+            "flex items-center gap-2 rounded-lg border bg-panel/60 px-2.5 py-1 transition-all",
+            isSearchOpen ? "border-arc-400/50 bg-panel/90 w-52 xl:w-64" : "border-arc-500/20 w-36 xl:w-44"
+          )}>
+            <Search className="h-3 w-3 flex-shrink-0 text-arc-400/70" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setIsSearchOpen(true); }}
+              onFocus={() => setIsSearchOpen(true)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search pages..."
+              className="flex-1 min-w-0 bg-transparent font-mono text-[10px] text-ink-primary placeholder:text-ink-faint focus:outline-none"
+            />
+            {searchQuery && (
+              <button onClick={() => { setSearchQuery(""); setIsSearchOpen(false); }}>
+                <X className="h-3 w-3 text-ink-faint hover:text-arc-300" />
+              </button>
+            )}
+          </div>
+
+          {/* Dropdown results */}
+          {isSearchOpen && (
+            <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-arc-500/30 bg-void/95 backdrop-blur-xl shadow-xl overflow-hidden z-50">
+              {filteredPages.length === 0 ? (
+                <div className="px-3 py-3 text-center font-mono text-[9px] text-ink-faint">
+                  No pages found
+                </div>
+              ) : (
+                <div className="max-h-64 overflow-y-auto scrollbar-thin">
+                  {filteredPages.map((page) => {
+                    const isActive = pathname === page.href;
+                    return (
+                      <button
+                        key={page.href}
+                        onClick={() => handleSelectPage(page.href)}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors hover:bg-arc-500/10",
+                          isActive && "bg-arc-500/15 border-l-2 border-arc-400"
+                        )}
+                      >
+                        <Search className="h-3 w-3 flex-shrink-0 text-arc-400/50" />
+                        <div className="min-w-0">
+                          <p className={cn(
+                            "font-display text-[10px] font-bold leading-none",
+                            isActive ? "text-arc-300" : "text-white"
+                          )}>
+                            {page.label}
+                          </p>
+                          <p className="font-mono text-[8px] text-ink-faint mt-0.5 truncate">
+                            {page.description}
+                          </p>
+                        </div>
+                        {isActive && (
+                          <span className="ml-auto font-mono text-[7px] text-arc-400 flex-shrink-0">CURRENT</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="border-t border-arc-500/15 px-3 py-1.5 flex items-center gap-2">
+                <kbd className="rounded border border-arc-500/30 bg-void/80 px-1 font-mono text-[7px] text-arc-500">↵</kbd>
+                <span className="font-mono text-[7px] text-ink-faint">to navigate</span>
+                <kbd className="ml-auto rounded border border-arc-500/30 bg-void/80 px-1 font-mono text-[7px] text-arc-500">ESC</kbd>
+                <span className="font-mono text-[7px] text-ink-faint">to close</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Date & Time pill */}
