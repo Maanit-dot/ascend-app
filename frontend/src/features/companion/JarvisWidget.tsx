@@ -225,9 +225,6 @@ export function JarvisWidget() {
 
   const isActive = isListening || isSpeaking;
 
-  // Quests summary list
-  const activeQuests = board?.categories.flatMap((c) => c.quests) ?? [];
-
   return (
     <aside className="z-40 hidden h-full w-[290px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-void/95 lg:flex overflow-hidden p-2 gap-2 select-none">
       {/* ── HEADER ──────────────────────────────────────────────── */}
@@ -310,28 +307,6 @@ export function JarvisWidget() {
           messages.map((msg) => <ChatMessage key={msg.id} msg={msg} />)
         )}
 
-        {/* TODAY'S QUESTS Nested Box */}
-        {activeQuests.length > 0 && (
-          <div className="rounded-lg border border-arc-500/20 bg-void/80 p-2 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="font-display text-[10px] font-bold text-arc-300 tracking-wider">TODAY&apos;S QUESTS</span>
-              <Link href="/quests" className="font-mono text-[8px] text-arc-400 hover:underline">
-                VIEW ALL →
-              </Link>
-            </div>
-            <div className="space-y-1">
-              {activeQuests.slice(0, 4).map((q) => (
-                <div key={q.id} className="flex items-center justify-between text-[9px] font-mono border-b border-arc-500/10 pb-0.5 last:border-0">
-                  <span className="text-ink-secondary truncate max-w-[130px]">⚡ {q.template.name}</span>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <span className="text-ink-faint">{q.current_value}/{q.target_value}</span>
-                    <span className="text-amber-400">+{q.xp_reward} XP</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {isProcessing && (
           <div className="flex items-center gap-2 text-arc-400 font-mono text-[9px] py-1">
