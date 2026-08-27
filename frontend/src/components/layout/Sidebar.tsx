@@ -32,9 +32,9 @@ const NAV_ITEMS = [
   { href: "/bosses", label: "Bosses & Raids", icon: Skull },
   { href: "/inventory", label: "Inventory", icon: Package },
   { href: "/achievements", label: "Achievements", icon: Trophy },
-  { href: "/social", label: "Leaderboards", icon: Medal },
+  { href: "/leaderboard", label: "Leaderboards", icon: Medal },
   { href: "/statistics", label: "Statistics", icon: BarChart3 },
-  { href: "/quests", label: "Calendar", icon: Calendar },
+  { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

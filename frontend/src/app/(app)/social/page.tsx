@@ -64,12 +64,16 @@ export default function HunterNetworkPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
+  const hasAutoSelected = useRef(false);
+
   // Load friend list
   const fetchFriends = async () => {
     try {
       const res = await api.get<{ friends: PublicHunterProfile[] }>("/social/friends");
       setFriends(res.friends);
-      if (res.friends[0] && !selectedFriend) {
+      // Only auto-select the first friend on initial load, never on polling
+      if (res.friends[0] && !hasAutoSelected.current) {
+        hasAutoSelected.current = true;
         setSelectedFriend(res.friends[0]);
       }
     } catch {

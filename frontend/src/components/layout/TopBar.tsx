@@ -16,6 +16,9 @@ const PAGE_LABELS: Record<string, { title: string; subtitle: string }> = {
   "/story":        { title: "STORY MODE",      subtitle: "The ASCEND narrative unfolds." },
   "/statistics":   { title: "STATISTICS",      subtitle: "Character analysis and progression." },
   "/settings":     { title: "SETTINGS",        subtitle: "System configuration and profile." },
+  "/leaderboard":  { title: "LEADERBOARDS",    subtitle: "Global Hunter rankings sorted by XP earned." },
+  "/calendar":     { title: "CALENDAR",        subtitle: "Your quest history and discipline log, %NAME%." },
+  "/social":       { title: "HUNTER NETWORK",  subtitle: "Connect, inspect, and coordinate with fellow Hunters." },
 };
 
 export function TopBar() {
@@ -58,12 +61,12 @@ export function TopBar() {
       </button>
 
       {/* Page title block */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-none max-w-[160px] xl:max-w-[220px] min-w-0">
         <div className="flex items-center gap-2">
-          <h1 className="font-display text-xs font-bold tracking-[0.25em] text-white leading-none sm:text-sm">
+          <h1 className="font-display text-xs font-bold tracking-[0.25em] text-white leading-none sm:text-sm truncate">
             {pageInfo.title}
           </h1>
-          <span className="h-1 w-1 rounded-full bg-arc-400" />
+          <span className="h-1 w-1 flex-shrink-0 rounded-full bg-arc-400" />
         </div>
         <p className="mt-0.5 font-mono text-[8px] tracking-wider text-arc-400/70 truncate uppercase">
           {subtitle}

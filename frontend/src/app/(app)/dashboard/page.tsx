@@ -18,9 +18,7 @@ import { LevelUpModal } from "@/features/quests/LevelUpModal";
 import { HeroBanner } from "@/features/dashboard/HeroBanner";
 import { KpiCard } from "@/features/dashboard/KpiCard";
 import { SystemOverviewPanel } from "@/features/dashboard/SystemOverviewPanel";
-import { OnlineFriendsPanel } from "@/features/dashboard/OnlineFriendsPanel";
-import { LeaderboardMiniPanel } from "@/features/dashboard/LeaderboardMiniPanel";
-import { ChatMiniPanel } from "@/features/dashboard/ChatMiniPanel";
+
 import { resolveIcon } from "@/lib/icon-map";
 import { formatQuestValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -304,23 +302,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ROW 4: 3 BOTTOM CARDS (Fixed ~145px) ──────────────── */}
-      <div className="h-[145px] flex-shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-2 overflow-hidden">
-        {/* Card 1: Online Friends */}
-        <div className="h-full overflow-hidden">
-          <OnlineFriendsPanel />
-        </div>
 
-        {/* Card 2: Hunter Connect Chat */}
-        <div className="h-full overflow-hidden">
-          <ChatMiniPanel />
-        </div>
-
-        {/* Card 3: Mini Leaderboard */}
-        <div className="h-full overflow-hidden">
-          <LeaderboardMiniPanel />
-        </div>
-      </div>
 
       {/* Level-Up Modal */}
       <LevelUpModal
