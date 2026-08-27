@@ -364,9 +364,8 @@ export function JarvisWidget() {
         </form>
       </div>
 
-      {/* ── RECENT ACHIEVEMENT & ARC PROJECTION ──────────────────── */}
-      <div className="flex-shrink-0 space-y-1.5">
-        {/* Recent Achievement */}
+      {/* ── RECENT ACHIEVEMENT ──────────────────────────────────── */}
+      <div className="flex-shrink-0">
         <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/25 text-amber-300">
@@ -383,28 +382,6 @@ export function JarvisWidget() {
           <Link href="/achievements" className="font-mono text-[8px] text-amber-400 hover:underline flex-shrink-0">
             VIEW ALL →
           </Link>
-        </div>
-
-        {/* ARC Projection Panel */}
-        <div className="rounded-lg border border-arc-500/25 bg-arc-950/40 p-2 relative overflow-hidden flex items-center justify-between">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
-              <span className="font-display text-[10px] font-bold text-arc-300 tracking-wider">ARC PROJECTION</span>
-              <span className="font-mono text-[10px] font-bold text-arc-400 text-glow-arc">78%</span>
-            </div>
-            <p className="font-mono text-[8px] text-ink-muted truncate mt-0.5">Learning / Adapting / Evolving</p>
-            <div className="mt-1 h-1 w-full rounded-full bg-void-deep overflow-hidden">
-              <div className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm" style={{ width: "78%" }} />
-            </div>
-          </div>
-
-          {/* Anime Shadow Figure SVG Graphic on Right */}
-          <div className="relative flex h-9 w-10 flex-shrink-0 items-center justify-center ml-2">
-            <svg viewBox="0 0 40 40" className="h-full w-full drop-shadow-[0_0_8px_rgba(168,85,247,0.9)]" fill="none">
-              <path d="M20 5 L28 15 L24 25 L32 35 L12 35 L16 25 L12 15 Z" fill="rgba(124,58,237,0.7)" stroke="rgba(192,178,255,0.9)" strokeWidth="1" />
-              <circle cx="20" cy="12" r="2" fill="#00E5FF" />
-            </svg>
-          </div>
         </div>
       </div>
     </aside>

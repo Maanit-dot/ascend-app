@@ -203,9 +203,9 @@ export function TopBar() {
           )}
         </div>
 
-        {/* Date & Time pill */}
-        <div className="hidden items-center gap-1.5 rounded-lg border border-arc-500/20 bg-panel/50 px-2.5 py-1 text-[9px] font-mono text-ink-muted xl:flex">
-          <span>{timeStr || "22 Aug 2026, 10:49 PM"}</span>
+        {/* Date & Time pill — compact: DAY TIME only */}
+        <div className="hidden items-center gap-1.5 rounded-lg border border-arc-500/20 bg-panel/50 px-2 py-1 text-[9px] font-mono text-ink-muted xl:flex">
+          <span>{timeStr ? timeStr.split(",")[1]?.trim() ?? timeStr : "10:49 PM"}</span>
         </div>
 
         {/* Streak Pill */}
@@ -219,11 +219,19 @@ export function TopBar() {
 
         {/* Icon Action Buttons */}
         <div className="hidden items-center gap-1 sm:flex">
-          <button className="flex h-7 w-7 items-center justify-center rounded-lg border border-arc-500/20 bg-panel/50 text-ink-muted hover:border-arc-400 hover:text-arc-300 transition-colors">
+          <button
+            onClick={() => router.push("/statistics")}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-arc-500/20 bg-panel/50 text-ink-muted hover:border-arc-400 hover:text-arc-300 transition-colors"
+            title="Statistics"
+          >
             <BarChart2 className="h-3.5 w-3.5" />
           </button>
           <NotificationBell />
-          <button className="flex h-7 w-7 items-center justify-center rounded-lg border border-arc-500/20 bg-panel/50 text-ink-muted hover:border-arc-400 hover:text-arc-300 transition-colors">
+          <button
+            onClick={() => router.push("/settings")}
+            className="flex h-7 w-7 items-center justify-center rounded-lg border border-arc-500/20 bg-panel/50 text-ink-muted hover:border-arc-400 hover:text-arc-300 transition-colors"
+            title="Settings"
+          >
             <Settings className="h-3.5 w-3.5" />
           </button>
         </div>
