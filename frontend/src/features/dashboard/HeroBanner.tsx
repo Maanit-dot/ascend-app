@@ -17,7 +17,7 @@ function FlameLayers() {
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full"
         style={{
-          background: "radial-gradient(ellipse at 50% 100%, rgba(168,85,247,0.55) 0%, rgba(124,58,237,0.35) 40%, rgba(53,16,111,0.15) 70%, transparent 85%)",
+          background: "radial-gradient(ellipse at 50% 100%, rgba(168,85,247,0.65) 0%, rgba(124,58,237,0.4) 35%, rgba(53,16,111,0.2) 70%, transparent 85%)",
           filter: "blur(22px)",
           animation: "hero-aura 4s ease-in-out infinite",
         }}
@@ -25,8 +25,8 @@ function FlameLayers() {
       <div
         className="absolute bottom-0 left-[10%] w-2/5 h-full"
         style={{
-          background: "radial-gradient(ellipse at 30% 100%, rgba(192,178,255,0.45) 0%, rgba(124,58,237,0.25) 45%, transparent 75%)",
-          filter: "blur(18px)",
+          background: "radial-gradient(ellipse at 30% 100%, rgba(192,178,255,0.5) 0%, rgba(124,58,237,0.3) 45%, transparent 75%)",
+          filter: "blur(16px)",
           animation: "flame-rise 3.5s ease-in-out infinite",
           transformOrigin: "bottom center",
         }}
@@ -34,8 +34,8 @@ function FlameLayers() {
       <div
         className="absolute bottom-0 right-[10%] w-2/5 h-full"
         style={{
-          background: "radial-gradient(ellipse at 70% 100%, rgba(192,178,255,0.45) 0%, rgba(124,58,237,0.25) 45%, transparent 75%)",
-          filter: "blur(18px)",
+          background: "radial-gradient(ellipse at 70% 100%, rgba(192,178,255,0.5) 0%, rgba(124,58,237,0.3) 45%, transparent 75%)",
+          filter: "blur(16px)",
           animation: "flame-rise 4.2s ease-in-out infinite 0.7s",
           transformOrigin: "bottom center",
         }}
@@ -49,110 +49,130 @@ function FlameLayers() {
   );
 }
 
-/** Epic Shadow Dragon Head + Anime Shadow Hunter Silhouette SVG */
+/** High-Detail Shadow Dragon Head + Anime Shadow Hunter Silhouette SVG */
 function ShadowDragonAndHunter() {
   return (
     <div className="relative w-full h-full flex items-end justify-center" style={{ zIndex: 2 }}>
       {/* Ground purple plasma glow */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-44 h-4 rounded-full"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-4 rounded-full"
         style={{
-          background: "radial-gradient(ellipse, rgba(168,85,247,0.9) 0%, rgba(124,58,237,0.5) 50%, transparent 80%)",
+          background: "radial-gradient(ellipse, rgba(168,85,247,0.95) 0%, rgba(124,58,237,0.6) 50%, transparent 80%)",
           filter: "blur(6px)",
         }}
       />
 
       <svg
-        viewBox="0 0 220 200"
-        className="h-full w-auto max-h-full drop-shadow-[0_0_24px_rgba(168,85,247,0.9)]"
+        viewBox="0 0 240 210"
+        className="h-full w-auto max-h-full drop-shadow-[0_0_24px_rgba(168,85,247,0.95)]"
         style={{ animation: "float-y 6s ease-in-out infinite" }}
         fill="none"
       >
-        {/* ── Shadow Dragon Head Silhouette ──────── */}
-        <g opacity="0.9" style={{ filter: "drop-shadow(0 0 16px rgba(168,85,247,0.95))" }}>
-          {/* Dragon Snout & Jaws */}
+        {/* ── Shadow Dragon Head Silhouette (Left / Back) ──────── */}
+        <g opacity="0.95" style={{ filter: "drop-shadow(0 0 16px rgba(168,85,247,0.95))" }}>
+          {/* Main Skull & Upper Jaw */}
           <path
-            d="M20 55 C38 28 80 15 115 26 C135 32 150 48 145 72 C130 68 105 60 85 66 C65 72 40 85 20 55 Z"
+            d="M15 65 C35 30 85 15 125 28 C150 35 168 55 160 85 C140 80 110 70 88 76 C65 82 38 98 15 65 Z"
             fill="url(#dragonHeadGrad)"
           />
-          {/* Dragon Horns */}
+          {/* Main Horn 1 */}
           <path
-            d="M95 20 C110 2 140 -2 155 8 C140 16 120 20 105 24 Z"
+            d="M105 22 C125 0 160 -5 180 8 C160 18 135 22 118 26 Z"
             fill="url(#dragonHornGrad)"
           />
+          {/* Main Horn 2 */}
           <path
-            d="M75 28 C85 10 110 6 125 14 C112 22 98 26 85 30 Z"
+            d="M85 30 C98 10 128 5 145 15 C130 24 112 28 95 32 Z"
             fill="url(#dragonHornGrad)"
           />
-          {/* Dragon Glowing Eye */}
-          <ellipse cx="74" cy="44" rx="5" ry="3" fill="#00E5FF" style={{ filter: "blur(0.8px)" }} />
-          <circle cx="74" cy="44" r="2" fill="#FFFFFF" />
-          {/* Dragon Teeth & Flame Breath Trails */}
+          {/* Dragon Snout Ridge */}
           <path
-            d="M32 60 L38 66 L44 61 L50 67 L56 62 L62 68 L68 63"
+            d="M35 55 C50 40 80 32 105 38 L95 48 C75 42 50 48 35 55 Z"
+            fill="rgba(192,178,255,0.3)"
+          />
+
+          {/* Dragon Glowing Cyan Eye */}
+          <ellipse cx="80" cy="48" rx="6" ry="3.5" fill="#00E5FF" style={{ filter: "blur(0.8px)" }} />
+          <circle cx="80" cy="48" r="2.2" fill="#FFFFFF" />
+          {/* Eye Trail Light */}
+          <path d="M84 48 Q100 46 115 50" stroke="#00E5FF" strokeWidth="1.5" opacity="0.8" />
+
+          {/* Dragon Fangs & Jaws */}
+          <path
+            d="M28 70 L34 78 L42 71 L48 79 L56 72 L64 80 L70 73 M20 72 Q35 88 55 82"
             stroke="rgba(192,178,255,0.95)"
-            strokeWidth="1.5"
+            strokeWidth="1.8"
             fill="none"
           />
+
+          {/* Dragon Smoke / Plasma Breath Plumes */}
           <path
-            d="M15 65 C5 60 0 75 10 85 C20 95 40 85 30 70 Z"
-            fill="rgba(168,85,247,0.5)"
-            style={{ filter: "blur(4px)" }}
+            d="M10 72 C-5 65 -10 85 5 95 C20 105 45 95 30 75 Z"
+            fill="rgba(168,85,247,0.6)"
+            style={{ filter: "blur(5px)" }}
+          />
+          <path
+            d="M-5 85 C-15 95 0 110 15 105 C30 100 20 85 5 85 Z"
+            fill="rgba(124,58,237,0.5)"
+            style={{ filter: "blur(6px)" }}
           />
         </g>
 
-        {/* ── Anime Shadow Hunter Silhouette ─── */}
-        <g style={{ filter: "drop-shadow(0 0 12px rgba(124,58,237,0.95))" }}>
-          {/* Hair & Head */}
+        {/* ── Anime Shadow Hunter (Center / Front) ─── */}
+        <g style={{ filter: "drop-shadow(0 0 14px rgba(124,58,237,0.95))" }}>
+          {/* Spiky Anime Hair */}
           <path
-            d="M110 70 C100 70 95 82 97 96 C103 96 110 92 115 92 C120 92 125 96 131 96 C133 82 128 70 118 70 Z"
-            fill="#1E0A46"
+            d="M120 72 L112 58 L122 65 L132 52 L136 65 L148 58 L140 72 L150 70 L142 82 L152 84 L138 92 C134 78 128 72 120 72 Z"
+            fill="#2E1065"
             stroke="rgba(192,178,255,0.9)"
             strokeWidth="1"
           />
-          {/* Hair Spikes */}
-          <path d="M106 72 L100 60 L110 66 L118 56 L122 66 L132 60 L126 74" fill="#2E1065" />
+          <path d="M125 76 L118 85 C124 85 130 82 135 82 C140 82 145 86 150 86 L144 76 Z" fill="#1E0A46" />
 
-          {/* Eyes Glow */}
-          <circle cx="108" cy="85" r="2.2" fill="#00E5FF" style={{ filter: "blur(0.5px)" }} />
-          <circle cx="116" cy="85" r="2.2" fill="#00E5FF" style={{ filter: "blur(0.5px)" }} />
+          {/* Glowing Eyes */}
+          <circle cx="126" cy="88" r="2.5" fill="#00E5FF" style={{ filter: "blur(0.5px)" }} />
+          <circle cx="135" cy="88" r="2.5" fill="#00E5FF" style={{ filter: "blur(0.5px)" }} />
 
-          {/* Coat & Collar */}
+          {/* High Collar Coat & Cloak */}
           <path
-            d="M94 100 C88 118 85 140 87 175 L110 175 L116 145 L122 145 L128 175 L151 175 C153 140 150 118 144 100 Z"
+            d="M104 105 C98 125 94 148 96 185 L122 185 L128 152 L134 152 L140 185 L166 185 C168 148 165 125 159 105 Z"
             fill="#0F0628"
-            stroke="rgba(168,85,247,0.7)"
-            strokeWidth="1.2"
+            stroke="rgba(168,85,247,0.85)"
+            strokeWidth="1.4"
           />
-          <path d="M96 98 L104 110 L110 102 L116 102 L122 110 L132 98" fill="#1A093D" stroke="rgba(192,178,255,0.8)" strokeWidth="1" />
+          {/* Coat Collar & Buttons */}
+          <path d="M106 102 L116 116 L122 108 L128 108 L134 116 L144 102" fill="#1A093D" stroke="rgba(192,178,255,0.9)" strokeWidth="1.2" />
+          <circle cx="125" cy="122" r="1.5" fill="#A855F7" />
+          <circle cx="125" cy="134" r="1.5" fill="#A855F7" />
+          <circle cx="125" cy="146" r="1.5" fill="#A855F7" />
 
-          {/* Shadow Aura Ribbons */}
+          {/* Shadow Aura Ribbons Left & Right */}
           <path
-            d="M84 125 C72 135 65 155 70 170 C80 165 85 145 88 132 Z"
-            fill="rgba(168,85,247,0.65)"
+            d="M92 130 C78 142 70 165 76 180 C88 175 93 152 96 138 Z"
+            fill="rgba(168,85,247,0.7)"
             style={{ filter: "blur(2px)" }}
           />
           <path
-            d="M154 125 C166 135 173 155 168 170 C158 165 153 145 150 132 Z"
-            fill="rgba(168,85,247,0.65)"
+            d="M170 130 C184 142 192 165 186 180 C174 175 169 152 166 138 Z"
+            fill="rgba(168,85,247,0.7)"
             style={{ filter: "blur(2px)" }}
           />
 
           {/* Boots */}
-          <path d="M98 175 L94 195 L108 195 L106 175 Z" fill="#060312" stroke="rgba(192,178,255,0.5)" strokeWidth="0.8" />
-          <path d="M118 175 L116 195 L130 195 L126 175 Z" fill="#060312" stroke="rgba(192,178,255,0.5)" strokeWidth="0.8" />
+          <path d="M108 185 L102 205 L118 205 L116 185 Z" fill="#060312" stroke="rgba(192,178,255,0.6)" strokeWidth="0.8" />
+          <path d="M130 185 L128 205 L144 205 L138 185 Z" fill="#060312" stroke="rgba(192,178,255,0.6)" strokeWidth="0.8" />
         </g>
 
         {/* Gradients */}
         <defs>
           <linearGradient id="dragonHeadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#9333EA" stopOpacity="0.95" />
-            <stop offset="60%" stopColor="#4C1D95" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#0B041C" stopOpacity="0.98" />
+            <stop offset="0%" stopColor="#A855F7" stopOpacity="0.98" />
+            <stop offset="50%" stopColor="#6D28D9" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#0B041C" stopOpacity="0.99" />
           </linearGradient>
           <linearGradient id="dragonHornGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6D28D9" />
-            <stop offset="100%" stopColor="#C084FC" />
+            <stop offset="0%" stopColor="#7C3AED" />
+            <stop offset="100%" stopColor="#E9D5FF" />
           </linearGradient>
         </defs>
       </svg>
@@ -160,32 +180,52 @@ function ShadowDragonAndHunter() {
   );
 }
 
-/** Animated Level Core Ring SVG */
+/** Animated Level Core Ring SVG with Flaming Purple Ring */
 function LevelRing({ level, xpPercent }: { level: number; xpPercent: number }) {
-  const radius = 34;
+  const radius = 36;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - xpPercent / 100);
 
   return (
-    <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 92, height: 92 }}>
-      {/* Concentric rotating outer HUD rings */}
-      <svg className="absolute inset-0" width="92" height="92" viewBox="0 0 92 92">
-        <circle cx="46" cy="46" r="43" stroke="rgba(168,85,247,0.3)" strokeWidth="1" fill="none"
-          strokeDasharray="4 4" style={{ animation: "energy-rotate 20s linear infinite", transformOrigin: "46px 46px" }} />
-        <circle cx="46" cy="46" r={radius} stroke="rgba(53,16,111,0.95)" strokeWidth="4.5" fill="none" />
+    <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 100, height: 100 }}>
+      {/* ── Flaming Purple Aura Ring background ── */}
+      <div className="absolute inset-0 pointer-events-none rounded-full" style={{ zIndex: 0 }}>
+        <div
+          className="absolute -inset-2 rounded-full"
+          style={{
+            background: "conic-gradient(from 0deg, rgba(168,85,247,0.7), rgba(124,58,237,0.2), rgba(192,178,255,0.8), rgba(109,40,217,0.3), rgba(168,85,247,0.7))",
+            filter: "blur(8px)",
+            animation: "energy-rotate 12s linear infinite",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(168,85,247,0.4) 0%, rgba(124,58,237,0.2) 60%, transparent 85%)",
+            filter: "blur(5px)",
+            animation: "orb-pulse 3s ease-in-out infinite",
+          }}
+        />
+      </div>
+
+      {/* ── Concentric HUD SVG Rings ── */}
+      <svg className="relative z-10" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" stroke="rgba(168,85,247,0.35)" strokeWidth="1.2" fill="none"
+          strokeDasharray="4 4" style={{ animation: "energy-rotate 20s linear infinite", transformOrigin: "50px 50px" }} />
+        <circle cx="50" cy="50" r={radius} stroke="rgba(53,16,111,0.95)" strokeWidth="5" fill="none" />
         <circle
-          cx="46" cy="46" r={radius}
+          cx="50" cy="50" r={radius}
           stroke="url(#levelGradHero)"
-          strokeWidth="4.5"
+          strokeWidth="5"
           fill="none"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={dashOffset}
-          transform="rotate(-90 46 46)"
+          transform="rotate(-90 50 50)"
           style={{ transition: "stroke-dashoffset 1s ease-out" }}
         />
-        <circle cx="46" cy="46" r="26" stroke="rgba(192,178,255,0.25)" strokeWidth="1" fill="none"
-          style={{ animation: "energy-rotate-r 15s linear infinite", transformOrigin: "46px 46px" }} />
+        <circle cx="50" cy="50" r="27" stroke="rgba(192,178,255,0.3)" strokeWidth="1" fill="none"
+          style={{ animation: "energy-rotate-r 15s linear infinite", transformOrigin: "50px 50px" }} />
         <defs>
           <linearGradient id="levelGradHero" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#7C3AED" />
@@ -195,11 +235,15 @@ function LevelRing({ level, xpPercent }: { level: number; xpPercent: number }) {
         </defs>
       </svg>
 
-      {/* Center Level Content */}
-      <div className="relative flex flex-col items-center justify-center text-center"
+      {/* ── Center Level Number & Crest ── */}
+      <div className="absolute z-20 flex flex-col items-center justify-center text-center"
         style={{ animation: "level-ring 3s ease-in-out infinite" }}>
         <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold">LEVEL</span>
         <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none">{level}</span>
+        {/* Diamond Rank Crest */}
+        <svg className="h-3.5 w-3.5 text-arc-400 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+        </svg>
       </div>
     </div>
   );
@@ -282,8 +326,8 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
           </div>
         </div>
 
-        {/* ── CENTER: Epic Shadow Dragon + Anime Hunter Artwork ──────────────────── */}
-        <div className="relative flex-shrink-0 flex items-end justify-center h-full w-44 sm:w-56">
+        {/* ── CENTER: High-Detail Shadow Dragon + Anime Hunter Artwork ──────────────────── */}
+        <div className="relative flex-shrink-0 flex items-end justify-center h-full w-48 sm:w-60">
           <FlameLayers />
           <div
             ref={charRef}
