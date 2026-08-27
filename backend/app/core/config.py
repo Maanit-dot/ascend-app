@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     AI_PROVIDER: str = "openrouter"
     OPENROUTER_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
-    AI_MODEL: str = "openrouter/auto"
+    AI_MODEL: str = "meta-llama/llama-3.3-70b-instruct:free"
 
     # --- Misc ---
     ENVIRONMENT: str = "local"
