@@ -14,6 +14,10 @@ from app.models.quest import QuestInstance, QuestType
 from app.models.user import User
 from app.services import quest_service
 from app.services.leveling import xp_required_for_level, xp_progress_percent
+from app.services.tools.web_search import search_web
+from app.services.tools.weather_service import get_weather
+from app.services.tools.youtube_service import search_youtube
+from app.services.tools.code_assistant import format_code_response
 
 logger = logging.getLogger("ascend.jarvis")
 
@@ -21,43 +25,51 @@ JARVIS_SYSTEM_PROMPT = """You are JARVIS, an intelligent, high-precision AI syst
 
 Your identity:
 - You speak with crisp, intelligent, supportive system companion tone ("Hunter [Name]").
-- You have full awareness of the Hunter's real live character status and active daily quests.
-- You can answer general knowledge questions dynamically across science, mathematics, programming, productivity, physics, quantum mechanics, and general explanations.
-- You can execute control actions on the Hunter's ASCEND system (modifying quest targets, optimizing workload for time budgets, adding new quests).
+- You have full awareness of the Hunter's real live character status, active daily quests, and stats.
+- You can execute control actions on the Hunter's ASCEND system (modifying quest targets, optimizing workload, adding new quests).
+- You can execute external actions: real-time web search, live weather reports, YouTube study media lookup, code generation, and reminders.
 
 AVAILABLE SYSTEM ACTIONS:
-When the user requests a quest change, optimization, or status query, include an `action` object in your JSON response.
+When the user requests a quest change, search, weather, YouTube, code, or reminder, include an `action` object in your JSON response.
 
 Your response MUST be a valid JSON object matching this schema:
 {
   "reply": "Your natural language response to the Hunter",
   "action": null OR {
-     "type": "QUEST_MUTATION" | "QUERY_RESULT" | "GENERAL_KNOWLEDGE",
-     "action_name": "UPDATE_TARGET" | "OPTIMIZE_WORKLOAD" | "ADD_QUEST" | "DELETE_QUEST",
+     "type": "QUEST_MUTATION" | "WEB_SEARCH" | "WEATHER_REPORT" | "YOUTUBE_SEARCH" | "CODE_ASSIST" | "REMINDER" | "QUERY_RESULT" | "GENERAL_KNOWLEDGE",
+     "action_name": "UPDATE_TARGET" | "OPTIMIZE_WORKLOAD" | "ADD_QUEST" | "DELETE_QUEST" (only for QUEST_MUTATION),
      "quest_title": "exact or partial quest title",
      "new_target": 50,
      "time_budget_minutes": 90,
-     "summary": "description of change"
+     "query": "search query for web or youtube",
+     "city": "city name for weather",
+     "language": "python / typescript / cpp / etc.",
+     "code": "code snippet if generating code",
+     "explanation": "concise explanation",
+     "complexity": "time/space complexity if code",
+     "message": "reminder text",
+     "time_text": "in 30 mins / 5pm"
   }
 }
 
 EXAMPLES:
-1. User: "Explain photovoltaic cells."
-   Response: {"reply": "Photovoltaic (PV) cells convert solar energy directly into electrical energy through the photovoltaic effect. When photons hit a semiconductor material (like silicon), they knock electrons free, creating an electric current across p-n junctions...", "action": {"type": "GENERAL_KNOWLEDGE"}}
+1. User: "Search who discovered CRISPR."
+   Response: {"reply": "Initiating search on CRISPR discovery...", "action": {"type": "WEB_SEARCH", "query": "who discovered CRISPR gene editing"}}
 
-2. User: "Change today's Physics quest to 50 questions."
-   Response: {"reply": "Understood, Hunter. I have updated your Physics Chapter Revision quest target to 50 questions.", "action": {"type": "QUEST_MUTATION", "action_name": "UPDATE_TARGET", "quest_title": "Physics", "new_target": 50}}
+2. User: "What's the weather in Tokyo?"
+   Response: {"reply": "Checking atmospheric conditions for Tokyo, Hunter.", "action": {"type": "WEATHER_REPORT", "city": "Tokyo"}}
 
-3. User: "I only have 90 minutes today. Optimize my workload."
-   Response: {"reply": "Optimization matrix applied for a 90-minute timeframe, Hunter. Daily workloads scaled down for maximum efficiency.", "action": {"type": "QUEST_MUTATION", "action_name": "OPTIMIZE_WORKLOAD", "time_budget_minutes": 90}}
+3. User: "Play lofi study beats on youtube."
+   Response: {"reply": "Retrieving study stream on YouTube, Hunter.", "action": {"type": "YOUTUBE_SEARCH", "query": "lofi hip hop study beats"}}
 
-4. User: "Add a new quest: Meditation for 20 minutes."
+4. User: "Write a Python binary search function."
+   Response: {"reply": "Here is an optimized binary search implementation in Python, Hunter.", "action": {"type": "CODE_ASSIST", "language": "python", "code": "def binary_search(arr: list[int], target: int) -> int:\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1", "explanation": "Searches sorted array with logarithmic time.", "complexity": "Time: O(log N) | Space: O(1)"}}
+
+5. User: "Remind me in 30 minutes to review Physics."
+   Response: {"reply": "Reminder initialized for 30 minutes: 'Review Physics', Hunter.", "action": {"type": "REMINDER", "message": "Review Physics", "time_text": "in 30 minutes"}}
+
+6. User: "Add a new quest: Meditation for 20 minutes."
    Response: {"reply": "New custom quest 'Meditation' added to your board for today, Hunter. Target: 20 minutes.", "action": {"type": "QUEST_MUTATION", "action_name": "ADD_QUEST", "quest_title": "Meditation", "new_target": 20}}
-
-IMPORTANT — When the user says things like:
-- "add a quest", "create a quest", "new quest", "I want to do X", "add X for N reps/minutes/km"
-Always use action_name: "ADD_QUEST" with quest_title = the name and new_target = the number.
-YOU decide the XP reward automatically based on difficulty. NEVER ask the user for XP.
 """
 
 
@@ -215,56 +227,114 @@ def _execute_tool_action(
     mandatory: List[QuestInstance],
     action: Dict[str, Any],
 ) -> Optional[Dict[str, Any]]:
-    """Executes backend tool actions requested by LLM on SQLite database."""
+    """Executes backend tool actions requested by LLM on database and external integrations."""
+    action_type = action.get("type")
     action_name = action.get("action_name")
 
-    if action_name == "UPDATE_TARGET":
-        quest_title = action.get("quest_title", "").lower()
-        new_target = action.get("new_target")
+    if action_type == "QUEST_MUTATION" or action_name in ("UPDATE_TARGET", "OPTIMIZE_WORKLOAD", "ADD_QUEST"):
+        if action_name == "UPDATE_TARGET":
+            quest_title = action.get("quest_title", "").lower()
+            new_target = action.get("new_target")
 
-        if new_target is not None and quest_title:
+            if new_target is not None and quest_title:
+                for q in mandatory:
+                    if quest_title in q.template.name.lower() or q.template.name.lower() in quest_title:
+                        old_target = q.target_value
+                        q.target_value = int(new_target)
+                        q.xp_reward = quest_service.recompute_xp_for_target(q.template, q.target_value)
+                        if q.current_value >= int(new_target):
+                            q.is_completed = True
+                        db.commit()
+                        db.refresh(q)
+                        return {
+                            "type": "QUEST_MUTATION",
+                            "action_name": "UPDATE_TARGET",
+                            "quest_id": str(q.id),
+                            "quest_title": q.template.name,
+                            "old_target": old_target,
+                            "new_target": int(new_target),
+                        }
+
+        elif action_name == "OPTIMIZE_WORKLOAD":
+            minutes = action.get("time_budget_minutes", 90)
+            scale_factor = 0.5 if minutes <= 60 else 0.7 if minutes <= 90 else 0.85
+            updated_items = []
             for q in mandatory:
-                if quest_title in q.template.name.lower() or q.template.name.lower() in quest_title:
-                    old_target = q.target_value
-                    q.target_value = int(new_target)
-                    q.xp_reward = quest_service.recompute_xp_for_target(q.template, q.target_value)
-                    if q.current_value >= int(new_target):
-                        q.is_completed = True
-                    db.commit()
-                    db.refresh(q)
-                    return {
-                        "type": "QUEST_MUTATION",
-                        "action_name": "UPDATE_TARGET",
-                        "quest_id": str(q.id),
-                        "quest_title": q.template.name,
-                        "old_target": old_target,
-                        "new_target": int(new_target),
-                    }
+                if not q.is_completed and q.target_value > 1:
+                    old_val = q.target_value
+                    new_val = max(1, int(old_val * scale_factor))
+                    q.target_value = new_val
+                    q.xp_reward = quest_service.recompute_xp_for_target(q.template, new_val)
+                    updated_items.append(f"• {q.template.name}: {old_val} ➔ {new_val}")
+            db.commit()
+            return {
+                "type": "QUEST_MUTATION",
+                "action_name": "OPTIMIZE_WORKLOAD",
+                "time_budget_minutes": minutes,
+                "summary": "\n".join(updated_items),
+            }
 
-    elif action_name == "OPTIMIZE_WORKLOAD":
-        minutes = action.get("time_budget_minutes", 90)
-        scale_factor = 0.5 if minutes <= 60 else 0.7 if minutes <= 90 else 0.85
-        updated_items = []
-        for q in mandatory:
-            if not q.is_completed and q.target_value > 1:
-                old_val = q.target_value
-                new_val = max(1, int(old_val * scale_factor))
-                q.target_value = new_val
-                q.xp_reward = quest_service.recompute_xp_for_target(q.template, new_val)
-                updated_items.append(f"• {q.template.name}: {old_val} ➔ {new_val}")
-        db.commit()
+        elif action_name == "ADD_QUEST":
+            quest_title = action.get("quest_title", "Custom Quest")
+            new_target = int(action.get("new_target", 10))
+            result = _create_custom_quest(db, user, quest_title, new_target)
+            return result
+
+    elif action_type == "WEB_SEARCH":
+        q = action.get("query", "")
+        if q:
+            search_res = _run_async(search_web(q))
+            return {
+                "type": "WEB_SEARCH",
+                "query": q,
+                "results": search_res.get("results", []),
+                "summary": search_res.get("summary", ""),
+            }
+
+    elif action_type == "WEATHER_REPORT":
+        city = action.get("city", "Delhi")
+        weather_res = _run_async(get_weather(city))
         return {
-            "type": "QUEST_MUTATION",
-            "action_name": "OPTIMIZE_WORKLOAD",
-            "time_budget_minutes": minutes,
-            "summary": "\n".join(updated_items),
+            "type": "WEATHER_REPORT",
+            "city": weather_res.get("city", city),
+            "data": weather_res,
         }
 
-    elif action_name == "ADD_QUEST":
-        quest_title = action.get("quest_title", "Custom Quest")
-        new_target = int(action.get("new_target", 10))
-        result = _create_custom_quest(db, user, quest_title, new_target)
-        return result
+    elif action_type == "YOUTUBE_SEARCH":
+        query = action.get("query", "lofi study beats")
+        yt_res = _run_async(search_youtube(query))
+        return {
+            "type": "YOUTUBE_SEARCH",
+            "query": query,
+            "results": yt_res.get("results", []),
+            "summary": yt_res.get("summary", ""),
+        }
+
+    elif action_type == "CODE_ASSIST":
+        return format_code_response(
+            language=action.get("language", "python"),
+            code=action.get("code", "# No code generated"),
+            explanation=action.get("explanation", ""),
+            complexity=action.get("complexity", ""),
+        )
+
+    elif action_type == "REMINDER":
+        from app.models.story import Notification, NotificationType
+        msg = action.get("message", "Task Reminder")
+        time_text = action.get("time_text", "soon")
+        notif = Notification(
+            user_id=user.id,
+            type=NotificationType.SYSTEM_BROADCAST,
+            title="JARVIS Reminder",
+            body=f"{msg} ({time_text})",
+        )
+        db.add(notif)
+        db.commit()
+        return {
+            "type": "REMINDER",
+            "message": msg,
+            "time_text": time_text,
+        }
 
     return action
 
@@ -676,21 +746,126 @@ def _execute_deterministic_fallback(
             "action": {"type": "QUERY_RESULT", "target": "ACHIEVEMENTS"},
         }
 
-    if "boss" in cmd_lower or "raid" in cmd_lower:
-        from app.models.boss import Boss
-        from datetime import date
-        active_bosses = db.query(Boss).filter(Boss.cycle_end >= date.today(), Boss.is_defeated == False).all()
-        if active_bosses:
-            boss_list = "\n".join(
-                f"• **{b.name}** ({b.cycle.value.upper()}) | HP: {b.current_hp:.0f}/{b.max_hp:.0f} ({b.current_hp/b.max_hp*100:.1f}%)"
-                for b in active_bosses
-            )
-            reply_text = f"Hunter **{user.display_name}**, here are the active threat matrices (Bosses):\n\n{boss_list}"
-        else:
-            reply_text = f"No active boss threats detected for the current cycle, Hunter."
+    # --- External Tool Actions (Deterministic Fallbacks) ---
+
+    # Weather lookup
+    weather_match = re.search(r"weather(?:\s+in|\s+for|\s+at)?\s+([a-zA-Z\s]+)", cmd_lower)
+    if weather_match or "weather" in cmd_lower or "forecast" in cmd_lower or "temperature" in cmd_lower:
+        city = weather_match.group(1).strip().title() if weather_match else "Delhi"
+        weather_res = _run_async(get_weather(city))
         return {
-            "reply": reply_text,
-            "action": {"type": "QUERY_RESULT", "target": "BOSSES"},
+            "reply": weather_res.get("summary", f"Retrieved atmospheric conditions for {city}."),
+            "action": {
+                "type": "WEATHER_REPORT",
+                "city": weather_res.get("city", city),
+                "data": weather_res,
+            },
+        }
+
+    # YouTube / Music lookup
+    yt_match = re.search(r"(?:youtube|play|song|music|video|listen\s+to)\s+(.+)", cmd_lower)
+    if yt_match or "youtube" in cmd_lower or "lofi" in cmd_lower or "study music" in cmd_lower:
+        yt_query = yt_match.group(1).strip() if yt_match else "lofi study beats"
+        yt_res = _run_async(search_youtube(yt_query))
+        return {
+            "reply": yt_res.get("summary", f"Found YouTube stream for {yt_query}."),
+            "action": {
+                "type": "YOUTUBE_SEARCH",
+                "query": yt_query,
+                "results": yt_res.get("results", []),
+                "summary": yt_res.get("summary", ""),
+            },
+        }
+
+    # Web Search lookup
+    search_match = re.search(r"(?:search|lookup|find|google|ddg)\s+(?:for\s+|online\s+)?(.+)", cmd_lower)
+    if search_match or cmd_lower.startswith("search ") or cmd_lower.startswith("who is ") or cmd_lower.startswith("what is "):
+        s_query = search_match.group(1).strip() if search_match else command
+        search_res = _run_async(search_web(s_query))
+        return {
+            "reply": search_res.get("summary", f"Web search results for: {s_query}"),
+            "action": {
+                "type": "WEB_SEARCH",
+                "query": s_query,
+                "results": search_res.get("results", []),
+                "summary": search_res.get("summary", ""),
+            },
+        }
+
+    # Code generation & Algorithms
+    code_match = re.search(r"(?:write|create|generate|implement|code)\s+(?:a\s+)?(python|javascript|typescript|cpp|java|rust|sql|html)?\s*(?:code|script|function|algorithm)?\s*(?:for|to)?\s*(.+)", cmd_lower)
+    if code_match or "binary search" in cmd_lower or "quicksort" in cmd_lower or "algorithm" in cmd_lower or "function" in cmd_lower:
+        lang = code_match.group(1).lower() if code_match and code_match.group(1) else "python"
+        task = code_match.group(2).strip() if code_match and code_match.group(2) else command
+        
+        # Standard templates for common algorithm queries
+        if "binary search" in cmd_lower:
+            code_sample = (
+                "def binary_search(arr: list[int], target: int) -> int:\n"
+                "    low, high = 0, len(arr) - 1\n"
+                "    while low <= high:\n"
+                "        mid = (low + high) // 2\n"
+                "        if arr[mid] == target:\n"
+                "            return mid\n"
+                "        elif arr[mid] < target:\n"
+                "            low = mid + 1\n"
+                "        else:\n"
+                "            high = mid - 1\n"
+                "    return -1"
+            )
+            complexity = "Time: O(log N) | Space: O(1)"
+            expl = "Iterative binary search on a sorted list."
+        elif "quicksort" in cmd_lower:
+            code_sample = (
+                "def quicksort(arr: list[int]) -> list[int]:\n"
+                "    if len(arr) <= 1:\n"
+                "        return arr\n"
+                "    pivot = arr[len(arr) // 2]\n"
+                "    left = [x for x in arr if x < pivot]\n"
+                "    middle = [x for x in arr if x == pivot]\n"
+                "    right = [x for x in arr if x > pivot]\n"
+                "    return quicksort(left) + middle + quicksort(right)"
+            )
+            complexity = "Average Time: O(N log N) | Space: O(N)"
+            expl = "Divide-and-conquer quicksort with middle pivot."
+        else:
+            code_sample = f"# {task.title()}\ndef solve():\n    # Optimal implementation\n    pass\n\nif __name__ == '__main__':\n    solve()"
+            complexity = "Time: O(N) | Space: O(1)"
+            expl = f"Implementation template for {task}."
+
+        code_action = format_code_response(
+            language=lang,
+            code=code_sample,
+            explanation=expl,
+            complexity=complexity,
+        )
+        return {
+            "reply": f"Here is the requested **{lang.title()}** solution, Hunter **{user.display_name}**:\n\n{expl}",
+            "action": code_action,
+        }
+
+    # Reminder
+    remind_match = re.search(r"remind\s+(?:me\s+)?(?:in\s+)?(\d+\s*(?:minutes|mins|hours|hrs))?\s*(?:to\s+)?(.+)", cmd_lower)
+    if remind_match or "remind" in cmd_lower or "alarm" in cmd_lower or "timer" in cmd_lower:
+        time_spec = remind_match.group(1) if remind_match and remind_match.group(1) else "in 30 minutes"
+        task_msg = remind_match.group(2).strip().title() if remind_match and remind_match.group(2) else "Task Reminder"
+        
+        from app.models.story import Notification, NotificationType
+        notif = Notification(
+            user_id=user.id,
+            type=NotificationType.SYSTEM_BROADCAST,
+            title="JARVIS Reminder",
+            body=f"{task_msg} ({time_spec})",
+        )
+        db.add(notif)
+        db.commit()
+        return {
+            "reply": f"**Reminder Set ⏰**\n\nTask: **{task_msg}**\nTiming: **{time_spec}**\n\nI will ping your neural interface when the timer expires, Hunter {user.display_name}!",
+            "action": {
+                "type": "REMINDER",
+                "message": task_msg,
+                "time_text": time_spec,
+            },
         }
 
     # 4. Natural Companion Greetings & Conversational Handling

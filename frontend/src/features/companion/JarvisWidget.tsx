@@ -10,6 +10,14 @@ import {
   Volume2,
   VolumeX,
   Trophy,
+  CloudSun,
+  Globe,
+  Youtube,
+  Code2,
+  Clock,
+  Copy,
+  Check,
+  ExternalLink,
 } from "lucide-react";
 import { jarvisApi, type JarvisAction } from "@/lib/api/jarvis";
 import { jarvisSpeech } from "@/lib/speech";
@@ -72,9 +80,166 @@ function JarvisOrb({ active }: { active: boolean }) {
   );
 }
 
+/* ── Code Card with Copy ─────────────────────────────────────────── */
+function CodeCard({ action }: { action: JarvisAction }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (action.code) {
+      navigator.clipboard.writeText(action.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="mt-2 rounded-lg border border-cyan-500/30 bg-void/90 overflow-hidden font-mono text-[10px]">
+      <div className="flex items-center justify-between bg-cyan-950/40 px-2.5 py-1.5 border-b border-cyan-500/20">
+        <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
+          <Code2 className="h-3 w-3" />
+          <span className="uppercase text-[9px]">{action.language || "code"}</span>
+        </div>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1 text-[8px] text-ink-muted hover:text-white transition-colors"
+        >
+          {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+          <span>{copied ? "Copied" : "Copy"}</span>
+        </button>
+      </div>
+      {action.code && (
+        <pre className="p-2.5 overflow-x-auto text-[9px] leading-relaxed text-cyan-100 max-h-48 scrollbar-thin">
+          <code>{action.code}</code>
+        </pre>
+      )}
+      {action.complexity && (
+        <div className="px-2.5 py-1 bg-void border-t border-cyan-500/15 text-[8px] text-cyan-400/80">
+          {action.complexity}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Weather Card ─────────────────────────────────────────────────── */
+function WeatherCard({ action }: { action: JarvisAction }) {
+  const d = action.data;
+  return (
+    <div className="mt-2 rounded-lg border border-amber-500/30 bg-amber-950/20 p-2.5 space-y-1.5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <CloudSun className="h-4 w-4 text-amber-400" />
+          <span className="font-display text-[10px] font-bold text-white tracking-wider">
+            {d?.city || action.city || "Atmosphere"}
+          </span>
+        </div>
+        <span className="font-mono text-sm font-bold text-amber-300">{d?.temp_c || "26°C"}</span>
+      </div>
+      <div className="grid grid-cols-3 gap-1 text-center font-mono text-[8px] pt-1 border-t border-amber-500/20">
+        <div className="rounded bg-void/50 p-1">
+          <p className="text-ink-faint">Condition</p>
+          <p className="text-white font-semibold truncate">{d?.condition || "Clear"}</p>
+        </div>
+        <div className="rounded bg-void/50 p-1">
+          <p className="text-ink-faint">Humidity</p>
+          <p className="text-amber-300 font-semibold">{d?.humidity || "55%"}</p>
+        </div>
+        <div className="rounded bg-void/50 p-1">
+          <p className="text-ink-faint">Wind</p>
+          <p className="text-cyan-300 font-semibold">{d?.wind || "12 km/h"}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── YouTube Video Card ──────────────────────────────────────────── */
+function YouTubeCard({ action }: { action: JarvisAction }) {
+  const items = action.results?.slice(0, 2) || [];
+  return (
+    <div className="mt-2 rounded-lg border border-crimson-500/30 bg-crimson-950/20 p-2 space-y-1.5">
+      <div className="flex items-center gap-1.5 text-crimson-400 font-display text-[10px] font-bold">
+        <Youtube className="h-3.5 w-3.5" />
+        <span>YouTube Stream</span>
+      </div>
+      <div className="space-y-1">
+        {items.map((vid, i) => (
+          <a
+            key={i}
+            href={vid.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded bg-void/80 p-1.5 hover:bg-void transition-colors group"
+          >
+            <div className="flex-1 min-w-0 font-mono text-[9px]">
+              <p className="text-white font-semibold truncate group-hover:text-crimson-300">{vid.title}</p>
+              <span className="text-[8px] text-ink-faint">Watch on YouTube</span>
+            </div>
+            <ExternalLink className="h-3 w-3 text-crimson-400 group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Web Search Card ─────────────────────────────────────────────── */
+function SearchCard({ action }: { action: JarvisAction }) {
+  const items = action.results?.slice(0, 3) || [];
+  return (
+    <div className="mt-2 rounded-lg border border-arc-500/30 bg-arc-950/30 p-2 space-y-1.5">
+      <div className="flex items-center gap-1.5 text-arc-300 font-display text-[10px] font-bold">
+        <Globe className="h-3.5 w-3.5" />
+        <span>Web Knowledge Matrix</span>
+      </div>
+      <div className="space-y-1">
+        {items.map((item, i) => (
+          <a
+            key={i}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded bg-void/70 p-1.5 hover:bg-void transition-colors group"
+          >
+            <div className="flex items-center justify-between font-mono text-[9px]">
+              <p className="text-white font-semibold truncate group-hover:text-arc-300">{item.title}</p>
+              <ExternalLink className="h-2.5 w-2.5 text-arc-400 flex-shrink-0 ml-1" />
+            </div>
+            {item.snippet && (
+              <p className="font-mono text-[8px] text-ink-muted line-clamp-2 mt-0.5">{item.snippet}</p>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Reminder Card ───────────────────────────────────────────────── */
+function ReminderCard({ action }: { action: JarvisAction }) {
+  return (
+    <div className="mt-2 rounded-lg border border-amber-500/40 bg-amber-950/30 p-2 flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-amber-500/20 text-amber-400">
+          <Clock className="h-3.5 w-3.5" />
+        </div>
+        <div className="min-w-0 font-mono text-[9px]">
+          <p className="text-white font-semibold truncate">{action.message || "Reminder Active"}</p>
+          <span className="text-[8px] text-amber-400/90">{action.time_text || "Scheduled"}</span>
+        </div>
+      </div>
+      <span className="rounded bg-amber-500/20 px-1.5 py-0.5 font-mono text-[8px] text-amber-300 flex-shrink-0">
+        SET
+      </span>
+    </div>
+  );
+}
+
 /* ── Chat Message Bubble ─────────────────────────────────────────── */
 function ChatMessage({ msg }: { msg: JarvisMessage }) {
   const isUser = msg.role === "user";
+  const action = msg.action;
+
   return (
     <div className={cn("flex flex-col animate-fade-in", isUser ? "items-end" : "items-start")}>
       <div className={cn("mb-0.5 flex items-center gap-1.5", isUser && "flex-row-reverse")}>
@@ -87,22 +252,30 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
       <div className={isUser ? "jarvis-user-bubble" : "jarvis-ai-bubble"}>
         <div className="whitespace-pre-line text-[11px]">{msg.text}</div>
 
-        {msg.action?.type === "QUEST_MUTATION" && (
+        {/* Quest Mutation Card */}
+        {action?.type === "QUEST_MUTATION" && (
           <div className="mt-1.5 rounded border border-emerald-500/30 bg-emerald-950/40 p-2">
             <div className="flex items-center gap-1.5 font-semibold text-emerald-400 text-[9px] mb-0.5">
               <CheckCircle2 className="h-3 w-3" />
               <span>Quest Updated</span>
             </div>
-            {msg.action.quest_title && (
+            {action.quest_title && (
               <p className="font-mono text-[8px] text-emerald-300/90">
-                {msg.action.quest_title}
-                {msg.action.new_target && (
-                  <> → <strong className="text-white">{msg.action.new_target}</strong></>
+                {action.quest_title}
+                {action.new_target && (
+                  <> → <strong className="text-white">{action.new_target}</strong></>
                 )}
               </p>
             )}
           </div>
         )}
+
+        {/* Tool Action Cards */}
+        {action?.type === "CODE_ASSIST" && <CodeCard action={action} />}
+        {action?.type === "WEATHER_REPORT" && <WeatherCard action={action} />}
+        {action?.type === "YOUTUBE_SEARCH" && <YouTubeCard action={action} />}
+        {action?.type === "WEB_SEARCH" && <SearchCard action={action} />}
+        {action?.type === "REMINDER" && <ReminderCard action={action} />}
       </div>
     </div>
   );

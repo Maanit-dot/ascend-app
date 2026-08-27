@@ -14,6 +14,26 @@ export interface JarvisAction {
   xp_reward?: number;
   category?: string;
   unit?: string;
+  // External Tool fields
+  query?: string;
+  results?: { title: string; snippet?: string; url?: string; video_id?: string; thumbnail?: string }[];
+  city?: string;
+  data?: {
+    city?: string;
+    temp_c?: string;
+    temp_f?: string;
+    condition?: string;
+    humidity?: string;
+    wind?: string;
+    feels_like?: string;
+    summary?: string;
+  };
+  language?: string;
+  code?: string;
+  explanation?: string;
+  complexity?: string;
+  message?: string;
+  time_text?: string;
 }
 
 export interface JarvisResponse {
