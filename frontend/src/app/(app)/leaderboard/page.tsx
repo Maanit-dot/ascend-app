@@ -51,11 +51,11 @@ export default function LeaderboardPage() {
     async function load() {
       setIsLoading(true);
       try {
-        // Try dedicated leaderboard endpoint first
-        const res = await api.get<{ entries: LeaderboardEntry[] }>("/social/leaderboard");
+        // Fetch from dedicated leaderboard endpoint with filter
+        const res = await api.get<{ entries: LeaderboardEntry[] }>(`/social/leaderboard?filter=${tab}`);
         setEntries(res.entries);
       } catch {
-        // Fallback: use friends list + inject self, sort by XP
+        // Fallback: use friends list + inject self, sort by total lifetime XP
         try {
           const friendsRes = await api.get<{ friends: LeaderboardEntry[] }>("/social/friends");
           const all: LeaderboardEntry[] = [...friendsRes.friends];
@@ -65,7 +65,7 @@ export default function LeaderboardPage() {
               display_name: user.display_name,
               avatar_url: user.avatar_url ?? null,
               level: user.character.level,
-              total_xp_earned: user.character.current_xp,
+              total_xp_earned: user.character.total_xp_earned,
               current_streak_days: user.character.current_streak_days,
               rank: "C",
               title: "Elite Hunter",
@@ -82,7 +82,7 @@ export default function LeaderboardPage() {
       }
     }
     load();
-  }, [user]);
+  }, [user, tab]);
 
   return (
     <div className="mx-auto max-w-4xl space-y-4 h-full overflow-y-auto pr-1 scrollbar-thin">
@@ -95,11 +95,11 @@ export default function LeaderboardPage() {
               LEADERBOARD
             </h1>
             <span className="rounded border border-amber-500/30 bg-amber-950/20 px-2 py-0.5 font-mono text-[9px] text-amber-400">
-              ● LIVE RANKINGS
+              ● LIFETIME XP
             </span>
           </div>
           <p className="font-mono text-[10px] text-arc-400/70 mt-1">
-            Global Hunter rankings sorted by total XP earned. Climb the board.
+            Hunter rankings ranked strictly by lifetime total XP earned all-time.
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export default function LeaderboardPage() {
           <span className="col-span-1 font-mono text-[8px] uppercase text-arc-400/60">#</span>
           <span className="col-span-5 font-mono text-[8px] uppercase text-arc-400/60">Hunter</span>
           <span className="col-span-2 font-mono text-[8px] uppercase text-arc-400/60 text-center">Level</span>
-          <span className="col-span-2 font-mono text-[8px] uppercase text-arc-400/60 text-right">Total XP</span>
+          <span className="col-span-2 font-mono text-[8px] uppercase text-arc-400/60 text-right">Lifetime XP</span>
           <span className="col-span-2 font-mono text-[8px] uppercase text-arc-400/60 text-right">Streak</span>
         </div>
 

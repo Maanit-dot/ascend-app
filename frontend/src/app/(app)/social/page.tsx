@@ -253,21 +253,31 @@ export default function HunterNetworkPage() {
   // Remove friend
   const handleRemoveFriend = async () => {
     if (!selectedFriend) return;
-    try {
-      await api.post("/social/friends/remove", { friend_id: selectedFriend.id });
-    } catch {}
-    // Always remove locally even if API fails
-    setFriends((prev) => prev.filter((f) => f.id !== selectedFriend.id));
+    const friendToRemove = selectedFriend;
+    setConfirmAction(null);
     setSelectedFriend(null);
     setMessages([]);
+    setFriends((prev) => prev.filter((f) => f.id !== friendToRemove.id));
     hasAutoSelected.current = false;
-    setConfirmAction(null);
+    try {
+      await api.post("/social/friends/remove", { friend_id: friendToRemove.id });
+      fetchFriends();
+    } catch {
+      // Failed to remove on backend
+    }
   };
 
-  // Clear chat (local only)
-  const handleClearChat = () => {
-    setMessages([]);
+  // Clear chat
+  const handleClearChat = async () => {
+    if (!selectedFriend) return;
+    const friendToClear = selectedFriend;
     setConfirmAction(null);
+    setMessages([]);
+    try {
+      await api.post("/social/messages/clear", { friend_id: friendToClear.id });
+    } catch {
+      // fallback
+    }
   };
 
   // Group messages by date for date separator labels

@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.social import HunterChatMessage, HunterFriend
-from app.models.user import User
+from app.models.user import User, CharacterProfile
 from app.services.jarvis_service import get_hunter_rank, get_hunter_title
 
 logger = logging.getLogger("ascend.social")
@@ -43,6 +43,14 @@ class FriendRequestPayload(BaseModel):
 
 class AcceptFriendPayload(BaseModel):
     request_id: str
+
+
+class RemoveFriendPayload(BaseModel):
+    friend_id: str
+
+
+class ClearChatPayload(BaseModel):
+    friend_id: str
 
 
 class SendMessagePayload(BaseModel):
@@ -184,6 +192,116 @@ def send_friend_request(
     db.add(new_friendship)
     db.commit()
     return {"message": f"Connected with Hunter {target_user.display_name}!"}
+
+
+@router.post("/friends/remove")
+def remove_friend(
+    payload: RemoveFriendPayload,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Removes a friend relationship between current user and friend."""
+    try:
+        friend_uuid = uuid.UUID(payload.friend_id)
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid friend ID.")
+
+    friendship = (
+        db.query(HunterFriend)
+        .filter(
+            or_(
+                and_(HunterFriend.user_id == current_user.id, HunterFriend.friend_id == friend_uuid),
+                and_(HunterFriend.user_id == friend_uuid, HunterFriend.friend_id == current_user.id),
+            )
+        )
+        .first()
+    )
+    if friendship:
+        db.delete(friendship)
+        db.commit()
+
+    return {"message": "Friend removed successfully."}
+
+
+@router.post("/messages/clear")
+def clear_chat_history(
+    payload: ClearChatPayload,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Clears all chat message logs between current user and friend."""
+    try:
+        friend_uuid = uuid.UUID(payload.friend_id)
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid friend ID.")
+
+    db.query(HunterChatMessage).filter(
+        or_(
+            and_(HunterChatMessage.sender_id == current_user.id, HunterChatMessage.receiver_id == friend_uuid),
+            and_(HunterChatMessage.sender_id == friend_uuid, HunterChatMessage.receiver_id == current_user.id),
+        )
+    ).delete(synchronize_session=False)
+    db.commit()
+
+    return {"message": "Chat history cleared successfully."}
+
+
+@router.get("/leaderboard", response_model=Dict[str, List[PublicHunterProfile]])
+def get_leaderboard(
+    filter: str = "global",
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns Hunter Leaderboard ranked by lifetime/total XP earned across the entire system.
+    """
+    if filter == "friends":
+        friendships = (
+            db.query(HunterFriend)
+            .filter(
+                or_(HunterFriend.user_id == current_user.id, HunterFriend.friend_id == current_user.id),
+                HunterFriend.status == "accepted",
+            )
+            .all()
+        )
+        allowed_ids = {current_user.id}
+        for f in friendships:
+            other_id = f.friend_id if f.user_id == current_user.id else f.user_id
+            allowed_ids.add(other_id)
+
+        users = (
+            db.query(User)
+            .join(CharacterProfile, User.id == CharacterProfile.user_id)
+            .filter(User.id.in_(allowed_ids))
+            .order_by(CharacterProfile.total_xp_earned.desc())
+            .limit(50)
+            .all()
+        )
+    else:
+        users = (
+            db.query(User)
+            .join(CharacterProfile, User.id == CharacterProfile.user_id)
+            .filter(User.is_active.is_(True))
+            .order_by(CharacterProfile.total_xp_earned.desc())
+            .limit(50)
+            .all()
+        )
+
+    entries = [
+        PublicHunterProfile(
+            id=str(u.id),
+            display_name=u.display_name,
+            avatar_url=u.avatar_url,
+            level=u.character.level,
+            rank=get_hunter_rank(u.character.level),
+            title=get_hunter_title(u.character.level),
+            current_streak_days=u.character.current_streak_days,
+            total_xp_earned=u.character.total_xp_earned,
+            is_online=manager.is_online(str(u.id)),
+        )
+        for u in users
+    ]
+    return {"entries": entries}
 
 
 @router.get("/profile/{user_id}", response_model=PublicHunterProfile)
