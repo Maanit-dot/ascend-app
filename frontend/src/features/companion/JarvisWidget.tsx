@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Loader2,
   Mic,
-  Minus,
   Send,
   Volume2,
   VolumeX,
@@ -21,7 +20,7 @@ import { getHunterTitle, getHunterRank } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-/* ── Animated Waveform ─────────────────────────────────────────── */
+/* ── Animated Waveform Bars ─────────────────────────────────────── */
 function WaveformBars({ active }: { active: boolean }) {
   const HEIGHTS = [35, 65, 50, 80, 55, 40, 75, 45, 60, 30, 70, 45, 55, 38, 68];
   return (
@@ -31,7 +30,7 @@ function WaveformBars({ active }: { active: boolean }) {
           key={i}
           className={cn(
             "waveform-bar rounded-full transition-all duration-300",
-            active ? "bg-arc-400" : "bg-arc-600/25",
+            active ? "bg-arc-300 shadow-glow-arc-sm" : "bg-arc-600/30",
           )}
           style={{
             height: active ? `${Math.max(3, (h / 100) * 20)}px` : "2px",
@@ -45,12 +44,12 @@ function WaveformBars({ active }: { active: boolean }) {
   );
 }
 
-/* ── JARVIS Orb ─────────────────────────────────────────────────── */
+/* ── JARVIS Orb Header ──────────────────────────────────────────── */
 function JarvisOrb({ active }: { active: boolean }) {
   return (
     <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center">
-      <div className="absolute inset-0 rounded-full border border-arc-500/30 animate-spin-slow" />
-      <div className="absolute inset-0.5 rounded-full border border-arc-400/20 animate-spin-reverse" />
+      <div className="absolute inset-0 rounded-full border border-arc-500/40 animate-spin-slow" />
+      <div className="absolute inset-0.5 rounded-full border border-arc-400/30 animate-spin-reverse" />
       <div
         className={cn(
           "relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc transition-all duration-500",
@@ -59,10 +58,10 @@ function JarvisOrb({ active }: { active: boolean }) {
       >
         <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="2.5" fill="white" />
-          <path d="M12 3C7.03 3 3 7.03 3 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <path d="M12 21C16.97 21 21 16.97 21 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
-          <path d="M3 12C3 16.97 7.03 21 12 21" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeLinecap="round" />
-          <path d="M21 12C21 7.03 16.97 3 12 3" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeLinecap="round" />
+          <path d="M12 3C7.03 3 3 7.03 3 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M12 21C16.97 21 21 16.97 21 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M3 12C3 16.97 7.03 21 12 21" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" />
+          <path d="M21 12C21 7.03 16.97 3 12 3" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" />
         </svg>
       </div>
       <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
@@ -73,16 +72,16 @@ function JarvisOrb({ active }: { active: boolean }) {
   );
 }
 
-/* ── Chat Message ────────────────────────────────────────────────── */
+/* ── Chat Message Bubble ─────────────────────────────────────────── */
 function ChatMessage({ msg }: { msg: JarvisMessage }) {
   const isUser = msg.role === "user";
   return (
     <div className={cn("flex flex-col animate-fade-in", isUser ? "items-end" : "items-start")}>
       <div className={cn("mb-0.5 flex items-center gap-1.5", isUser && "flex-row-reverse")}>
-        <span className="font-mono text-[8px] uppercase tracking-wider text-arc-500/50">
+        <span className="font-mono text-[8px] uppercase tracking-wider text-arc-300 font-bold">
           {isUser ? "You" : "JARVIS"}
         </span>
-        <span className="font-mono text-[8px] text-arc-500/30">{msg.timestamp}</span>
+        <span className="font-mono text-[8px] text-ink-faint">{msg.timestamp}</span>
       </div>
 
       <div className={isUser ? "jarvis-user-bubble" : "jarvis-ai-bubble"}>
@@ -105,6 +104,36 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ── Large Mic Orb with Waveforms (Matching Reference Screenshot) ─ */
+function VoiceOrbWithWaveform({ active, onClick }: { active: boolean; onClick: () => void }) {
+  return (
+    <div className="flex flex-col items-center gap-1 my-1">
+      <div className="flex items-center justify-center gap-2.5 w-full">
+        <WaveformBars active={active} />
+
+        {/* Central glowing microphone orb */}
+        <button
+          type="button"
+          onClick={onClick}
+          className={cn(
+            "relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 shadow-glow-arc-lg",
+            active
+              ? "border-crimson-500 bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
+              : "border-arc-300 bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105",
+          )}
+          title={active ? "Stop Listening" : "Tap to speak"}
+        >
+          <div className="absolute inset-0 rounded-full border border-arc-300/40 animate-ping-slow pointer-events-none" />
+          <Mic className="h-5 w-5" />
+        </button>
+
+        <WaveformBars active={active} />
+      </div>
+      <span className="font-mono text-[8px] text-ink-muted">Tap to speak</span>
     </div>
   );
 }
@@ -195,13 +224,12 @@ export function JarvisWidget() {
   }
 
   const isActive = isListening || isSpeaking;
-  const statusText = isListening ? "LISTENING..." : isSpeaking ? "SPEAKING..." : isProcessing ? "PROCESSING..." : "ONLINE AI SYSTEM ASSISTANT";
 
   // Quests summary list
   const activeQuests = board?.categories.flatMap((c) => c.quests) ?? [];
 
   return (
-    <aside className="z-40 hidden h-full w-[290px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-void/95 lg:flex overflow-hidden p-2 gap-2">
+    <aside className="z-40 hidden h-full w-[290px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-void/95 lg:flex overflow-hidden p-2 gap-2 select-none">
       {/* ── HEADER ──────────────────────────────────────────────── */}
       <div className="relative flex h-12 flex-shrink-0 items-center justify-between border-b border-arc-500/20 px-2 pb-1.5">
         <span className="absolute top-0 left-0 w-3 h-3 border-t border-l border-arc-400/40 pointer-events-none" />
@@ -237,8 +265,8 @@ export function JarvisWidget() {
 
       {/* ── HUNTER DATA METRICS ─────────────────────────────────── */}
       {user && (
-        <div className="flex-shrink-0 rounded-lg border border-arc-500/15 bg-arc-950/20 p-2 space-y-1">
-          <p className="system-label text-[8px] text-arc-400/60 uppercase tracking-widest">HUNTER DATA</p>
+        <div className="flex-shrink-0 rounded-lg border border-arc-500/20 bg-arc-950/30 p-2 space-y-1">
+          <p className="system-label text-[8px] text-arc-300 font-bold uppercase tracking-widest">HUNTER DATA</p>
           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[9px]">
             <div className="flex justify-between">
               <span className="text-ink-faint">NAME</span>
@@ -313,29 +341,11 @@ export function JarvisWidget() {
         )}
       </div>
 
-      {/* ── MIC VOICE ORB + INPUT BOX ──────────────────────────── */}
-      <div className="flex-shrink-0 rounded-lg border border-arc-500/20 bg-arc-950/40 p-2 space-y-1.5">
-        <div className="flex items-center justify-center gap-2">
-          {/* Animated concentric mic button */}
-          <button
-            type="button"
-            onClick={toggleVoiceListening}
-            className={cn(
-              "relative flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-300",
-              isListening
-                ? "border-crimson-500 bg-crimson-500/20 text-crimson-400 shadow-glow-crimson animate-pulse"
-                : "border-arc-500/40 bg-arc-500/15 text-arc-300 hover:border-arc-400 hover:bg-arc-500/30 shadow-glow-arc-sm",
-            )}
-            title={isListening ? "Stop Listening" : "Tap to speak"}
-          >
-            <Mic className="h-4 w-4" />
-          </button>
-        </div>
-        <p className="text-center font-mono text-[8px] text-ink-faint">
-          {isListening ? "Listening..." : "Tap to speak"}
-        </p>
+      {/* ── MIC VOICE ORB WITH WAVEFORMS ───────────────────────── */}
+      <div className="flex-shrink-0 rounded-lg border border-arc-500/20 bg-arc-950/40 p-2 space-y-1">
+        <VoiceOrbWithWaveform active={isListening} onClick={toggleVoiceListening} />
 
-        <form onSubmit={handleFormSubmit} className="flex items-center gap-1.5">
+        <form onSubmit={handleFormSubmit} className="flex items-center gap-1.5 pt-1 border-t border-arc-500/15">
           <input
             type="text"
             value={input}
@@ -356,10 +366,10 @@ export function JarvisWidget() {
 
       {/* ── RECENT ACHIEVEMENT & ARC PROJECTION ──────────────────── */}
       <div className="flex-shrink-0 space-y-1.5">
-        {/* Recent Achievement Mini */}
-        <div className="rounded-lg border border-amber-500/25 bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
+        {/* Recent Achievement */}
+        <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/20 text-amber-400">
+            <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/25 text-amber-300">
               <Trophy className="h-3.5 w-3.5" />
             </div>
             <div className="min-w-0">
@@ -375,13 +385,26 @@ export function JarvisWidget() {
           </Link>
         </div>
 
-        {/* ARC Projection Mini */}
-        <div className="rounded-lg border border-arc-500/20 bg-arc-950/30 p-1.5 flex items-center justify-between">
-          <div>
-            <span className="font-display text-[9px] font-bold text-arc-300 tracking-wider">ARC PROJECTION</span>
-            <p className="font-mono text-[8px] text-ink-faint">Learning / Adapting / Evolving</p>
+        {/* ARC Projection Panel */}
+        <div className="rounded-lg border border-arc-500/25 bg-arc-950/40 p-2 relative overflow-hidden flex items-center justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between">
+              <span className="font-display text-[10px] font-bold text-arc-300 tracking-wider">ARC PROJECTION</span>
+              <span className="font-mono text-[10px] font-bold text-arc-400 text-glow-arc">78%</span>
+            </div>
+            <p className="font-mono text-[8px] text-ink-muted truncate mt-0.5">Learning / Adapting / Evolving</p>
+            <div className="mt-1 h-1 w-full rounded-full bg-void-deep overflow-hidden">
+              <div className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm" style={{ width: "78%" }} />
+            </div>
           </div>
-          <span className="font-mono text-[11px] font-bold text-arc-400 text-glow-arc">78%</span>
+
+          {/* Anime Shadow Figure SVG Graphic on Right */}
+          <div className="relative flex h-9 w-10 flex-shrink-0 items-center justify-center ml-2">
+            <svg viewBox="0 0 40 40" className="h-full w-full drop-shadow-[0_0_8px_rgba(168,85,247,0.9)]" fill="none">
+              <path d="M20 5 L28 15 L24 25 L32 35 L12 35 L16 25 L12 15 Z" fill="rgba(124,58,237,0.7)" stroke="rgba(192,178,255,0.9)" strokeWidth="1" />
+              <circle cx="20" cy="12" r="2" fill="#00E5FF" />
+            </svg>
+          </div>
         </div>
       </div>
     </aside>
