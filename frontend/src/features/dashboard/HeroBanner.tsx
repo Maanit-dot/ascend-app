@@ -28,20 +28,19 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
       ref={bannerRef}
       className="hud-panel-elite relative overflow-hidden h-full flex items-center bg-[#03030B] select-none"
     >
-      {/* ── Exact Reference Artwork Background Image ───────────────────────────── */}
+      {/* ── Text-Free Background Image (media_1787827147820.png processed) ───────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/hero_banner_bg_final.png"
+        src="/hero_banner_textfree_final.png"
         alt="Hero Banner Background"
         className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-95"
         style={{ zIndex: 0 }}
       />
 
-      {/* Cyber Grid & top accent line overlay */}
-      <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" style={{ zIndex: 1 }} />
+      {/* Cyber Grid & subtle scanline overlay */}
+      <div className="absolute inset-0 cyber-grid opacity-15 pointer-events-none" style={{ zIndex: 1 }} />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/80 to-transparent pointer-events-none" style={{ zIndex: 3 }} />
 
-      {/* Subtle scanline animation */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1 }}>
         <div className="absolute left-0 right-0 h-px bg-arc-400/10 animate-scan-line" />
       </div>
@@ -52,12 +51,12 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
       <div className="energy-particle energy-particle-3" style={{ zIndex: 1 }} />
       <div className="energy-particle energy-particle-4" style={{ zIndex: 1 }} />
 
-      {/* ── 3-Zone Overlay Layout Structure ──────────────────────────────────── */}
+      {/* ── 3-Zone Overlay Layout Structure (Positioned 1:1 Over Background) ──── */}
       <div className="relative flex items-center justify-between w-full h-full p-3 px-5" style={{ zIndex: 2 }}>
 
         {/* ── LEFT ZONE (25-30% Width): System Status & Dynamic Quote ────────── */}
         <div className="flex flex-col justify-center gap-1.5 w-[28%] min-w-0 pr-2">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
@@ -73,7 +72,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
           </div>
         </div>
 
-        {/* ── CENTER ZONE (35-40% Width): Dragon + Hunter Artwork Area (Background visible) ── */}
+        {/* ── CENTER ZONE (35-40% Width): Dragon + Hunter Artwork Channel ─────────── */}
         <div className="w-[38%] h-full pointer-events-none flex-shrink-0" />
 
         {/* ── RIGHT ZONE (30-35% Width): Dynamic Hunter Info & Level Ring ───── */}
@@ -123,7 +122,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
 
           {/* Dynamic Circular Level Showcase Indicator Overlaid inside Glowing Background Ring */}
           <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 84, height: 84 }}>
-            {/* Concentric rotating accent ring */}
+            {/* Concentric rotating accent ring overlay */}
             <svg className="absolute inset-0" width="84" height="84" viewBox="0 0 84 84">
               <circle cx="42" cy="42" r="39" stroke="rgba(168,85,247,0.4)" strokeWidth="1" fill="none"
                 strokeDasharray="4 4" style={{ animation: "energy-rotate 20s linear infinite", transformOrigin: "42px 42px" }} />
