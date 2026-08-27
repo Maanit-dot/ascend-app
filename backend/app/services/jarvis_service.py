@@ -162,8 +162,13 @@ Burnout Risk Score: {character.burnout_risk_score:.2f}
 
     full_user_prompt = f"{live_context}\n{history_str}\n\nHUNTER COMMAND: \"{command}\""
 
-    # Attempt 1: Call LLM API (Anthropic / Gemini)
-    if settings.ANTHROPIC_API_KEY and settings.ANTHROPIC_API_KEY != "paste_your_real_anthropic_key_here":
+    has_ai_key = (
+        (bool(settings.OPENROUTER_API_KEY) and settings.OPENROUTER_API_KEY != "paste_your_real_openrouter_key_here")
+        or (bool(settings.ANTHROPIC_API_KEY) and settings.ANTHROPIC_API_KEY != "paste_your_real_anthropic_key_here")
+    )
+
+    # Attempt 1: Call LLM API (OpenRouter / Anthropic)
+    if has_ai_key:
         try:
             ai_response = _run_async(
                 call_ai(
@@ -186,9 +191,15 @@ Burnout Risk Score: {character.burnout_risk_score:.2f}
                 return {"reply": reply, "action": action}
 
         except AIClientError as exc:
-            logger.error("LLM API call failed: %s", exc)
+            logger.warning("LLM API call failed (%s), attempting deterministic fallback.", exc)
+            fallback_res = _execute_deterministic_fallback(
+                db, user, command, mandatory, completed_count, total_quests_count, completion_percent, context_history
+            )
+            # If deterministic handler matched a real action or query (not the generic fallback explanation)
+            if fallback_res.get("action", {}).get("type") != "GENERAL_CHAT":
+                return fallback_res
             return {
-                "reply": f"⚠️ **JARVIS AI Error** — The AI companion encountered an error calling the configured model ({settings.AI_MODEL}):\n\n{str(exc)}\n\nPlease check your configuration or API key in `backend/.env`.",
+                "reply": f"⚠️ **JARVIS Notice**: AI credits required for external model (`{settings.AI_MODEL}`).\n\n*Free alternatives*:\n• Set `AI_MODEL=meta-llama/llama-3.3-70b-instruct:free` or `google/gemini-2.0-flash-exp:free` in your backend environment.\n• Or purchase \$5 credits at [openrouter.ai/settings/credits](https://openrouter.ai/settings/credits).\n\n*System controls (quests, stats, level)* are still fully operational!",
                 "action": {"type": "AI_UNAVAILABLE", "error": str(exc)},
             }
 
