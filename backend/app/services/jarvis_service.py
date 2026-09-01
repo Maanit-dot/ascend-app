@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.client import AIClientError, call_ai
 from app.core.config import settings
-from app.models.quest import QuestInstance, QuestType
+from app.models.quest import QuestCategory, QuestInstance, QuestTemplate, QuestType, QuestUnit
 from app.models.user import User
 from app.services import quest_service
 from app.services.leveling import xp_required_for_level, xp_progress_percent
@@ -211,7 +211,7 @@ Burnout Risk Score: {character.burnout_risk_score:.2f}
             if fallback_res.get("action", {}).get("type") != "GENERAL_CHAT":
                 return fallback_res
             return {
-                "reply": f"⚠️ **JARVIS Notice**: AI credits required for external model (`{settings.AI_MODEL}`).\n\n*Free alternatives*:\n• Set `AI_MODEL=meta-llama/llama-3.3-70b-instruct:free` or `google/gemini-2.0-flash-exp:free` in your backend environment.\n• Or purchase \$5 credits at [openrouter.ai/settings/credits](https://openrouter.ai/settings/credits).\n\n*System controls (quests, stats, level)* are still fully operational!",
+                "reply": f"⚠️ **JARVIS Notice**: AI credits required for external model (`{settings.AI_MODEL}`).\n\n*Free alternatives*:\n• Set `AI_MODEL=meta-llama/llama-3.3-70b-instruct:free` or `google/gemini-2.0-flash-exp:free` in your backend environment.\n• Or purchase $5 credits at [openrouter.ai/settings/credits](https://openrouter.ai/settings/credits).\n\n*System controls (quests, stats, level)* are still fully operational!",
                 "action": {"type": "AI_UNAVAILABLE", "error": str(exc)},
             }
 
@@ -237,8 +237,10 @@ def _execute_tool_action(
             new_target = action.get("new_target")
 
             if new_target is not None and quest_title:
+                norm_query = re.sub(r"[^a-z0-9]", "", quest_title)
                 for q in mandatory:
-                    if quest_title in q.template.name.lower() or q.template.name.lower() in quest_title:
+                    norm_q = re.sub(r"[^a-z0-9]", "", q.template.name.lower())
+                    if (norm_query and (norm_query in norm_q or norm_q in norm_query)) or quest_title in q.template.name.lower():
                         old_target = q.target_value
                         q.target_value = int(new_target)
                         q.xp_reward = quest_service.recompute_xp_for_target(q.template, q.target_value)
@@ -537,15 +539,26 @@ def _execute_deterministic_fallback(
     character = user.character
 
     # 1. Target Quantity Change
+    # Match patterns like:
+    # "change situps 100", "change situps to 100", "set pushups 50", "update study 120", "make squats 30"
     target_match = re.search(
-        r"(?:change|set|reduce|increase|update|make)\s+(?:today's\s+)?(.+?)\s+(?:quest\s+)?(?:from\s+\d+\s+)?to\s+(\d+)",
+        r"(?:change|set|reduce|increase|update|make|modify|adjust)\s+(?:today's\s+)?(.+?)\s+(?:quest\s+)?(?:from\s+\d+\s+)?(?:to\s+|as\s+|\:\s*|\=\s*)?(\d+)\s*(?:reps?|minutes?|mins?|hours?|hrs?|km|steps?|sets?|questions?|rounds?)?$",
         cmd_lower,
     ) or re.search(
-        r"(?:change|set|reduce|increase|update|make)\s+(?:the\s+)?(first|second|third|fourth|fifth|1st|2nd|3rd|4th|5th)\s+(?:quest\s+)?to\s+(\d+)",
+        r"(?:change|set|reduce|increase|update|make|modify|adjust)\s+(?:the\s+)?(first|second|third|fourth|fifth|1st|2nd|3rd|4th|5th)\s+(?:quest\s+)?(?:to\s+|as\s+|\:\s*|\=\s*)?(\d+)",
         cmd_lower,
     )
 
-    if target_match:
+    if not target_match and not ("add" in cmd_lower or "create" in cmd_lower or "new" in cmd_lower):
+        # Match short direct commands like "situps 100" or "sit-ups 100"
+        short_match = re.search(r"^([a-z\s\-]+?)\s+(\d+)\s*$", cmd_lower)
+        if short_match:
+            cand_name = short_match.group(1).strip()
+            cand_norm = re.sub(r"[^a-z0-9]", "", cand_name)
+            if any(cand_norm and (cand_norm in re.sub(r"[^a-z0-9]", "", q.template.name.lower()) or re.sub(r"[^a-z0-9]", "", q.template.name.lower()) in cand_norm) for q in mandatory):
+                target_match = short_match
+
+    if target_match and not ("add" in cmd_lower or "create" in cmd_lower or "new quest" in cmd_lower):
         quest_identifier = target_match.group(1).strip()
         new_target = int(target_match.group(2))
         target_quest: Optional[QuestInstance] = None
@@ -571,8 +584,10 @@ def _execute_deterministic_fallback(
             if not target_quest and idx < len(mandatory):
                 target_quest = mandatory[idx]
         else:
+            norm_identifier = re.sub(r"[^a-z0-9]", "", quest_identifier)
             for q in mandatory:
-                if quest_identifier in q.template.name.lower():
+                norm_name = re.sub(r"[^a-z0-9]", "", q.template.name.lower())
+                if norm_identifier and (norm_identifier in norm_name or norm_name in norm_identifier or quest_identifier in q.template.name.lower()):
                     target_quest = q
                     break
 
@@ -586,7 +601,7 @@ def _execute_deterministic_fallback(
             db.refresh(target_quest)
 
             return {
-                "reply": f"Understood, Hunter {user.display_name}. I have updated your **{target_quest.template.name}** quest target to **{new_target}** (now worth **{target_quest.xp_reward} XP**).",
+                "reply": f"Understood, Hunter **{user.display_name}**. I have updated your **{target_quest.template.name}** quest target to **{new_target}** (now worth **{target_quest.xp_reward} XP**).",
                 "action": {
                     "type": "QUEST_MUTATION",
                     "action_name": "UPDATE_TARGET",
@@ -598,21 +613,32 @@ def _execute_deterministic_fallback(
             }
 
     # 2. Create Custom Quest — fires on "add quest", "create quest", "new quest", "add X for N"
-    create_match = re.search(
-        r"(?:add|create|new|make)\s+(?:a\s+)?(?:quest\s+(?:called|named|for)?\s*)?['\"]?([a-z][a-z\s\-]+?)['\"]?\s+(?:for\s+)?(\d+)\s*(?:reps?|minutes?|mins?|hours?|hrs?|km|steps?|sets?|questions?|rounds?)?",
-        cmd_lower,
+    create_match = (
+        re.search(
+            r"(?:add|create|new|make)\s+(?:a\s+)?(?:quest\s+(?:called|named|for)?\s*)?['\"]?([a-z][a-z\s\-]+?)['\"]?\s+(?:for\s+|to\s+|:\s*|\=\s*)?(\d+)\s*(?:reps?|minutes?|mins?|hours?|hrs?|km|steps?|sets?|questions?|rounds?)?$",
+            cmd_lower,
+        )
+        or re.search(
+            r"(?:add|create|new|make)\s+(?:a\s+)?(?:quest\s+(?:called|named|for)?\s*)?(\d+)\s*(?:reps?|minutes?|mins?|hours?|hrs?|km|steps?|sets?|questions?|rounds?)?\s+(?:of\s+)?['\"]?([a-z][a-z\s\-]+?)['\"]?$",
+            cmd_lower,
+        )
     )
     if create_match or ("add" in cmd_lower and "quest" in cmd_lower) or ("create" in cmd_lower and "quest" in cmd_lower) or ("new quest" in cmd_lower):
         if create_match:
-            quest_name_raw = create_match.group(1).strip().title()
-            new_target = int(create_match.group(2))
+            g1, g2 = create_match.group(1), create_match.group(2)
+            if str(g1).isdigit():
+                new_target = int(g1)
+                quest_name_raw = str(g2).strip().title()
+            else:
+                quest_name_raw = str(g1).strip().title()
+                new_target = int(g2)
         else:
             # Try to extract number if pattern didn't match cleanly
             num_match = re.search(r"(\d+)", cmd_lower)
             new_target = int(num_match.group(1)) if num_match else 10
             # Grab quest name from command
             quest_name_raw = re.sub(
-                r"\b(add|create|new|make|a|quest|for|called|named|reps?|minutes?|mins?|hours?|km|steps?|sets?|today|me|my)\b",
+                r"\b(add|create|new|make|a|quest|for|called|named|reps?|minutes?|mins?|hours?|km|steps?|sets?|today|me|my|to|of)\b",
                 "",
                 cmd_lower,
             ).strip().title() or "Custom Quest"
@@ -629,7 +655,7 @@ def _execute_deterministic_fallback(
                 f"Target: **{new_target} {meta['unit'].value}**\n"
                 f"Category: **{meta['category'].value.title()}**\n"
                 f"XP Reward: **{meta['xp']} XP**\n\n"
-                f"Head to your Quest Board to track and complete it, Hunter {user.display_name}!"
+                f"Head to your Quest Board to track and complete it, Hunter **{user.display_name}**!"
             ),
             "action": result,
         }
