@@ -244,7 +244,7 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
     <div className={cn("flex flex-col animate-fade-in", isUser ? "items-end" : "items-start")}>
       <div className={cn("mb-0.5 flex items-center gap-1.5", isUser && "flex-row-reverse")}>
         <span className="font-mono text-[8px] uppercase tracking-wider text-arc-300 font-bold">
-          {isUser ? "You" : "JARVIS"}
+          {isUser ? "You" : "ARC"}
         </span>
         <span className="font-mono text-[8px] text-ink-faint">{msg.timestamp}</span>
       </div>
@@ -409,7 +409,7 @@ export function JarvisWidget() {
           <JarvisOrb active={isActive || isProcessing} />
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">JARVIS</h2>
+              <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">ARC</h2>
               <span className="rounded border border-arc-500/30 bg-arc-500/10 px-1 font-mono text-[7px] text-arc-400">AI</span>
             </div>
             <p className="font-mono text-[8px] uppercase tracking-wider text-emerald-400 flex items-center gap-1">
@@ -426,7 +426,7 @@ export function JarvisWidget() {
               "rounded p-1 transition-colors",
               voiceEnabled ? "text-arc-300 hover:bg-arc-500/20" : "text-ink-faint hover:bg-white/5",
             )}
-            title={voiceEnabled ? "Mute JARVIS" : "Unmute JARVIS"}
+            title={voiceEnabled ? "Mute ARC" : "Unmute ARC"}
           >
             {voiceEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
           </button>

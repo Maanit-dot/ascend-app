@@ -43,7 +43,7 @@ export function KpiCard({
       {/* Main value + trend */}
       <div className="flex items-baseline justify-between gap-1 leading-none mt-0.5">
         <div className="flex items-baseline gap-1 min-w-0">
-          <span className={cn("font-display text-base font-bold tabular-nums truncate", accentClass)}>
+          <span className={cn("font-display text-sm sm:text-base font-bold tabular-nums whitespace-nowrap", accentClass)}>
             {value}
           </span>
           {subValue && (
@@ -53,7 +53,7 @@ export function KpiCard({
 
         {trend && (
           <span className={cn(
-            "font-mono text-[8px] font-medium flex-shrink-0 truncate max-w-[45%]",
+            "font-mono text-[8px] font-medium flex-shrink-0 whitespace-nowrap",
             trendUp ? "text-emerald-400" : "text-ink-faint"
           )}>
             {trendUp ? "↑" : "→"} {trend}

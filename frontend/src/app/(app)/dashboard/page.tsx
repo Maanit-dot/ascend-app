@@ -178,57 +178,53 @@ export default function DashboardPage() {
       <div className="h-[60px] flex-shrink-0 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         <KpiCard
           label="QUESTS COMPLETED"
-          value={completedCount}
-          subValue={`/ ${totalCount}`}
+          value={`${completedCount} / ${totalCount}`}
           icon={CheckCircle}
-          trend={board ? `${Math.round(board.completion_percent)}% today` : "Loading..."}
+          trend={board ? `${Math.round(board.completion_percent)}% to next` : "0% to next"}
           trendUp={board ? board.completion_percent >= 50 : false}
-          accentClass="text-arc-400"
+          accentClass="text-arc-300"
           glowClass="shadow-glow-arc-sm"
-          iconBgClass="from-arc-700 to-arc-950"
+          iconBgClass="from-purple-600 to-purple-950"
         />
         <KpiCard
           label="DAILY XP"
-          value={character.current_xp.toLocaleString()}
-          subValue="XP"
+          value={`${character.current_xp.toLocaleString()} XP`}
           icon={Zap}
-          trend={`+${Math.round(character.xp_progress_percent)}% to next`}
+          trend={`+${Math.round(character.xp_progress_percent)}% from yesterday`}
           trendUp={true}
-          accentClass="text-amber-400"
-          glowClass="shadow-glow-amber"
-          iconBgClass="from-amber-600 to-amber-950"
+          accentClass="text-blue-400"
+          glowClass="shadow-glow-cyan"
+          iconBgClass="from-blue-600 to-blue-950"
         />
         <KpiCard
           label="OVERALL PROGRESS"
           value={`${Math.round(character.xp_progress_percent)}%`}
           icon={TrendingUp}
-          trend={`Level ${character.level}`}
+          trend="Keep going, Hunter!"
           trendUp={true}
           accentClass="text-cyan-400"
           glowClass="shadow-glow-cyan"
-          iconBgClass="from-cyan-700 to-cyan-950"
+          iconBgClass="from-cyan-600 to-cyan-950"
         />
         <KpiCard
           label="STREAK"
-          value={character.current_streak_days}
-          subValue="Days"
+          value={`${character.current_streak_days} Days`}
           icon={Flame}
-          trend={character.current_streak_days > 0 ? "Keep it up!" : "Start today"}
+          trend="Best: 12 Days"
           trendUp={character.current_streak_days > 0}
-          accentClass="text-amber-300"
+          accentClass="text-amber-400"
           glowClass="shadow-glow-amber"
-          iconBgClass="from-orange-700 to-orange-950"
+          iconBgClass="from-orange-600 to-orange-950"
         />
         <KpiCard
           label="CREDITS"
           value="15,850"
-          subValue=""
           icon={Gem}
-          trend="Unlimited Plan"
+          trend="+250 today"
           trendUp={true}
-          accentClass="text-arc-300"
-          glowClass="shadow-glow-arc"
-          iconBgClass="from-purple-700 to-purple-950"
+          accentClass="text-amber-300"
+          glowClass="shadow-glow-amber"
+          iconBgClass="from-amber-600 to-amber-950"
         />
       </div>
 

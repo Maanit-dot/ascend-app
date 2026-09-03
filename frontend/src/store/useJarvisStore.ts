@@ -33,7 +33,7 @@ const initialMessages: JarvisMessage[] = [
   {
     id: "init-1",
     role: "jarvis",
-    text: "JARVIS ONLINE. System operating at peak performance. How can I assist your progression today, Hunter?",
+    text: "ARC ONLINE. System operating at peak performance. How can I assist your progression today, Hunter?",
     timestamp: typeof window !== "undefined" ? new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "12:00 PM",
   },
 ];

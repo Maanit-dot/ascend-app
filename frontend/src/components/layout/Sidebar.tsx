@@ -24,15 +24,20 @@ import { useUserStore } from "@/store/useUserStore";
 import { getHunterTitle, getHunterRank } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  badge?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/character", label: "Character Sheet", icon: Shield },
   { href: "/quests", label: "Daily Quests", icon: Swords },
-  { href: "/social", label: "Hunter Network", icon: Users, badge: "NEW" },
   { href: "/bosses", label: "Bosses & Raids", icon: Skull },
   { href: "/inventory", label: "Inventory", icon: Package },
   { href: "/achievements", label: "Achievements", icon: Trophy },
-  { href: "/leaderboard", label: "Leaderboards", icon: Medal },
   { href: "/statistics", label: "Statistics", icon: BarChart3 },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/settings", label: "Settings", icon: Settings },

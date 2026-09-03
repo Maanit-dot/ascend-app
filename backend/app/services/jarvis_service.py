@@ -19,9 +19,9 @@ from app.services.tools.weather_service import get_weather
 from app.services.tools.youtube_service import search_youtube
 from app.services.tools.code_assistant import format_code_response
 
-logger = logging.getLogger("ascend.jarvis")
+logger = logging.getLogger("ascend.arc")
 
-JARVIS_SYSTEM_PROMPT = """You are JARVIS, an intelligent, high-precision AI system companion built into ASCEND — a Solo Leveling-inspired personal progression system.
+JARVIS_SYSTEM_PROMPT = """You are ARC, an intelligent, high-precision AI system companion built into ASCEND — a Solo Leveling-inspired personal progression system.
 
 Your identity:
 - You speak with crisp, intelligent, supportive system companion tone ("Hunter [Name]").
@@ -895,11 +895,11 @@ def _execute_deterministic_fallback(
         }
 
     # 4. Natural Companion Greetings & Conversational Handling
-    greetings = {"hi", "hello", "hey", "yo", "sup", "good morning", "good evening", "good afternoon", "jarvis", "greetings"}
+    greetings = {"hi", "hello", "hey", "yo", "sup", "good morning", "good evening", "good afternoon", "jarvis", "arc", "greetings"}
     if cmd_lower in greetings or any(cmd_lower.startswith(g + " ") for g in greetings):
         hunter_title = get_hunter_title(character.level)
         return {
-            "reply": f"Greetings, Hunter **{user.display_name}**! JARVIS online and monitoring your vitals. You are currently **Level {character.level} ({hunter_title})** with a **{character.current_streak_days}-day streak**. How can I assist your ascent today?",
+            "reply": f"Greetings, Hunter **{user.display_name}**! ARC online and monitoring your vitals. You are currently **Level {character.level} ({hunter_title})** with a **{character.current_streak_days}-day streak**. How can I assist your ascent today?",
             "action": {"type": "GENERAL_CHAT"},
         }
 
@@ -919,14 +919,14 @@ def _execute_deterministic_fallback(
         import random
         selected_quote = random.choice(quotes)
         return {
-            "reply": f"{selected_quote}\n\n— *JARVIS System Directive*",
+            "reply": f"{selected_quote}\n\n— *ARC System Directive*",
             "action": {"type": "GENERAL_CHAT"},
         }
 
     if any(phrase in cmd_lower for phrase in ["help", "commands", "what can you do"]):
         return {
             "reply": (
-                f"**JARVIS System Capabilities:**\n\n"
+                f"**ARC System Capabilities:**\n\n"
                 f"• **Quest Target Modification**: *\"Change today's Study quest to 5 hours\"*\n"
                 f"• **Add Custom Quests**: *\"Add quest Meditation for 20 minutes\"*\n"
                 f"• **Optimize Workload**: *\"Optimize my workload to 60 minutes\"*\n"
