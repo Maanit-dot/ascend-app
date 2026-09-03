@@ -18,6 +18,9 @@ import { LevelUpModal } from "@/features/quests/LevelUpModal";
 import { HeroBanner } from "@/features/dashboard/HeroBanner";
 import { KpiCard } from "@/features/dashboard/KpiCard";
 import { SystemOverviewPanel } from "@/features/dashboard/SystemOverviewPanel";
+import { OnlineFriendsPanel } from "@/features/dashboard/OnlineFriendsPanel";
+import { ChatMiniPanel } from "@/features/dashboard/ChatMiniPanel";
+import { LeaderboardMiniPanel } from "@/features/dashboard/LeaderboardMiniPanel";
 
 import { resolveIcon } from "@/lib/icon-map";
 import { formatQuestValue } from "@/lib/format";
@@ -296,6 +299,13 @@ export default function DashboardPage() {
             activeBoost="2.1x XP"
           />
         </div>
+      </div>
+
+      {/* ── ROW 4: ONLINE FRIENDS (1/3) + HUNTER CONNECT CHAT (1/3) + LEADERBOARD (1/3) ── */}
+      <div className="h-[125px] flex-shrink-0 grid grid-cols-1 md:grid-cols-3 gap-2 overflow-hidden">
+        <OnlineFriendsPanel />
+        <ChatMiniPanel />
+        <LeaderboardMiniPanel />
       </div>
 
 
