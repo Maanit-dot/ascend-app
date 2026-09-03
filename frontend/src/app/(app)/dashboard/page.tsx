@@ -180,7 +180,7 @@ export default function DashboardPage() {
           label="QUESTS COMPLETED"
           value={`${completedCount} / ${totalCount}`}
           icon={CheckCircle}
-          trend={board ? `${Math.round(board.completion_percent)}% to next` : "0% to next"}
+          trend={board ? `${Math.round(board.completion_percent)}%` : "0%"}
           trendUp={board ? board.completion_percent >= 50 : false}
           accentClass="text-arc-300"
           glowClass="shadow-glow-arc-sm"
@@ -190,7 +190,7 @@ export default function DashboardPage() {
           label="DAILY XP"
           value={`${character.current_xp.toLocaleString()} XP`}
           icon={Zap}
-          trend={`+${Math.round(character.xp_progress_percent)}% from yesterday`}
+          trend={`+${Math.round(character.xp_progress_percent)}%`}
           trendUp={true}
           accentClass="text-blue-400"
           glowClass="shadow-glow-cyan"
@@ -200,7 +200,7 @@ export default function DashboardPage() {
           label="OVERALL PROGRESS"
           value={`${Math.round(character.xp_progress_percent)}%`}
           icon={TrendingUp}
-          trend="Keep going, Hunter!"
+          trend={`Lv. ${character.level}`}
           trendUp={true}
           accentClass="text-cyan-400"
           glowClass="shadow-glow-cyan"
@@ -210,7 +210,7 @@ export default function DashboardPage() {
           label="STREAK"
           value={`${character.current_streak_days} Days`}
           icon={Flame}
-          trend="Best: 12 Days"
+          trend="Active"
           trendUp={character.current_streak_days > 0}
           accentClass="text-amber-400"
           glowClass="shadow-glow-amber"
@@ -220,7 +220,7 @@ export default function DashboardPage() {
           label="CREDITS"
           value="15,850"
           icon={Gem}
-          trend="+250 today"
+          trend="+250"
           trendUp={true}
           accentClass="text-amber-300"
           glowClass="shadow-glow-amber"
