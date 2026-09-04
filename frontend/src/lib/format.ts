@@ -49,19 +49,16 @@ export function defaultStepForUnit(unit: QuestUnit): number {
   }
 }
 
-/** Dynamic 10-level title progression */
+/** Dynamic level title progression */
 export function getHunterTitle(level: number): string {
-  if (level < 10) return "Novice Hunter";
+  if (level < 10) return "Awakening";
   if (level < 20) return "Hunter";
   if (level < 30) return "Elite Hunter";
-  if (level < 40) return "Advanced Hunter";
-  if (level < 50) return "Shadow Hunter";
-  if (level < 60) return "Shadow Knight";
-  if (level < 70) return "Shadow Commander";
-  if (level < 80) return "Monarch";
-  if (level < 90) return "Shadow Monarch";
+  if (level < 40) return "High Hunter";
+  if (level < 50) return "Monarch Candidate";
+  if (level < 75) return "Monarch";
   if (level < 100) return "Sovereign";
-  return "Transcendent";
+  return "ASCENDANT";
 }
 
 /** Rank progression based on level */

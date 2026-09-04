@@ -7,7 +7,12 @@ import {
   Calendar as CalendarIcon,
   CheckCircle,
   Flame,
-  Loader2,
+  Plus,
+  Clock,
+  AlertTriangle,
+  Sparkles,
+  Trash2,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuestBoardStore } from "@/store/useQuestBoardStore";
@@ -19,46 +24,47 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-// Simulated per-day activity history — in a real app this would come from the backend
-function useActivityHistory(year: number, month: number) {
-  const { board } = useQuestBoardStore();
-  const user = useUserStore((s) => s.user);
-
-  // Generate plausible activity from streak data
-  const activity = useMemo(() => {
-    const map: Record<string, number> = {}; // YYYY-MM-DD → completion %
-    const today = new Date();
-    const streak = user?.character?.current_streak_days ?? 0;
-
-    // Simulate historical streak days with high completion
-    for (let i = 0; i < streak; i++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      map[key] = i === 0 ? (board?.completion_percent ?? 50) : 80 + Math.random() * 20;
-    }
-
-    // Simulate some partial days further back
-    for (let i = streak; i < streak + 7; i++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      map[key] = 20 + Math.random() * 40;
-    }
-
-    return map;
-  }, [board, user]);
-
-  return activity;
+export interface CalendarDeadline {
+  id: string;
+  date: string; // YYYY-MM-DD
+  title: string;
+  category: "exam" | "study" | "fitness" | "project";
+  priority: "low" | "medium" | "critical";
+  targetTime?: string;
+  remindMe: boolean;
+  notes?: string;
 }
 
-function getDayColor(pct: number | undefined): string {
-  if (pct === undefined) return "bg-void-deep/60 border-arc-500/10";
-  if (pct >= 90) return "bg-emerald-500/80 border-emerald-400/60 shadow-[0_0_6px_rgba(52,211,153,0.4)]";
-  if (pct >= 60) return "bg-emerald-700/60 border-emerald-600/40";
-  if (pct >= 30) return "bg-amber-600/50 border-amber-500/40";
-  return "bg-arc-700/30 border-arc-600/20";
-}
+const DEFAULT_DEADLINES: CalendarDeadline[] = [
+  {
+    id: "d1",
+    date: "2026-09-15",
+    title: "JEE Advanced Physics Mock Test 1",
+    category: "exam",
+    priority: "critical",
+    targetTime: "09:00 AM",
+    remindMe: true,
+    notes: "Revise Electrostatics & Thermodynamics formulas",
+  },
+  {
+    id: "d2",
+    date: "2026-09-20",
+    title: "Chemistry Organic Reactions Submission",
+    category: "study",
+    priority: "medium",
+    targetTime: "06:00 PM",
+    remindMe: true,
+  },
+  {
+    id: "d3",
+    date: "2026-09-28",
+    title: "5km Endurance Run Milestone",
+    category: "fitness",
+    priority: "low",
+    targetTime: "07:00 AM",
+    remindMe: true,
+  },
+];
 
 export default function CalendarPage() {
   const user = useUserStore((s) => s.user);
@@ -67,13 +73,35 @@ export default function CalendarPage() {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState<string | null>(today.toISOString().slice(0, 10));
+  const [selectedDate, setSelectedDate] = useState<string>(today.toISOString().slice(0, 10));
 
-  const activity = useActivityHistory(viewYear, viewMonth);
+  // Deadlines state
+  const [deadlines, setDeadlines] = useState<CalendarDeadline[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("ascend_calendar_deadlines");
+      if (saved) {
+        try { return JSON.parse(saved); } catch { /* ignore */ }
+      }
+    }
+    return DEFAULT_DEADLINES;
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState<"exam" | "study" | "fitness" | "project">("exam");
+  const [newPriority, setNewPriority] = useState<"low" | "medium" | "critical">("critical");
+  const [newTime, setNewTime] = useState("09:00 AM");
+  const [newNotes, setNewNotes] = useState("");
 
   useEffect(() => {
     fetchToday();
   }, [fetchToday]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ascend_calendar_deadlines", JSON.stringify(deadlines));
+    }
+  }, [deadlines]);
 
   // Build calendar grid
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
@@ -92,46 +120,60 @@ export default function CalendarPage() {
     else setViewMonth((m) => m + 1);
   }
 
-  const selectedActivity = selectedDate ? activity[selectedDate] : undefined;
-  const selectedIsToday = selectedDate === today.toISOString().slice(0, 10);
+  function handleAddDeadline(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
 
-  // Compute streak stats for this month
-  const monthKeys = Object.keys(activity).filter((k) => k.startsWith(`${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`));
-  const completedDays = monthKeys.filter((k) => (activity[k] ?? 0) >= 90).length;
-  const activeDays = monthKeys.filter((k) => (activity[k] ?? 0) >= 30).length;
+    const deadline: CalendarDeadline = {
+      id: Date.now().toString(),
+      date: selectedDate,
+      title: newTitle.trim(),
+      category: newCategory,
+      priority: newPriority,
+      targetTime: newTime,
+      remindMe: true,
+      notes: newNotes.trim() || undefined,
+    };
+
+    setDeadlines((prev) => [...prev, deadline]);
+    setNewTitle("");
+    setNewNotes("");
+    setIsModalOpen(false);
+  }
+
+  function handleDeleteDeadline(id: string) {
+    setDeadlines((prev) => prev.filter((d) => d.id !== id));
+  }
+
+  const selectedDeadlines = deadlines.filter((d) => d.date === selectedDate);
+  const selectedIsToday = selectedDate === today.toISOString().slice(0, 10);
+  const selectedDateObj = new Date(selectedDate);
+  const isFutureDate = selectedDateObj > today;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-4 h-full overflow-y-auto pr-1 scrollbar-thin">
+    <div className="mx-auto max-w-5xl space-y-4 h-full overflow-y-auto pr-1 scrollbar-thin select-none">
       {/* Header */}
       <div className="hud-panel-elite p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5 text-arc-400" />
             <h1 className="font-display text-lg font-bold tracking-[0.2em] text-white">
-              QUEST CALENDAR
+              QUEST & DEADLINE CALENDAR
             </h1>
           </div>
           <p className="font-mono text-[10px] text-arc-400/70 mt-1">
-            Visual record of your daily discipline. Every day counts.
+            Schedule deadlines on any date. ARC will continuously remind you via HUD notifications.
           </p>
         </div>
-        {/* Month stats */}
-        <div className="flex items-center gap-3">
-          <div className="text-center px-3 py-1.5 rounded border border-emerald-500/25 bg-emerald-950/20">
-            <p className="font-mono text-[8px] text-emerald-400/70 uppercase">Perfect Days</p>
-            <p className="font-display text-lg font-bold text-emerald-400">{completedDays}</p>
-          </div>
-          <div className="text-center px-3 py-1.5 rounded border border-arc-500/25 bg-arc-950/20">
-            <p className="font-mono text-[8px] text-arc-400/70 uppercase">Active Days</p>
-            <p className="font-display text-lg font-bold text-arc-300">{activeDays}</p>
-          </div>
-          <div className="text-center px-3 py-1.5 rounded border border-amber-500/25 bg-amber-950/20">
-            <p className="font-mono text-[8px] text-amber-400/70 uppercase">Streak</p>
-            <p className="font-display text-lg font-bold text-amber-400">
-              {user?.character?.current_streak_days ?? 0}d
-            </p>
-          </div>
-        </div>
+
+        {/* Action Button */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-1.5 rounded-lg border border-arc-400/50 bg-arc-600/30 px-3 py-1.5 font-mono text-[9px] font-bold text-white hover:bg-arc-500/40 shadow-glow-arc-sm transition-all"
+        >
+          <Plus className="h-3.5 w-3.5 text-arc-300" />
+          <span>+ ADD DEADLINE</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -175,169 +217,237 @@ export default function CalendarPage() {
                 return <div key={`empty-${idx}`} className="aspect-square" />;
               }
               const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-              const pct = activity[dateKey];
               const isToday = dateKey === today.toISOString().slice(0, 10);
               const isSelected = dateKey === selectedDate;
-              const isFuture = new Date(dateKey) > today;
+              const hasDeadlines = deadlines.filter((d) => d.date === dateKey);
 
               return (
                 <button
                   key={dateKey}
-                  onClick={() => !isFuture && setSelectedDate(dateKey)}
-                  disabled={isFuture}
+                  onClick={() => setSelectedDate(dateKey)}
                   className={cn(
-                    "aspect-square rounded border text-center flex flex-col items-center justify-center transition-all duration-200 relative",
-                    isFuture ? "opacity-25 cursor-not-allowed border-arc-500/10 bg-void/20" : "cursor-pointer",
-                    !isFuture && getDayColor(pct),
-                    isSelected && !isFuture && "ring-2 ring-arc-400 ring-offset-1 ring-offset-void",
-                    isToday && "ring-2 ring-arc-300"
+                    "aspect-square rounded-lg border text-center flex flex-col items-center justify-between p-1 transition-all duration-200 relative",
+                    isSelected
+                      ? "border-arc-400 bg-arc-950/60 ring-2 ring-arc-400/80 shadow-glow-arc-sm"
+                      : isToday
+                      ? "border-arc-500/40 bg-void/90"
+                      : "border-arc-500/15 bg-void/50 hover:border-arc-500/40 hover:bg-arc-950/20"
                   )}
                 >
                   <span className={cn(
-                    "font-mono text-[9px] font-bold leading-none",
-                    isToday ? "text-white" : pct !== undefined ? "text-white/90" : "text-ink-faint"
+                    "font-mono text-[9px] font-bold leading-none self-start",
+                    isToday ? "text-arc-300" : "text-white/90"
                   )}>
                     {day}
                   </span>
-                  {pct !== undefined && (
-                    <span className="font-mono text-[6px] text-white/60 leading-none mt-0.5">
-                      {Math.round(pct)}%
-                    </span>
+
+                  {/* Deadline Indicator Badges */}
+                  {hasDeadlines.length > 0 && (
+                    <div className="flex items-center gap-0.5 mt-auto">
+                      {hasDeadlines.slice(0, 3).map((dl) => (
+                        <span
+                          key={dl.id}
+                          className={cn(
+                            "h-1.5 w-1.5 rounded-full",
+                            dl.priority === "critical" ? "bg-crimson-400 shadow-glow-crimson" :
+                            dl.priority === "medium" ? "bg-amber-400 shadow-glow-amber" :
+                            "bg-cyan-400 shadow-glow-cyan"
+                          )}
+                        />
+                      ))}
+                    </div>
                   )}
                 </button>
               );
             })}
           </div>
-
-          {/* Legend */}
-          <div className="flex items-center gap-3 mt-4 pt-3 border-t border-arc-500/15">
-            <span className="font-mono text-[8px] text-ink-faint">Legend:</span>
-            {[
-              { color: "bg-void-deep/60 border-arc-500/10", label: "No activity" },
-              { color: "bg-arc-700/30 border-arc-600/20", label: "< 30%" },
-              { color: "bg-amber-600/50 border-amber-500/40", label: "30-60%" },
-              { color: "bg-emerald-700/60 border-emerald-600/40", label: "60-90%" },
-              { color: "bg-emerald-500/80 border-emerald-400/60", label: "Perfect" },
-            ].map((l) => (
-              <div key={l.label} className="flex items-center gap-1">
-                <div className={cn("h-3 w-3 rounded border", l.color)} />
-                <span className="font-mono text-[7px] text-ink-faint">{l.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Right Panel: Selected Day Detail */}
-        <div className="hud-panel p-4 flex flex-col gap-3">
-          <div className="border-b border-arc-500/15 pb-2">
-            <h2 className="font-display text-xs font-bold tracking-wider text-white">
-              {selectedDate
-                ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                : "Select a day"}
-            </h2>
+        {/* Selected Date Details Panel */}
+        <div className="hud-panel p-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between border-b border-arc-500/20 pb-2">
+              <div>
+                <p className="font-mono text-[8px] text-arc-400/80 uppercase tracking-widest font-bold">
+                  {selectedIsToday ? "TODAY'S TARGETS" : isFutureDate ? "FUTURE TARGETS" : "PAST LOG"}
+                </p>
+                <h3 className="font-display text-sm font-bold text-white mt-0.5">
+                  {new Date(selectedDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-1 rounded border border-arc-500/30 bg-arc-500/10 px-2 py-1 font-mono text-[8px] text-arc-300 hover:bg-arc-500/20"
+              >
+                <Plus className="h-2.5 w-2.5" /> ADD
+              </button>
+            </div>
+
+            {/* Deadlines List */}
+            <div className="space-y-2">
+              <p className="font-mono text-[8px] text-ink-muted uppercase tracking-wider">Scheduled Deadlines ({selectedDeadlines.length})</p>
+
+              {selectedDeadlines.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-arc-500/20 p-4 text-center">
+                  <Clock className="h-5 w-5 text-arc-500/30 mx-auto mb-1" />
+                  <p className="font-mono text-[8px] text-ink-faint">No deadlines set for this date.</p>
+                </div>
+              ) : (
+                selectedDeadlines.map((dl) => (
+                  <div
+                    key={dl.id}
+                    className="rounded-lg border border-arc-500/20 bg-void/80 p-2.5 space-y-1 relative group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={cn(
+                        "rounded px-1.5 py-0.5 font-mono text-[6px] font-bold uppercase",
+                        dl.priority === "critical" ? "bg-crimson-500/20 text-crimson-300 border border-crimson-500/40" :
+                        dl.priority === "medium" ? "bg-amber-500/20 text-amber-300 border border-amber-500/40" :
+                        "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                      )}>
+                        {dl.priority} priority
+                      </span>
+                      <button
+                        onClick={() => handleDeleteDeadline(dl.id)}
+                        className="text-ink-faint hover:text-crimson-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+
+                    <p className="font-display text-[11px] font-bold text-white">{dl.title}</p>
+                    {dl.targetTime && (
+                      <p className="font-mono text-[8px] text-arc-400 flex items-center gap-1">
+                        <Clock className="h-2.5 w-2.5" /> {dl.targetTime}
+                      </p>
+                    )}
+                    {dl.notes && (
+                      <p className="font-body text-[9px] text-ink-secondary">{dl.notes}</p>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          {selectedDate && (
-            <>
-              {/* Completion circle */}
-              <div className="flex flex-col items-center gap-2 py-4">
-                <div className="relative h-24 w-24">
-                  <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(139,92,246,0.1)" strokeWidth="2.5" />
-                    <circle
-                      cx="18" cy="18" r="15.9" fill="none"
-                      stroke={selectedActivity !== undefined
-                        ? selectedActivity >= 90 ? "#34D399"
-                          : selectedActivity >= 60 ? "#6EE7B7"
-                          : selectedActivity >= 30 ? "#F59E0B"
-                          : "#8B5CF6"
-                        : "#1e1b33"}
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeDasharray={`${selectedActivity ?? 0} 100`}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="font-display text-xl font-bold text-white leading-none">
-                      {selectedActivity !== undefined ? `${Math.round(selectedActivity)}%` : "—"}
-                    </span>
-                    <span className="font-mono text-[7px] text-ink-faint uppercase">
-                      {selectedActivity !== undefined ? "Done" : "No data"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {selectedActivity !== undefined && selectedActivity >= 90 ? (
-                    <span className="flex items-center gap-1 font-mono text-[9px] text-emerald-400">
-                      <CheckCircle className="h-3 w-3" /> Perfect day!
-                    </span>
-                  ) : selectedActivity !== undefined ? (
-                    <span className="font-mono text-[9px] text-amber-400">Partial completion</span>
-                  ) : selectedIsToday ? (
-                    <span className="font-mono text-[9px] text-arc-400">Today — in progress</span>
-                  ) : (
-                    <span className="font-mono text-[9px] text-ink-faint">No quest data recorded</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Today's quests if selected === today */}
-              {selectedIsToday && board && (
-                <div className="flex-1 min-h-0">
-                  <p className="font-mono text-[8px] uppercase text-arc-400/70 mb-2 font-bold">
-                    Today&apos;s Quests
-                  </p>
-                  <div className="space-y-1 overflow-y-auto max-h-[280px] scrollbar-thin">
-                    {board.categories.flatMap((c) => c.quests).map((q) => (
-                      <div
-                        key={q.id}
-                        className={cn(
-                          "flex items-center justify-between rounded border px-2 py-1",
-                          q.is_completed
-                            ? "border-emerald-500/25 bg-emerald-950/15"
-                            : "border-arc-500/15 bg-arc-950/20"
-                        )}
-                      >
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          {q.is_completed ? (
-                            <CheckCircle className="h-3 w-3 text-emerald-400 flex-shrink-0" />
-                          ) : (
-                            <div className="h-3 w-3 rounded-full border border-arc-500/40 flex-shrink-0" />
-                          )}
-                          <span className={cn(
-                            "font-body text-[10px] truncate",
-                            q.is_completed ? "text-ink-muted line-through" : "text-ink-primary"
-                          )}>
-                            {q.template.name}
-                          </span>
-                        </div>
-                        <span className="font-mono text-[8px] text-amber-400 flex-shrink-0 ml-1">
-                          +{q.xp_reward} XP
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {!selectedIsToday && (
-                <div className="flex flex-col items-center justify-center flex-1 py-6 gap-2 text-center">
-                  <Flame className="h-6 w-6 text-arc-500/30" />
-                  <p className="font-mono text-[9px] text-ink-faint">
-                    Historical quest log coming soon.
-                  </p>
-                </div>
-              )}
-            </>
-          )}
+          <div className="pt-3 border-t border-arc-500/15">
+            <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-[8px]">
+              <Bell className="h-3 w-3 animate-pulse" />
+              <span>ARC Active Reminder System Online</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Add Deadline Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="hud-panel-elite max-w-md w-full p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-arc-500/20 pb-2">
+              <h3 className="font-display text-sm font-bold text-white tracking-wider">
+                ADD DEADLINE / TARGET DATE
+              </h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="font-mono text-xs text-ink-faint hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDeadline} className="space-y-3 font-mono text-[9px]">
+              <div>
+                <label className="text-arc-400 uppercase tracking-wider block mb-1">Deadline Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="e.g. Physics Mock Test, Chapter 5 Mastery"
+                  className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-arc-400 uppercase tracking-wider block mb-1">Target Date</label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-arc-400 uppercase tracking-wider block mb-1">Target Time</label>
+                  <input
+                    type="text"
+                    value={newTime}
+                    onChange={(e) => setNewTime(e.target.value)}
+                    placeholder="09:00 AM"
+                    className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-arc-400 uppercase tracking-wider block mb-1">Priority</label>
+                  <select
+                    value={newPriority}
+                    onChange={(e) => setNewPriority(e.target.value as any)}
+                    className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                  >
+                    <option value="critical">🔴 Critical Priority</option>
+                    <option value="medium">🟡 Medium Priority</option>
+                    <option value="low">🔵 Normal Priority</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-arc-400 uppercase tracking-wider block mb-1">Category</label>
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value as any)}
+                    className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                  >
+                    <option value="exam">📚 Exam / Test</option>
+                    <option value="study">🧪 Study Goal</option>
+                    <option value="fitness">⚔️ Fitness Milestone</option>
+                    <option value="project">💻 Project Task</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-arc-400 uppercase tracking-wider block mb-1">Notes / Instructions</label>
+                <textarea
+                  value={newNotes}
+                  onChange={(e) => setNewNotes(e.target.value)}
+                  placeholder="Key concepts to revise, target accuracy, etc."
+                  rows={2}
+                  className="w-full rounded border border-arc-500/30 bg-void/90 p-2 text-white focus:border-arc-400 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-arc-500/15">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded border border-arc-500/20 px-3 py-1 text-ink-muted hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded bg-arc-600 px-4 py-1 text-white font-bold hover:bg-arc-500 shadow-glow-arc-sm transition-all"
+                >
+                  Save Deadline
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
