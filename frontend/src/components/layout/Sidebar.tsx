@@ -48,9 +48,9 @@ const NAV_ITEMS: NavItem[] = [
 /** Compact stat pill for the sidebar character panel */
 function StatPill({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="flex items-center justify-between gap-1 rounded border border-arc-500/20 bg-void/70 px-1.5 py-0.5">
+    <div className="flex items-center justify-between gap-1 rounded border border-arc-500/20 bg-void/80 px-1.5 py-0.5">
       <span className={cn("font-mono text-[7px] font-bold uppercase tracking-wider", color)}>{label}</span>
-      <span className="font-mono text-[9px] font-bold text-white">{value}</span>
+      <span className="font-mono text-[8px] font-bold text-white">{value}</span>
     </div>
   );
 }
@@ -81,7 +81,7 @@ function VitalBar({
           {current} / {max}
         </span>
       </div>
-      <div className="h-1 w-full rounded-full bg-void-deep/80 overflow-hidden">
+      <div className="h-1 w-full rounded-full bg-void-deep/90 overflow-hidden border border-arc-500/20">
         <div
           className={cn("h-full rounded-full transition-all duration-700", color.replace("text-", "bg-"))}
           style={{ width: `${pct}%` }}
@@ -97,43 +97,38 @@ export function Sidebar() {
 
   const character = user?.character;
 
-  const currentTitle = character ? getHunterTitle(character.level) : "Hunter";
-  const currentRank = character ? getHunterRank(character.level) : "E";
+  const currentTitle = character ? getHunterTitle(character.level) : "Elite Hunter";
+  const currentRank = character ? getHunterRank(character.level) : "C";
 
-  const strVal = character?.stats?.strength ?? 60;
+  const strVal = character?.stats?.strength ?? 64;
   const agiVal = character?.stats?.agility ?? 45;
   const intVal = character?.stats?.knowledge ?? 4;
 
   return (
-    <aside className="z-40 hidden h-full w-[240px] xl:w-[255px] 2xl:w-[265px] flex-shrink-0 flex-col border-r border-arc-500/20 bg-void/95 lg:flex overflow-hidden select-none">
-      {/* Glow lines */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-arc-500/50 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-arc-500/0 via-arc-500/15 to-arc-500/0" />
-
+    <aside className="z-40 hidden h-full w-[240px] xl:w-[250px] flex-shrink-0 flex-col border-r border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden select-none">
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
-      <div className="relative flex h-13 flex-shrink-0 items-center gap-3 border-b border-arc-500/20 px-4">
-        <span className="absolute top-0 left-0 w-3 h-3 border-t border-l border-arc-400/50" />
-        <span className="absolute top-0 right-0 w-3 h-3 border-t border-r border-arc-400/20" />
-
-        <div className="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc animate-orb-pulse">
+      <div className="relative flex h-12 flex-shrink-0 items-center gap-2.5 border-b border-arc-500/20 px-4">
+        <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="white" strokeWidth="1.5" fill="rgba(255,255,255,0.1)" />
-            <path d="M12 6L18 12L12 18L6 12L12 6Z" fill="white" opacity="0.85" />
+            <path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="white" strokeWidth="1.5" fill="rgba(255,255,255,0.15)" />
+            <path d="M12 6L18 12L12 18L6 12L12 6Z" fill="white" opacity="0.9" />
           </svg>
         </div>
         <div className="flex flex-col leading-none">
-          <span className="font-display text-base font-bold tracking-[0.2em] text-white text-glow-arc">
+          <span className="font-display text-sm font-bold tracking-[0.2em] text-white text-glow-arc">
             ASCEND
           </span>
-          <span className="font-mono text-[7px] tracking-[0.25em] text-arc-400/70 uppercase">
-            SYSTEM V3.0.0
+          <span className="font-mono text-[7px] tracking-[0.25em] text-arc-400/80 uppercase mt-0.5">
+            SYSTEM V4.0.0
           </span>
         </div>
       </div>
 
       {/* ── Navigation Menu ──────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-2 py-2 scrollbar-thin scrollbar-thumb-arc-900/40">
-        <p className="mb-1.5 px-2 system-label text-[8px]">MAIN PORTAL</p>
+      <div className="flex-1 overflow-y-auto min-h-0 px-2 py-1.5 scrollbar-thin">
+        <p className="mb-1 px-2 font-mono text-[7px] tracking-widest text-arc-400/60 uppercase font-bold">
+          MAIN PORTAL
+        </p>
         <nav className="space-y-0.5">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
@@ -143,32 +138,29 @@ export function Sidebar() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "group nav-item py-1.5 px-2.5",
-                  isActive ? "nav-item-active" : "nav-item-inactive"
+                  "group relative flex items-center gap-2 rounded-lg py-1 px-2 text-[10px] transition-all",
+                  isActive
+                    ? "bg-gradient-to-r from-arc-600/35 via-arc-500/20 to-transparent border border-arc-400/50 text-white font-bold shadow-[0_0_10px_rgba(139,92,246,0.2)]"
+                    : "text-ink-muted hover:text-white hover:bg-arc-500/10 border border-transparent"
                 )}
               >
-                {isActive && (
-                  <span className="absolute inset-0 rounded-lg bg-arc-500/10 pointer-events-none" />
-                )}
-
                 <Icon
                   className={cn(
                     "h-3.5 w-3.5 flex-shrink-0 transition-colors",
                     isActive ? "text-arc-300" : "text-ink-faint group-hover:text-arc-400"
                   )}
                 />
-                <span className={cn("flex-1 text-[11px]", isActive && "font-semibold text-white")}>{item.label}</span>
+                <span className="flex-1 truncate">{item.label}</span>
 
                 {item.badge && (
-                  <span className="rounded bg-arc-500/25 border border-arc-500/50 px-1 py-0.2 font-mono text-[7px] text-arc-300 font-bold">
+                  <span className="rounded bg-arc-500/30 border border-arc-400/50 px-1 py-0.2 font-mono text-[6px] text-arc-300 font-bold">
                     {item.badge}
                   </span>
                 )}
 
                 {isActive && !item.badge && (
                   <span className="flex h-1.5 w-1.5 flex-shrink-0">
-                    <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-arc-400 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-arc-400" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-arc-400 shadow-[0_0_6px_#A855F7]" />
                   </span>
                 )}
               </Link>
@@ -177,14 +169,13 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* ── Character Summary Panel (Pinned at bottom) ── */}
+      {/* ── Character Summary Panel (Pinned at bottom, ~35% height) ── */}
       {user && character && (
-        <div className="flex-shrink-0 border-t border-arc-500/20 bg-arc-950/50 p-2.5 space-y-1.5">
+        <div className="flex-shrink-0 border-t border-arc-500/20 bg-[#0A051A]/90 p-2.5 space-y-1.5">
           {/* Avatar + User details */}
           <div className="flex items-center gap-2">
             <div className="relative flex-shrink-0">
-              <div className="absolute -inset-0.5 rounded bg-gradient-to-br from-arc-500 to-arc-800 opacity-80 blur-sm animate-pulse-slow" />
-              <div className="relative flex h-10 w-10 items-center justify-center rounded border border-arc-500/50 overflow-hidden bg-void shadow-glow-arc-sm">
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-arc-500/50 overflow-hidden bg-void shadow-glow-arc-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={user.avatar_url || "/hunter_avatar.jpg"}
@@ -199,14 +190,14 @@ export function Sidebar() {
                 <p className="truncate font-display text-xs font-bold text-white leading-none">
                   {user.display_name}
                 </p>
-                <span className="flex items-center gap-0.5 font-mono text-[7px] text-emerald-400 font-semibold">
-                  <span className="h-1 w-1 rounded-full bg-emerald-400" /> ONLINE
+                <span className="flex items-center gap-0.5 font-mono text-[6px] text-emerald-400 font-semibold">
+                  <span className="h-1 w-1 rounded-full bg-emerald-400" /> SYSTEM ONLINE
                 </span>
               </div>
-              <p className="font-mono text-[8px] font-medium text-arc-300 truncate mt-0.5">
+              <p className="font-mono text-[7px] text-cyan-300 font-medium truncate mt-0.5">
                 {currentTitle}
               </p>
-              <span className="inline-block font-mono text-[7px] text-ink-faint">
+              <span className="inline-block font-mono text-[7px] text-arc-400/80">
                 Rank {currentRank} Hunter
               </span>
             </div>
@@ -215,15 +206,15 @@ export function Sidebar() {
           {/* Level badge + XP */}
           <div className="rounded border border-arc-500/20 bg-void/60 p-1">
             <div className="flex items-center justify-between mb-0.5">
-              <span className="system-label text-[7px]">LEVEL</span>
-              <span className="font-display text-sm font-bold text-arc-400 leading-none text-glow-arc">
+              <span className="font-mono text-[7px] uppercase tracking-wider text-arc-400 font-bold">LEVEL</span>
+              <span className="font-display text-sm font-bold text-white leading-none text-glow-arc">
                 {character.level}
               </span>
             </div>
-            <div className="mb-0.5 flex justify-between font-mono text-[7px] text-ink-faint">
+            <div className="mb-0.5 flex justify-between font-mono text-[6px] text-ink-faint">
               <span>{character.current_xp.toLocaleString()} / {character.xp_required_for_next_level.toLocaleString()} XP</span>
             </div>
-            <div className="h-1 w-full rounded-full bg-void-deep overflow-hidden">
+            <div className="h-1 w-full rounded-full bg-void-deep overflow-hidden border border-arc-500/20">
               <div
                 className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                 style={{ width: `${character.xp_progress_percent}%` }}
@@ -261,7 +252,7 @@ export function Sidebar() {
             {[Share2, Globe, Bell, Settings].map((Icon, i) => (
               <button
                 key={i}
-                className="flex h-5 w-5 items-center justify-center rounded text-ink-faint hover:text-arc-400 hover:bg-arc-500/10 transition-colors"
+                className="flex h-4 w-4 items-center justify-center rounded text-ink-faint hover:text-arc-400 hover:bg-arc-500/10 transition-colors"
               >
                 <Icon className="h-2.5 w-2.5" />
               </button>

@@ -10,227 +10,60 @@ import {
   Volume2,
   VolumeX,
   Trophy,
-  CloudSun,
-  Globe,
-  Youtube,
-  Code2,
-  Clock,
-  Copy,
-  Check,
-  ExternalLink,
+  Sparkles,
+  Zap,
+  Target,
+  BarChart2,
 } from "lucide-react";
 import { jarvisApi, type JarvisAction } from "@/lib/api/jarvis";
 import { jarvisSpeech } from "@/lib/speech";
 import { useJarvisStore, type JarvisMessage } from "@/store/useJarvisStore";
 import { useQuestBoardStore } from "@/store/useQuestBoardStore";
 import { useUserStore } from "@/store/useUserStore";
-import { getHunterTitle, getHunterRank } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-/* ── Animated Waveform Bars ─────────────────────────────────────── */
-function WaveformBars({ active }: { active: boolean }) {
-  const HEIGHTS = [35, 65, 50, 80, 55, 40, 75, 45, 60, 30, 70, 45, 55, 38, 68];
+/* ── Holographic Soundwave Frequency Core (Image 1 Matching) ───── */
+function JarvisHoloReactor({ active }: { active: boolean }) {
   return (
-    <div className="flex items-center gap-px h-5">
-      {HEIGHTS.map((h, i) => (
-        <span
-          key={i}
-          className={cn(
-            "waveform-bar rounded-full transition-all duration-300",
-            active ? "bg-arc-300 shadow-glow-arc-sm" : "bg-arc-600/30",
-          )}
-          style={{
-            height: active ? `${Math.max(3, (h / 100) * 20)}px` : "2px",
-            width: "2px",
-            animationDelay: `${i * 55}ms`,
-            animationPlayState: active ? "running" : "paused",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+    <div className="relative flex flex-col items-center justify-center py-1.5 flex-shrink-0">
+      {/* Outer Glow & Concentric Rings */}
+      <div className="relative flex items-center justify-center" style={{ width: 140, height: 68 }}>
+        <svg className="absolute inset-0" width="140" height="68" viewBox="0 0 140 68" fill="none">
+          {/* Background horizontal axis line */}
+          <line x1="10" y1="34" x2="130" y2="34" stroke="rgba(139,92,246,0.3)" strokeWidth="1" strokeDasharray="2 4" />
 
-/* ── JARVIS Orb Header ──────────────────────────────────────────── */
-function JarvisOrb({ active }: { active: boolean }) {
-  return (
-    <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center">
-      <div className="absolute inset-0 rounded-full border border-arc-500/40 animate-spin-slow" />
-      <div className="absolute inset-0.5 rounded-full border border-arc-400/30 animate-spin-reverse" />
-      <div
-        className={cn(
-          "relative flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc transition-all duration-500",
-          active && "shadow-glow-arc-lg animate-orb-pulse",
-        )}
-      >
-        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="2.5" fill="white" />
-          <path d="M12 3C7.03 3 3 7.03 3 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-          <path d="M12 21C16.97 21 21 16.97 21 12" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-          <path d="M3 12C3 16.97 7.03 21 12 21" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" />
-          <path d="M21 12C21 7.03 16.97 3 12 3" stroke="rgba(255,255,255,0.3)" strokeWidth="1" strokeLinecap="round" />
+          {/* Central concentric energy ellipses */}
+          <ellipse cx="70" cy="34" rx="42" ry="26" stroke="rgba(168,85,247,0.35)" strokeWidth="1" strokeDasharray="4 4" />
+          <ellipse cx="70" cy="34" rx="30" ry="18" stroke="rgba(192,178,255,0.4)" strokeWidth="1" />
+
+          {/* Dynamic Soundwave Frequencies */}
+          <path
+            d="M20 34 Q35 15 45 34 T70 12 T95 48 T105 34 T120 34"
+            stroke="rgba(168,85,247,0.9)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            style={{ animation: active ? "arc-draw 1.5s ease-in-out infinite" : "none", filter: "drop-shadow(0 0 4px #A855F7)" }}
+          />
+          <path
+            d="M30 34 Q45 48 55 34 T80 52 T105 20 T115 34"
+            stroke="rgba(0,229,255,0.85)"
+            strokeWidth="1"
+            strokeLinecap="round"
+            style={{ animation: active ? "arc-draw 2s ease-in-out infinite" : "none", filter: "drop-shadow(0 0 4px #00E5FF)" }}
+          />
         </svg>
-      </div>
-      <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 border border-void" />
-      </span>
-    </div>
-  );
-}
 
-/* ── Code Card with Copy ─────────────────────────────────────────── */
-function CodeCard({ action }: { action: JarvisAction }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    if (action.code) {
-      navigator.clipboard.writeText(action.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  return (
-    <div className="mt-2 rounded-lg border border-cyan-500/30 bg-void/90 overflow-hidden font-mono text-[10px]">
-      <div className="flex items-center justify-between bg-cyan-950/40 px-2.5 py-1.5 border-b border-cyan-500/20">
-        <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
-          <Code2 className="h-3 w-3" />
-          <span className="uppercase text-[9px]">{action.language || "code"}</span>
-        </div>
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1 text-[8px] text-ink-muted hover:text-white transition-colors"
+        {/* Center glowing energy sphere */}
+        <div
+          className={cn(
+            "relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-arc-400 via-arc-600 to-arc-950 shadow-glow-arc transition-all duration-500",
+            active && "scale-110 shadow-glow-arc-lg animate-orb-pulse"
+          )}
         >
-          {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-          <span>{copied ? "Copied" : "Copy"}</span>
-        </button>
-      </div>
-      {action.code && (
-        <pre className="p-2.5 overflow-x-auto text-[9px] leading-relaxed text-cyan-100 max-h-48 scrollbar-thin">
-          <code>{action.code}</code>
-        </pre>
-      )}
-      {action.complexity && (
-        <div className="px-2.5 py-1 bg-void border-t border-cyan-500/15 text-[8px] text-cyan-400/80">
-          {action.complexity}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ── Weather Card ─────────────────────────────────────────────────── */
-function WeatherCard({ action }: { action: JarvisAction }) {
-  const d = action.data;
-  return (
-    <div className="mt-2 rounded-lg border border-amber-500/30 bg-amber-950/20 p-2.5 space-y-1.5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <CloudSun className="h-4 w-4 text-amber-400" />
-          <span className="font-display text-[10px] font-bold text-white tracking-wider">
-            {d?.city || action.city || "Atmosphere"}
-          </span>
-        </div>
-        <span className="font-mono text-sm font-bold text-amber-300">{d?.temp_c || "26°C"}</span>
-      </div>
-      <div className="grid grid-cols-3 gap-1 text-center font-mono text-[8px] pt-1 border-t border-amber-500/20">
-        <div className="rounded bg-void/50 p-1">
-          <p className="text-ink-faint">Condition</p>
-          <p className="text-white font-semibold truncate">{d?.condition || "Clear"}</p>
-        </div>
-        <div className="rounded bg-void/50 p-1">
-          <p className="text-ink-faint">Humidity</p>
-          <p className="text-amber-300 font-semibold">{d?.humidity || "55%"}</p>
-        </div>
-        <div className="rounded bg-void/50 p-1">
-          <p className="text-ink-faint">Wind</p>
-          <p className="text-cyan-300 font-semibold">{d?.wind || "12 km/h"}</p>
+          <div className="h-3 w-3 rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ── YouTube Video Card ──────────────────────────────────────────── */
-function YouTubeCard({ action }: { action: JarvisAction }) {
-  const items = action.results?.slice(0, 2) || [];
-  return (
-    <div className="mt-2 rounded-lg border border-crimson-500/30 bg-crimson-950/20 p-2 space-y-1.5">
-      <div className="flex items-center gap-1.5 text-crimson-400 font-display text-[10px] font-bold">
-        <Youtube className="h-3.5 w-3.5" />
-        <span>YouTube Stream</span>
-      </div>
-      <div className="space-y-1">
-        {items.map((vid, i) => (
-          <a
-            key={i}
-            href={vid.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded bg-void/80 p-1.5 hover:bg-void transition-colors group"
-          >
-            <div className="flex-1 min-w-0 font-mono text-[9px]">
-              <p className="text-white font-semibold truncate group-hover:text-crimson-300">{vid.title}</p>
-              <span className="text-[8px] text-ink-faint">Watch on YouTube</span>
-            </div>
-            <ExternalLink className="h-3 w-3 text-crimson-400 group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Web Search Card ─────────────────────────────────────────────── */
-function SearchCard({ action }: { action: JarvisAction }) {
-  const items = action.results?.slice(0, 3) || [];
-  return (
-    <div className="mt-2 rounded-lg border border-arc-500/30 bg-arc-950/30 p-2 space-y-1.5">
-      <div className="flex items-center gap-1.5 text-arc-300 font-display text-[10px] font-bold">
-        <Globe className="h-3.5 w-3.5" />
-        <span>Web Knowledge Matrix</span>
-      </div>
-      <div className="space-y-1">
-        {items.map((item, i) => (
-          <a
-            key={i}
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded bg-void/70 p-1.5 hover:bg-void transition-colors group"
-          >
-            <div className="flex items-center justify-between font-mono text-[9px]">
-              <p className="text-white font-semibold truncate group-hover:text-arc-300">{item.title}</p>
-              <ExternalLink className="h-2.5 w-2.5 text-arc-400 flex-shrink-0 ml-1" />
-            </div>
-            {item.snippet && (
-              <p className="font-mono text-[8px] text-ink-muted line-clamp-2 mt-0.5">{item.snippet}</p>
-            )}
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Reminder Card ───────────────────────────────────────────────── */
-function ReminderCard({ action }: { action: JarvisAction }) {
-  return (
-    <div className="mt-2 rounded-lg border border-amber-500/40 bg-amber-950/30 p-2 flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2 min-w-0">
-        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-amber-500/20 text-amber-400">
-          <Clock className="h-3.5 w-3.5" />
-        </div>
-        <div className="min-w-0 font-mono text-[9px]">
-          <p className="text-white font-semibold truncate">{action.message || "Reminder Active"}</p>
-          <span className="text-[8px] text-amber-400/90">{action.time_text || "Scheduled"}</span>
-        </div>
-      </div>
-      <span className="rounded bg-amber-500/20 px-1.5 py-0.5 font-mono text-[8px] text-amber-300 flex-shrink-0">
-        SET
-      </span>
     </div>
   );
 }
@@ -238,80 +71,45 @@ function ReminderCard({ action }: { action: JarvisAction }) {
 /* ── Chat Message Bubble ─────────────────────────────────────────── */
 function ChatMessage({ msg }: { msg: JarvisMessage }) {
   const isUser = msg.role === "user";
-  const action = msg.action;
 
   return (
     <div className={cn("flex flex-col animate-fade-in", isUser ? "items-end" : "items-start")}>
       <div className={cn("mb-0.5 flex items-center gap-1.5", isUser && "flex-row-reverse")}>
         <span className="font-mono text-[8px] uppercase tracking-wider text-arc-300 font-bold">
-          {isUser ? "You" : "ARC"}
+          {isUser ? "You" : "JARVIS 23:02"}
         </span>
         <span className="font-mono text-[8px] text-ink-faint">{msg.timestamp}</span>
       </div>
 
-      <div className={isUser ? "jarvis-user-bubble" : "jarvis-ai-bubble"}>
-        <div className="whitespace-pre-line text-[11px]">{msg.text}</div>
+      <div
+        className={cn(
+          "rounded-lg px-2.5 py-1.5 max-w-[90%] leading-relaxed text-[10px]",
+          isUser
+            ? "border border-arc-500/30 bg-arc-950/60 text-white ml-auto"
+            : "border border-arc-500/20 bg-void/80 text-ink-secondary"
+        )}
+      >
+        <div className="whitespace-pre-line">{msg.text}</div>
 
-        {/* Quest Mutation Card */}
-        {action?.type === "QUEST_MUTATION" && (
-          <div className="mt-1.5 rounded border border-emerald-500/30 bg-emerald-950/40 p-2">
-            <div className="flex items-center gap-1.5 font-semibold text-emerald-400 text-[9px] mb-0.5">
-              <CheckCircle2 className="h-3 w-3" />
-              <span>Quest Updated</span>
+        {msg.action?.type === "QUEST_MUTATION" && (
+          <div className="mt-1 rounded border border-emerald-500/30 bg-emerald-950/40 p-1.5">
+            <div className="flex items-center gap-1 font-semibold text-emerald-400 text-[8px] mb-0.5">
+              <CheckCircle2 className="h-2.5 w-2.5" />
+              <span>Quest Target Updated</span>
             </div>
-            {action.quest_title && (
-              <p className="font-mono text-[8px] text-emerald-300/90">
-                {action.quest_title}
-                {action.new_target && (
-                  <> → <strong className="text-white">{action.new_target}</strong></>
-                )}
+            {msg.action.quest_title && (
+              <p className="font-mono text-[7px] text-emerald-300/90">
+                {msg.action.quest_title} → <strong className="text-white">{msg.action.new_target}</strong>
               </p>
             )}
           </div>
         )}
-
-        {/* Tool Action Cards */}
-        {action?.type === "CODE_ASSIST" && <CodeCard action={action} />}
-        {action?.type === "WEATHER_REPORT" && <WeatherCard action={action} />}
-        {action?.type === "YOUTUBE_SEARCH" && <YouTubeCard action={action} />}
-        {action?.type === "WEB_SEARCH" && <SearchCard action={action} />}
-        {action?.type === "REMINDER" && <ReminderCard action={action} />}
       </div>
     </div>
   );
 }
 
-/* ── Large Mic Orb with Waveforms (Matching Reference Screenshot) ─ */
-function VoiceOrbWithWaveform({ active, onClick }: { active: boolean; onClick: () => void }) {
-  return (
-    <div className="flex flex-col items-center gap-1 my-1">
-      <div className="flex items-center justify-center gap-2.5 w-full">
-        <WaveformBars active={active} />
-
-        {/* Central glowing microphone orb */}
-        <button
-          type="button"
-          onClick={onClick}
-          className={cn(
-            "relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 shadow-glow-arc-lg",
-            active
-              ? "border-crimson-500 bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
-              : "border-arc-300 bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105",
-          )}
-          title={active ? "Stop Listening" : "Tap to speak"}
-        >
-          <div className="absolute inset-0 rounded-full border border-arc-300/40 animate-ping-slow pointer-events-none" />
-          <Mic className="h-5 w-5" />
-        </button>
-
-        <WaveformBars active={active} />
-      </div>
-      <span className="font-mono text-[8px] text-ink-muted">Tap to speak</span>
-    </div>
-  );
-}
-
-/* ── JarvisWidget Main Export ───────────────────────────────────── */
+/* ── Jarvis Main Widget Export ──────────────────────────────────── */
 export function JarvisWidget() {
   const {
     isListening,
@@ -326,8 +124,7 @@ export function JarvisWidget() {
     addMessage,
   } = useJarvisStore();
 
-  const { board, updateQuestTarget, optimizeWorkload, fetchToday } = useQuestBoardStore();
-  const user = useUserStore((s) => s.user);
+  const { updateQuestTarget, optimizeWorkload, fetchToday } = useQuestBoardStore();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -370,7 +167,7 @@ export function JarvisWidget() {
     } catch {
       addMessage({
         role: "jarvis",
-        text: "⚠️ **Signal disrupted.** Neural link unstable — please repeat your command, Hunter.",
+        text: "⚠️ Signal disrupted. Neural link unstable — please repeat your command, Hunter.",
       });
     } finally {
       setProcessing(false);
@@ -396,83 +193,53 @@ export function JarvisWidget() {
     }
   }
 
+  const SUGGESTED_ACTIONS = [
+    { label: "Optimize today's quests", cmd: "Optimize my workload to 60 minutes", icon: Zap },
+    { label: "Analyze weak subjects", cmd: "What is my weakest stat and subject?", icon: Target },
+    { label: "Generate new quest", cmd: "Add a new quest: Meditation for 20 minutes", icon: Sparkles },
+    { label: "Show progress report", cmd: "Show my quests", icon: BarChart2 },
+  ];
+
   const isActive = isListening || isSpeaking;
 
   return (
-    <aside className="z-40 hidden h-full w-[290px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-void/95 lg:flex overflow-hidden p-2 gap-2 select-none">
+    <aside className="z-40 hidden h-full w-[310px] xl:w-[335px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden p-2.5 gap-2 select-none">
       {/* ── HEADER ──────────────────────────────────────────────── */}
-      <div className="relative flex h-12 flex-shrink-0 items-center justify-between border-b border-arc-500/20 px-2 pb-1.5">
-        <span className="absolute top-0 left-0 w-3 h-3 border-t border-l border-arc-400/40 pointer-events-none" />
-        <span className="absolute top-0 right-0 w-3 h-3 border-t border-r border-arc-400/40 pointer-events-none" />
-
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <JarvisOrb active={isActive || isProcessing} />
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">ARC</h2>
-              <span className="rounded border border-arc-500/30 bg-arc-500/10 px-1 font-mono text-[7px] text-arc-400">AI</span>
-            </div>
-            <p className="font-mono text-[8px] uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-              <span className="h-1 w-1 rounded-full bg-emerald-400" /> ONLINE
-            </p>
+      <div className="flex h-10 flex-shrink-0 items-center justify-between border-b border-arc-500/20 px-1 pb-1">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1.5">
+            <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">JARVIS AI</h2>
           </div>
+          <span className="font-mono text-[7px] tracking-widest text-arc-400/80 uppercase">AI SYSTEM ASSISTANT</span>
         </div>
 
-        <div className="flex items-center gap-1">
-          <WaveformBars active={isActive || isProcessing} />
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[8px] uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ONLINE
+          </span>
           <button
             onClick={toggleVoice}
             className={cn(
               "rounded p-1 transition-colors",
-              voiceEnabled ? "text-arc-300 hover:bg-arc-500/20" : "text-ink-faint hover:bg-white/5",
+              voiceEnabled ? "text-arc-300 hover:bg-arc-500/20" : "text-ink-faint hover:bg-white/5"
             )}
-            title={voiceEnabled ? "Mute ARC" : "Unmute ARC"}
+            title={voiceEnabled ? "Mute JARVIS" : "Unmute JARVIS"}
           >
             {voiceEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
 
-      {/* ── HUNTER DATA METRICS ─────────────────────────────────── */}
-      {user && (
-        <div className="flex-shrink-0 rounded-lg border border-arc-500/20 bg-arc-950/30 p-2 space-y-1">
-          <p className="system-label text-[8px] text-arc-300 font-bold uppercase tracking-widest">HUNTER DATA</p>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono text-[9px]">
-            <div className="flex justify-between">
-              <span className="text-ink-faint">NAME</span>
-              <span className="text-white font-semibold truncate max-w-[80px]">{user.display_name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-faint">LEVEL</span>
-              <span className="text-arc-300 font-bold">{user.character.level}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-faint">RANK</span>
-              <span className="text-amber-400 font-semibold">Rank {getHunterRank(user.character.level)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-faint">TITLE</span>
-              <span className="text-ink-secondary truncate max-w-[80px]">{getHunterTitle(user.character.level)}</span>
-            </div>
-            <div className="flex justify-between col-span-2">
-              <span className="text-ink-faint">XP</span>
-              <span className="text-arc-300 font-mono">{user.character.current_xp.toLocaleString()} / {user.character.xp_required_for_next_level.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between col-span-2">
-              <span className="text-ink-faint">STREAK</span>
-              <span className="text-amber-400 font-bold">{user.character.current_streak_days} days</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── HOLOGRAPHIC SOUNDWAVE CORE ─────────────────────────── */}
+      <JarvisHoloReactor active={isActive || isProcessing} />
 
-      {/* ── CHAT MESSAGES & TODAY'S QUESTS ─────────────────────── */}
+      {/* ── CHAT MESSAGE TRANSCRIPT ─────────────────────────────── */}
       <div
         ref={scrollRef}
-        className="flex-1 space-y-2 overflow-y-auto p-1.5 font-body text-xs min-h-0 scrollbar-thin"
+        className="flex-1 space-y-1.5 overflow-y-auto p-1 font-body text-xs min-h-0 scrollbar-thin"
       >
         {messages.length === 0 ? (
-          <div className="rounded-lg border border-arc-500/15 bg-arc-950/30 p-2 text-center space-y-1">
+          <div className="rounded-lg border border-arc-500/15 bg-arc-950/30 p-2 text-center space-y-0.5">
             <p className="font-mono text-[9px] text-arc-300">&quot;How can I assist you, Hunter?&quot;</p>
             <p className="font-mono text-[8px] text-ink-faint">&quot;What are my quests today?&quot;</p>
           </div>
@@ -480,40 +247,77 @@ export function JarvisWidget() {
           messages.map((msg) => <ChatMessage key={msg.id} msg={msg} />)
         )}
 
-
         {isProcessing && (
-          <div className="flex items-center gap-2 text-arc-400 font-mono text-[9px] py-1">
+          <div className="flex items-center gap-1.5 text-arc-400 font-mono text-[8px] py-0.5">
             <Loader2 className="h-3 w-3 animate-spin" />
             <span>Processing command...</span>
           </div>
         )}
       </div>
 
-      {/* ── MIC VOICE ORB WITH WAVEFORMS ───────────────────────── */}
-      <div className="flex-shrink-0 rounded-lg border border-arc-500/20 bg-arc-950/40 p-2 space-y-1">
-        <VoiceOrbWithWaveform active={isListening} onClick={toggleVoiceListening} />
+      {/* ── SUGGESTED ACTIONS DOCK ───────────────────────────────── */}
+      <div className="flex-shrink-0 space-y-1 pt-1 border-t border-arc-500/15">
+        <p className="font-mono text-[7px] text-arc-400/80 uppercase tracking-widest font-bold px-0.5">
+          SUGGESTED ACTIONS
+        </p>
+        <div className="space-y-1">
+          {SUGGESTED_ACTIONS.map((action, i) => (
+            <button
+              key={i}
+              onClick={() => handleCommandSubmit(action.cmd)}
+              disabled={isProcessing}
+              className="flex w-full items-center justify-between rounded border border-arc-500/20 bg-void/80 px-2 py-1 text-left font-mono text-[8px] text-ink-secondary hover:border-arc-400/50 hover:bg-arc-950/40 hover:text-white transition-all group disabled:opacity-50"
+            >
+              <div className="flex items-center gap-1.5 truncate">
+                <action.icon className="h-2.5 w-2.5 text-arc-400 group-hover:text-arc-300 flex-shrink-0" />
+                <span className="truncate">{action.label}</span>
+              </div>
+              <ArrowRight className="h-2.5 w-2.5 text-arc-500 group-hover:translate-x-0.5 group-hover:text-arc-300 transition-all flex-shrink-0 ml-1" />
+            </button>
+          ))}
+        </div>
+      </div>
 
-        <form onSubmit={handleFormSubmit} className="flex items-center gap-1.5 pt-1 border-t border-arc-500/15">
+      {/* ── VOICE MIC BUTTON & INPUT ─────────────────────────────── */}
+      <div className="flex-shrink-0 space-y-1.5 pt-1 border-t border-arc-500/15">
+        <div className="flex flex-col items-center gap-0.5">
+          <button
+            type="button"
+            onClick={toggleVoiceListening}
+            className={cn(
+              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 shadow-glow-arc-lg",
+              isListening
+                ? "border-crimson-500 bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
+                : "border-arc-300 bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105"
+            )}
+            title={isListening ? "Stop Listening" : "Tap to speak"}
+          >
+            <Mic className="h-4 w-4" />
+          </button>
+          <span className="font-mono text-[7px] text-ink-muted">Tap to speak</span>
+        </div>
+
+        <form onSubmit={handleFormSubmit} className="relative flex items-center">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your command..."
             disabled={isProcessing}
-            className="flex-1 rounded-lg border border-arc-500/20 bg-void/90 px-2.5 py-1 font-mono text-[10px] text-ink-primary placeholder:text-ink-faint focus:border-arc-400 focus:outline-none disabled:opacity-50"
+            className="w-full rounded border border-arc-500/20 bg-void/90 px-2.5 py-1 pr-7 font-mono text-[9px] text-ink-primary placeholder:text-ink-faint focus:border-arc-400 focus:outline-none disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || isProcessing}
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-arc-600 text-white hover:bg-arc-500 disabled:opacity-30 transition-colors"
+            className="absolute right-1 flex h-5 w-5 items-center justify-center rounded bg-arc-600 text-white hover:bg-arc-500 disabled:opacity-30 transition-colors"
           >
-            <Send className="h-3 w-3" />
+            <Send className="h-2.5 w-2.5" />
           </button>
         </form>
       </div>
 
-      {/* ── RECENT ACHIEVEMENT ──────────────────────────────────── */}
-      <div className="flex-shrink-0">
+      {/* ── RECENT ACHIEVEMENT CARD ─────────────────────────────── */}
+      <div className="flex-shrink-0 pt-0.5">
         <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/25 text-amber-300">
@@ -521,13 +325,13 @@ export function JarvisWidget() {
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1">
-                <span className="font-display text-[9px] font-bold text-white truncate">Unstoppable</span>
-                <span className="rounded bg-amber-500/30 px-1 font-mono text-[7px] text-amber-300">NEW</span>
+                <span className="font-display text-[8px] font-bold text-white truncate">Unstoppable</span>
+                <span className="rounded bg-amber-500/30 px-1 font-mono text-[6px] text-amber-300">NEW</span>
               </div>
-              <p className="font-mono text-[8px] text-amber-400/90">+500 XP</p>
+              <p className="font-mono text-[7px] text-amber-400/90">+500 XP</p>
             </div>
           </div>
-          <Link href="/achievements" className="font-mono text-[8px] text-amber-400 hover:underline flex-shrink-0">
+          <Link href="/achievements" className="font-mono text-[7px] text-amber-400 hover:underline flex-shrink-0">
             VIEW ALL →
           </Link>
         </div>

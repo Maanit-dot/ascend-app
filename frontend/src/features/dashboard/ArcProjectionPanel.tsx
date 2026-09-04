@@ -8,46 +8,58 @@ export function ArcProjectionPanel() {
   const growthRate = character ? Math.min(99, Math.round(character.xp_progress_percent || 78)) : 78;
 
   return (
-    <div className="hud-panel relative overflow-hidden p-2 h-full flex flex-col justify-between">
-      <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
+    <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-4 py-2 bg-[#060312]/90 border border-arc-500/30 rounded-xl select-none">
+      {/* Background cyber grid & energy particles */}
+      <div className="absolute inset-0 cyber-grid opacity-15 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/60 to-transparent pointer-events-none" />
 
-      {/* Top Header */}
-      <div className="relative z-10 flex items-center justify-between">
-        <h3 className="font-display text-[10px] font-bold tracking-wider text-white">
-          ARC PROJECTION
-        </h3>
-        <span className="font-mono text-[9px] text-arc-400 font-bold text-glow-arc">{growthRate}%</span>
+      {/* Left side: Label + subtitle */}
+      <div className="relative z-10 flex flex-col justify-center min-w-[180px]">
+        <div className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-arc-400 animate-pulse" />
+          <h3 className="font-display text-xs font-bold tracking-[0.2em] text-white">
+            ARC PROJECTION
+          </h3>
+        </div>
+        <p className="font-mono text-[9px] text-arc-400/70 tracking-wider uppercase mt-0.5">
+          Learning / Adapting / Evolving
+        </p>
       </div>
 
-      {/* Center Holographic Figure & Progress */}
-      <div className="relative z-10 my-0.5 flex items-center justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <p className="font-mono text-[8px] text-ink-muted truncate">Learning / Adapting / Evolving</p>
-          <div className="mt-1 h-1 w-full rounded-full bg-void-deep overflow-hidden">
-            <div
-              className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
-              style={{ width: `${growthRate}%` }}
-            />
-          </div>
+      {/* Center: Wide horizontal neon energy progress bar */}
+      <div className="relative z-10 flex-1 mx-6 flex flex-col justify-center">
+        <div className="relative h-2 w-full rounded-full bg-void-deep/90 overflow-hidden border border-arc-500/30">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-arc-600 via-arc-400 to-cyan-400 shadow-[0_0_12px_rgba(0,229,255,0.8)] transition-all duration-1000"
+            style={{ width: `${growthRate}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Right side: Percentage + Dragon Shadow Energy Artwork */}
+      <div className="relative z-10 flex items-center gap-4 flex-shrink-0">
+        <div className="text-right">
+          <span className="font-display text-xl font-bold text-white text-glow-arc leading-none">
+            {growthRate}%
+          </span>
+          <p className="font-mono text-[8px] text-arc-400/80 uppercase tracking-wider mt-0.5">
+            Current Arc Progress
+          </p>
         </div>
 
-        {/* Small holographic silhouette art with purple glow */}
-        <div className="relative flex h-10 w-12 items-center justify-center flex-shrink-0">
-          <div className="absolute inset-0 bg-arc-500/25 blur-md rounded-full animate-pulse-slow" />
-          <svg viewBox="0 0 60 40" className="h-full w-full drop-shadow-[0_0_8px_rgba(139,92,246,0.9)]" fill="none">
-            <path
-              d="M10 30 Q25 5 40 20 T55 10"
-              stroke="rgba(162,143,255,0.9)"
-              strokeWidth="1.5"
-              fill="none"
-            />
-            <circle cx="40" cy="20" r="2" fill="rgba(139,92,246,1)" />
-            <circle cx="55" cy="10" r="2.5" fill="rgba(162,143,255,1)" />
-            <path
-              d="M30 15 C32 10 38 10 40 15 L42 25 L28 25 Z"
-              fill="rgba(109,40,217,0.7)"
-            />
-          </svg>
+        {/* Embedded Dragon Shadow Energy Artwork */}
+        <div className="relative h-12 w-24 overflow-hidden rounded-lg border border-arc-500/20 bg-void/60 flex items-center justify-center flex-shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/shadow_dragon_hunter.png"
+            alt="Shadow Dragon Energy"
+            className="h-full w-full object-cover object-center opacity-85 hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              // Fallback to dragon_hunter_portrait if shadow_dragon_hunter missing
+              (e.currentTarget as HTMLImageElement).src = "/dragon_hunter_portrait.png";
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#060312]/80 via-transparent to-[#060312]/60 pointer-events-none" />
         </div>
       </div>
     </div>
