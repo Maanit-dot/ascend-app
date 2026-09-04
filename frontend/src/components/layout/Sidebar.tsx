@@ -105,7 +105,7 @@ export function Sidebar() {
   const intVal = character?.stats?.knowledge ?? 4;
 
   return (
-    <aside className="z-40 hidden h-full w-[240px] xl:w-[250px] flex-shrink-0 flex-col border-r border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden select-none">
+    <aside className="z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col border-r border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden select-none">
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
       <div className="relative flex h-12 flex-shrink-0 items-center gap-2.5 border-b border-arc-500/20 px-4">
         <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">

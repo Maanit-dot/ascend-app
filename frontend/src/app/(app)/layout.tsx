@@ -66,23 +66,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px]" />
       </div>
 
-      {/* ── Left Sidebar (fixed width, 100% height) ── */}
+      {/* ── Left Sidebar (15% width) ── */}
       <Sidebar />
 
-      {/* ── Central content column (flex-1, 100% height) ── */}
-      <div className="relative flex h-full flex-1 flex-col overflow-hidden z-10 min-w-0">
+      {/* ── Central content column (66% width) ── */}
+      <div className="relative flex h-full flex-1 min-w-0 flex-col overflow-hidden z-10">
         <TopBar />
         <main
           className={cn(
-            "flex-1 min-h-0 p-2.5 sm:p-3 scrollbar-thin scrollbar-thumb-arc-900/40",
-            isDashboard ? "overflow-hidden flex flex-col" : "overflow-y-auto"
+            "flex-1 min-h-0 p-2 sm:p-2.5 overflow-hidden flex flex-col"
           )}
         >
           {children}
         </main>
       </div>
 
-      {/* ── Right JARVIS Panel (fixed width, 100% height) ── */}
+      {/* ── Right JARVIS Panel (19% width) ── */}
       <JarvisWidget />
     </div>
   );

@@ -203,7 +203,7 @@ export function JarvisWidget() {
   const isActive = isListening || isSpeaking;
 
   return (
-    <aside className="z-40 hidden h-full w-[310px] xl:w-[335px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden p-2.5 gap-2 select-none">
+    <aside className="z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
       {/* ── HEADER ──────────────────────────────────────────────── */}
       <div className="flex h-10 flex-shrink-0 items-center justify-between border-b border-arc-500/20 px-1 pb-1">
         <div className="flex flex-col">
