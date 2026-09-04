@@ -59,11 +59,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="fixed inset-0 h-screen max-h-screen w-screen max-w-screen bg-void overflow-hidden flex z-0 select-none">
-      {/* Background radial glows */}
+    <div className="fixed inset-0 h-[100dvh] max-h-[100dvh] w-screen max-w-screen bg-[#03020A] overflow-hidden flex z-0 select-none">
+      {/* ── Background Cosmic Space, Nebula & Cyber Grid Layers ── */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-arc-500/8 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px]" />
+        {/* Cyber grid */}
+        <div className="absolute inset-0 cyber-grid opacity-20" />
+
+        {/* Deep purple nebula top-center */}
+        <div className="absolute -top-20 left-1/3 w-[650px] h-[450px] bg-gradient-to-b from-arc-600/25 via-arc-900/10 to-transparent rounded-full blur-[130px]" />
+
+        {/* Violet glow behind sidebar/hunter card */}
+        <div className="absolute bottom-0 left-0 w-80 h-96 bg-arc-500/15 rounded-full blur-[100px]" />
+
+        {/* Electric blue / cyan accent behind core */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-cyan-500/8 rounded-full blur-[120px]" />
+
+        {/* Violet glow behind JARVIS AI */}
+        <div className="absolute top-10 right-0 w-72 h-80 bg-arc-500/12 rounded-full blur-[90px]" />
+
+        {/* Subtle scanline overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,38,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
       </div>
 
       {/* ── Left Sidebar (15% width) ── */}
