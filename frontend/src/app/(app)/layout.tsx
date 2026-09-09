@@ -89,7 +89,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <TopBar />
         <main
           className={cn(
-            "flex-1 min-h-0 p-2 sm:p-2.5 overflow-hidden flex flex-col"
+            "flex-1 min-h-0 p-2 sm:p-2.5",
+            isDashboard
+              ? "overflow-hidden flex flex-col"
+              : "overflow-y-auto scrollbar-thin scrollbar-thumb-arc-900/40"
           )}
         >
           {children}

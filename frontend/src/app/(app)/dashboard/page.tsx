@@ -26,7 +26,7 @@ import { formatQuestValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { QuestInstance } from "@/types";
 
-/* ── Inline Quest Row (reference-style compact quest card) ─────── */
+/* ── Inline Quest Row (reference-style compact quest card with Done button) ─────── */
 function DashboardQuestRow({
   quest,
   onLog,
@@ -73,20 +73,25 @@ function DashboardQuestRow({
       )}
     >
       <div className="flex items-center gap-2">
-        <div
+        {/* Clickable Quick-Check Circle */}
+        <button
+          type="button"
+          onClick={() => !quest.is_completed && onLog(quest.id, quest.target_value - quest.current_value)}
+          disabled={quest.is_completed}
           className={cn(
-            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg border",
+            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg border transition-all",
             quest.is_completed
-              ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
-              : "border-arc-500/30 bg-void/70 text-arc-300"
+              ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
+              : "border-arc-500/30 bg-void/70 text-arc-300 hover:border-arc-400 hover:bg-arc-500/20 cursor-pointer"
           )}
+          title={quest.is_completed ? "Quest Completed" : "Click to mark Done"}
         >
           {quest.is_completed ? (
             <CheckCircle className="h-3.5 w-3.5" />
           ) : (
             <Icon className="h-3.5 w-3.5" />
           )}
-        </div>
+        </button>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-1">
@@ -98,9 +103,26 @@ function DashboardQuestRow({
             >
               {quest.template.name}
             </p>
-            <span className="flex-shrink-0 font-mono text-[8px] font-bold text-amber-400">
-              +{quest.xp_reward} XP
-            </span>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="font-mono text-[8px] font-bold text-amber-400">
+                +{quest.xp_reward} XP
+              </span>
+
+              {/* Done / Complete Action Button */}
+              {quest.is_completed ? (
+                <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 font-mono text-[7px] text-emerald-400 font-bold flex items-center gap-0.5">
+                  ✓ Done
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onLog(quest.id, quest.target_value - quest.current_value)}
+                  className="rounded bg-arc-500/20 border border-arc-400/40 px-1.5 py-0.5 font-mono text-[7px] text-arc-300 font-bold hover:bg-arc-500/40 hover:text-white transition-all shadow-glow-arc-sm"
+                >
+                  Done
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="mt-0.5 flex items-center justify-between font-mono text-[7px] text-ink-faint">
