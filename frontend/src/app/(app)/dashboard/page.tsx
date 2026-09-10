@@ -39,14 +39,14 @@ function DashboardQuestRow({
   const catClass = `quest-card-${quest.template.category}` as string;
 
   const CATEGORY_COLORS: Record<string, string> = {
-    study: "from-arc-500/20 to-arc-900/5 border-arc-500/30",
-    strength: "from-crimson-500/15 to-arc-900/5 border-crimson-500/30",
-    cardio: "from-cyan-500/15 to-arc-900/5 border-cyan-500/30",
-    mobility: "from-cyan-400/15 to-arc-900/5 border-cyan-400/30",
-    core: "from-crimson-400/15 to-arc-900/5 border-crimson-400/30",
-    recovery: "from-amber-400/15 to-arc-900/5 border-amber-400/30",
-    sport: "from-arc-400/15 to-arc-900/5 border-arc-400/30",
-    hidden: "from-amber-500/15 to-arc-900/5 border-amber-500/30",
+    study: "from-arc-500/20 to-arc-900/5",
+    strength: "from-crimson-500/15 to-arc-900/5",
+    cardio: "from-cyan-500/15 to-arc-900/5",
+    mobility: "from-cyan-400/15 to-arc-900/5",
+    core: "from-crimson-400/15 to-arc-900/5",
+    recovery: "from-amber-400/15 to-arc-900/5",
+    sport: "from-arc-400/15 to-arc-900/5",
+    hidden: "from-amber-500/15 to-arc-900/5",
   };
 
   const BAR_COLORS: Record<string, string> = {
@@ -66,7 +66,7 @@ function DashboardQuestRow({
   return (
     <div
       className={cn(
-        "relative group rounded-lg border bg-gradient-to-r px-2 py-1 transition-all duration-200 hover:border-arc-400/50 select-none",
+        "relative group rounded-lg bg-gradient-to-r px-2 py-1 transition-all duration-200 select-none",
         gradClass,
         catClass,
         quest.is_completed && "opacity-80"
@@ -79,10 +79,10 @@ function DashboardQuestRow({
           onClick={() => !quest.is_completed && onLog(quest.id, quest.target_value - quest.current_value)}
           disabled={quest.is_completed}
           className={cn(
-            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg border transition-all",
+            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg transition-all",
             quest.is_completed
-              ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
-              : "border-arc-500/30 bg-void/70 text-arc-300 hover:border-arc-400 hover:bg-arc-500/20 cursor-pointer"
+              ? "bg-emerald-500/20 text-emerald-400"
+              : "bg-void/70 text-arc-300 hover:bg-arc-500/20 cursor-pointer"
           )}
           title={quest.is_completed ? "Quest Completed" : "Click to mark Done"}
         >
@@ -110,14 +110,14 @@ function DashboardQuestRow({
 
               {/* Done / Complete Action Button */}
               {quest.is_completed ? (
-                <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 font-mono text-[7px] text-emerald-400 font-bold flex items-center gap-0.5">
+                <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 font-mono text-[7px] text-emerald-400 font-bold flex items-center gap-0.5">
                   ✓ Done
                 </span>
               ) : (
                 <button
                   type="button"
                   onClick={() => onLog(quest.id, quest.target_value - quest.current_value)}
-                  className="rounded bg-arc-500/20 border border-arc-400/40 px-1.5 py-0.5 font-mono text-[7px] text-arc-300 font-bold hover:bg-arc-500/40 hover:text-white transition-all shadow-glow-arc-sm"
+                  className="rounded bg-arc-500/25 px-1.5 py-0.5 font-mono text-[7px] text-arc-300 font-bold hover:bg-arc-500/40 hover:text-white transition-all shadow-glow-arc-sm"
                 >
                   Done
                 </button>
@@ -129,7 +129,7 @@ function DashboardQuestRow({
             <span>{formatQuestValue(quest.current_value, quest.template.unit)} / {formatQuestValue(quest.target_value, quest.template.unit)}</span>
           </div>
 
-          <div className="mt-0.5 h-1 w-full rounded-full bg-void-deep/90 overflow-hidden border border-white/5">
+          <div className="mt-0.5 h-1 w-full rounded-full bg-void-deep/90 overflow-hidden">
             <div
               className={cn("h-full rounded-full transition-all duration-500", barClass)}
               style={{ width: `${percent}%` }}
@@ -232,7 +232,7 @@ export default function DashboardPage() {
       {/* ── ROW 3: DAILY QUESTS (57%) + SYSTEM OVERVIEW (43%) (Flex 1) ─ */}
       <div className="flex-1 min-h-[220px] grid grid-cols-12 gap-2 overflow-hidden">
         {/* Daily Quests Panel — 7/12 (~58% width) */}
-        <div className="col-span-7 hud-panel p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 border border-arc-500/30 rounded-xl" id="daily-quests">
+        <div className="col-span-7 hud-panel p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
           <div className="flex flex-col flex-1 min-h-0">
             <div className="flex items-center justify-between flex-shrink-0">
               <div>
@@ -249,14 +249,14 @@ export default function DashboardPage() {
                 </span>
                 <Link
                   href="/quests"
-                  className="flex items-center gap-1 rounded border border-arc-500/25 bg-arc-500/10 px-2 py-0.5 font-mono text-[7px] text-arc-300 hover:bg-arc-500/20"
+                  className="flex items-center gap-1 rounded bg-arc-500/10 px-2 py-0.5 font-mono text-[7px] text-arc-300 hover:bg-arc-500/20"
                 >
                   FULL LOG <ArrowRight className="h-2 w-2" />
                 </Link>
               </div>
             </div>
 
-            <div className="mt-1 h-1 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden border border-arc-500/20">
+            <div className="mt-1 h-1 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden">
               <div
                 className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                 style={{ width: `${board?.completion_percent ?? 22}%` }}
@@ -284,7 +284,7 @@ export default function DashboardPage() {
 
           <Link
             href="/quests"
-            className="block text-center font-mono text-[8px] text-arc-400 hover:text-arc-300 pt-1 border-t border-arc-500/15 flex-shrink-0 mt-1"
+            className="block text-center font-mono text-[8px] text-arc-400 hover:text-arc-300 pt-1 flex-shrink-0 mt-1"
           >
             VIEW ALL QUESTS →
           </Link>

@@ -8,7 +8,7 @@ export function ArcProjectionPanel() {
   const growthRate = character ? Math.min(99, Math.round(character.xp_progress_percent || 78)) : 78;
 
   return (
-    <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-4 py-2 bg-[#060312]/90 border border-arc-500/30 rounded-xl select-none">
+    <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-4 py-2 bg-[#060312]/90 rounded-xl select-none">
       {/* Background cyber grid & energy particles */}
       <div className="absolute inset-0 cyber-grid opacity-15 pointer-events-none" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/60 to-transparent pointer-events-none" />
@@ -28,7 +28,7 @@ export function ArcProjectionPanel() {
 
       {/* Center: Wide horizontal neon energy progress bar */}
       <div className="relative z-10 flex-1 mx-6 flex flex-col justify-center">
-        <div className="relative h-2 w-full rounded-full bg-void-deep/90 overflow-hidden border border-arc-500/30">
+        <div className="relative h-2 w-full rounded-full bg-void-deep/90 overflow-hidden">
           <div
             className="h-full rounded-full bg-gradient-to-r from-arc-600 via-arc-400 to-cyan-400 shadow-[0_0_12px_rgba(0,229,255,0.8)] transition-all duration-1000"
             style={{ width: `${growthRate}%` }}
@@ -48,7 +48,7 @@ export function ArcProjectionPanel() {
         </div>
 
         {/* Embedded Dragon Shadow Energy Artwork */}
-        <div className="relative h-12 w-24 overflow-hidden rounded-lg border border-arc-500/20 bg-void/60 flex items-center justify-center flex-shrink-0">
+        <div className="relative h-12 w-24 overflow-hidden rounded-lg bg-void/60 flex items-center justify-center flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/shadow_dragon_hunter.png"

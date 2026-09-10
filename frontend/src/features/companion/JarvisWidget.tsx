@@ -85,14 +85,14 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
         className={cn(
           "rounded-lg px-2.5 py-1.5 max-w-[90%] leading-relaxed text-[10px]",
           isUser
-            ? "border border-arc-500/30 bg-arc-950/60 text-white ml-auto"
-            : "border border-arc-500/20 bg-void/80 text-ink-secondary"
+            ? "bg-arc-950/80 text-white ml-auto"
+            : "bg-void/80 text-ink-secondary"
         )}
       >
         <div className="whitespace-pre-line">{msg.text}</div>
 
         {msg.action?.type === "QUEST_MUTATION" && (
-          <div className="mt-1 rounded border border-emerald-500/30 bg-emerald-950/40 p-1.5">
+          <div className="mt-1 rounded bg-emerald-950/40 p-1.5">
             <div className="flex items-center gap-1 font-semibold text-emerald-400 text-[8px] mb-0.5">
               <CheckCircle2 className="h-2.5 w-2.5" />
               <span>Quest Target Updated</span>
@@ -203,9 +203,9 @@ export function JarvisWidget() {
   const isActive = isListening || isSpeaking;
 
   return (
-    <aside className="z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col border-l border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
+    <aside className="z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
       {/* ── HEADER ──────────────────────────────────────────────── */}
-      <div className="flex h-10 flex-shrink-0 items-center justify-between border-b border-arc-500/20 px-1 pb-1">
+      <div className="flex h-10 flex-shrink-0 items-center justify-between px-1 pb-1">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">JARVIS AI</h2>
@@ -239,7 +239,7 @@ export function JarvisWidget() {
         className="flex-1 space-y-1.5 overflow-y-auto p-1 font-body text-xs min-h-0 scrollbar-thin"
       >
         {messages.length === 0 ? (
-          <div className="rounded-lg border border-arc-500/15 bg-arc-950/30 p-2 text-center space-y-0.5">
+          <div className="rounded-lg bg-arc-950/30 p-2 text-center space-y-0.5">
             <p className="font-mono text-[9px] text-arc-300">&quot;How can I assist you, Hunter?&quot;</p>
             <p className="font-mono text-[8px] text-ink-faint">&quot;What are my quests today?&quot;</p>
           </div>
@@ -256,7 +256,7 @@ export function JarvisWidget() {
       </div>
 
       {/* ── SUGGESTED ACTIONS DOCK ───────────────────────────────── */}
-      <div className="flex-shrink-0 space-y-1 pt-1 border-t border-arc-500/15">
+      <div className="flex-shrink-0 space-y-1 pt-1">
         <p className="font-mono text-[7px] text-arc-400/80 uppercase tracking-widest font-bold px-0.5">
           SUGGESTED ACTIONS
         </p>
@@ -266,7 +266,7 @@ export function JarvisWidget() {
               key={i}
               onClick={() => handleCommandSubmit(action.cmd)}
               disabled={isProcessing}
-              className="flex w-full items-center justify-between rounded border border-arc-500/20 bg-void/80 px-2 py-1 text-left font-mono text-[8px] text-ink-secondary hover:border-arc-400/50 hover:bg-arc-950/40 hover:text-white transition-all group disabled:opacity-50"
+              className="flex w-full items-center justify-between rounded bg-void/80 px-2 py-1 text-left font-mono text-[8px] text-ink-secondary hover:bg-arc-950/40 hover:text-white transition-all group disabled:opacity-50"
             >
               <div className="flex items-center gap-1.5 truncate">
                 <action.icon className="h-2.5 w-2.5 text-arc-400 group-hover:text-arc-300 flex-shrink-0" />
@@ -279,16 +279,16 @@ export function JarvisWidget() {
       </div>
 
       {/* ── VOICE MIC BUTTON & INPUT ─────────────────────────────── */}
-      <div className="flex-shrink-0 space-y-1.5 pt-1 border-t border-arc-500/15">
+      <div className="flex-shrink-0 space-y-1.5 pt-1">
         <div className="flex flex-col items-center gap-0.5">
           <button
             type="button"
             onClick={toggleVoiceListening}
             className={cn(
-              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 shadow-glow-arc-lg",
+              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 shadow-glow-arc-lg",
               isListening
-                ? "border-crimson-500 bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
-                : "border-arc-300 bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105"
+                ? "bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
+                : "bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105"
             )}
             title={isListening ? "Stop Listening" : "Tap to speak"}
           >
@@ -304,7 +304,7 @@ export function JarvisWidget() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your command..."
             disabled={isProcessing}
-            className="w-full rounded border border-arc-500/20 bg-void/90 px-2.5 py-1 pr-7 font-mono text-[9px] text-ink-primary placeholder:text-ink-faint focus:border-arc-400 focus:outline-none disabled:opacity-50"
+            className="w-full rounded bg-void/90 px-2.5 py-1 pr-7 font-mono text-[9px] text-ink-primary placeholder:text-ink-faint focus:outline-none disabled:opacity-50"
           />
           <button
             type="submit"
@@ -318,7 +318,7 @@ export function JarvisWidget() {
 
       {/* ── RECENT ACHIEVEMENT CARD ─────────────────────────────── */}
       <div className="flex-shrink-0 pt-0.5">
-        <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
+        <div className="rounded-lg bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/25 text-amber-300">
               <Trophy className="h-3.5 w-3.5" />

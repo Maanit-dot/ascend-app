@@ -48,7 +48,7 @@ const NAV_ITEMS: NavItem[] = [
 /** Compact stat pill for the sidebar character panel */
 function StatPill({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="flex items-center justify-between gap-1 rounded border border-arc-500/20 bg-void/80 px-1.5 py-0.5">
+    <div className="flex items-center justify-between gap-1 rounded bg-void/80 px-1.5 py-0.5">
       <span className={cn("font-mono text-[7px] font-bold uppercase tracking-wider", color)}>{label}</span>
       <span className="font-mono text-[8px] font-bold text-white">{value}</span>
     </div>
@@ -81,7 +81,7 @@ function VitalBar({
           {current} / {max}
         </span>
       </div>
-      <div className="h-1 w-full rounded-full bg-void-deep/90 overflow-hidden border border-arc-500/20">
+      <div className="h-1 w-full rounded-full bg-void-deep/90 overflow-hidden">
         <div
           className={cn("h-full rounded-full transition-all duration-700", color.replace("text-", "bg-"))}
           style={{ width: `${pct}%` }}
@@ -105,9 +105,9 @@ export function Sidebar() {
   const intVal = character?.stats?.knowledge ?? 4;
 
   return (
-    <aside className="z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col border-r border-arc-500/20 bg-[#05030D]/95 lg:flex overflow-hidden select-none">
+    <aside className="z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden select-none">
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
-      <div className="relative flex h-12 flex-shrink-0 items-center gap-2.5 border-b border-arc-500/20 px-4">
+      <div className="relative flex h-12 flex-shrink-0 items-center gap-2.5 px-4">
         <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="white" strokeWidth="1.5" fill="rgba(255,255,255,0.15)" />
@@ -140,8 +140,8 @@ export function Sidebar() {
                 className={cn(
                   "group relative flex items-center gap-2 rounded-lg py-1 px-2 text-[10px] transition-all",
                   isActive
-                    ? "bg-gradient-to-r from-arc-600/35 via-arc-500/20 to-transparent border border-arc-400/50 text-white font-bold shadow-[0_0_10px_rgba(139,92,246,0.2)]"
-                    : "text-ink-muted hover:text-white hover:bg-arc-500/10 border border-transparent"
+                    ? "bg-gradient-to-r from-arc-600/35 via-arc-500/20 to-transparent text-white font-bold shadow-[0_0_10px_rgba(139,92,246,0.2)]"
+                    : "text-ink-muted hover:text-white hover:bg-arc-500/10"
                 )}
               >
                 <Icon
@@ -153,7 +153,7 @@ export function Sidebar() {
                 <span className="flex-1 truncate">{item.label}</span>
 
                 {item.badge && (
-                  <span className="rounded bg-arc-500/30 border border-arc-400/50 px-1 py-0.2 font-mono text-[6px] text-arc-300 font-bold">
+                  <span className="rounded bg-arc-500/30 px-1 py-0.2 font-mono text-[6px] text-arc-300 font-bold">
                     {item.badge}
                   </span>
                 )}
@@ -169,52 +169,43 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* ── Character Summary Panel (Pinned at bottom, ~35% height) ── */}
+      {/* ── Character Summary Panel (Pinned at bottom, extended upwards without photo) ── */}
       {user && character && (
-        <div className="flex-shrink-0 border-t border-arc-500/20 bg-[#0A051A]/90 p-2.5 space-y-1.5">
-          {/* Avatar + User details */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-shrink-0">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-arc-500/50 overflow-hidden bg-void shadow-glow-arc-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={user.avatar_url || "/hunter_avatar.jpg"}
-                  alt={user.display_name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between">
-                <p className="truncate font-display text-xs font-bold text-white leading-none">
-                  {user.display_name}
-                </p>
-                <span className="flex items-center gap-0.5 font-mono text-[6px] text-emerald-400 font-semibold">
-                  <span className="h-1 w-1 rounded-full bg-emerald-400" /> SYSTEM ONLINE
-                </span>
-              </div>
-              <p className="font-mono text-[7px] text-cyan-300 font-medium truncate mt-0.5">
-                {currentTitle}
+        <div className="flex-shrink-0 bg-[#0A051A]/95 p-3.5 space-y-2.5">
+          {/* User details left-aligned without photo */}
+          <div className="space-y-0.5">
+            <div className="flex items-center justify-between">
+              <p className="font-display text-sm font-bold text-white leading-tight">
+                {user.display_name}
               </p>
-              <span className="inline-block font-mono text-[7px] text-arc-400/80">
+              <span className="flex items-center gap-1 font-mono text-[7px] text-emerald-400 font-semibold">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> SYSTEM ONLINE
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[8px] text-cyan-300 font-semibold">
+                {currentTitle}
+              </span>
+              <span className="text-ink-faint text-[8px]">•</span>
+              <span className="font-mono text-[8px] text-arc-400/90">
                 Rank {currentRank} Hunter
               </span>
             </div>
           </div>
 
           {/* Level badge + XP */}
-          <div className="rounded border border-arc-500/20 bg-void/60 p-1">
-            <div className="flex items-center justify-between mb-0.5">
-              <span className="font-mono text-[7px] uppercase tracking-wider text-arc-400 font-bold">LEVEL</span>
-              <span className="font-display text-sm font-bold text-white leading-none text-glow-arc">
+          <div className="rounded-lg bg-void/70 p-2 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[8px] uppercase tracking-wider text-arc-400 font-bold">LEVEL</span>
+              <span className="font-display text-base font-bold text-white leading-none text-glow-arc">
                 {character.level}
               </span>
             </div>
-            <div className="mb-0.5 flex justify-between font-mono text-[6px] text-ink-faint">
-              <span>{character.current_xp.toLocaleString()} / {character.xp_required_for_next_level.toLocaleString()} XP</span>
+            <div className="flex justify-between font-mono text-[7px] text-ink-faint">
+              <span>{character.current_xp.toLocaleString()} XP</span>
+              <span>{character.xp_required_for_next_level.toLocaleString()} XP</span>
             </div>
-            <div className="h-1 w-full rounded-full bg-void-deep overflow-hidden border border-arc-500/20">
+            <div className="h-1.5 w-full rounded-full bg-void-deep overflow-hidden">
               <div
                 className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                 style={{ width: `${character.xp_progress_percent}%` }}
@@ -223,7 +214,7 @@ export function Sidebar() {
           </div>
 
           {/* HP / MP vitals */}
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-2 gap-1.5">
             <VitalBar
               label="HP"
               icon={Heart}
@@ -248,13 +239,13 @@ export function Sidebar() {
           </div>
 
           {/* Bottom icon row */}
-          <div className="flex items-center justify-around pt-1 border-t border-arc-500/15">
+          <div className="flex items-center justify-around pt-1.5 opacity-80">
             {[Share2, Globe, Bell, Settings].map((Icon, i) => (
               <button
                 key={i}
-                className="flex h-4 w-4 items-center justify-center rounded text-ink-faint hover:text-arc-400 hover:bg-arc-500/10 transition-colors"
+                className="flex h-5 w-5 items-center justify-center rounded text-ink-faint hover:text-arc-400 hover:bg-arc-500/10 transition-colors"
               >
-                <Icon className="h-2.5 w-2.5" />
+                <Icon className="h-3 w-3" />
               </button>
             ))}
           </div>

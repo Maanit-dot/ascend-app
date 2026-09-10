@@ -95,7 +95,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
                 <span>{character.current_xp.toLocaleString()} XP</span>
                 <span>{character.xp_required_for_next_level.toLocaleString()} XP</span>
               </div>
-              <div className="h-1 w-full rounded-full bg-void-deep/90 overflow-hidden border border-arc-500/30">
+              <div className="h-1 w-full rounded-full bg-void-deep/90 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                   style={{ width: `${character.xp_progress_percent}%` }}
@@ -105,15 +105,15 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
 
             {/* Dynamic 3-Column Stats (RANK | TITLE | CLASS) */}
             <div className="grid grid-cols-3 gap-1 pt-0.5 text-center font-mono text-[8px]">
-              <div className="rounded border border-arc-500/30 bg-void/80 p-0.5">
+              <div className="rounded bg-void/80 p-0.5">
                 <p className="text-ink-faint text-[6px] uppercase tracking-wider font-bold">RANK</p>
                 <p className="font-bold text-amber-400">{rank}</p>
               </div>
-              <div className="rounded border border-arc-500/30 bg-void/80 p-0.5">
+              <div className="rounded bg-void/80 p-0.5">
                 <p className="text-ink-faint text-[6px] uppercase tracking-wider font-bold">TITLE</p>
                 <p className="font-bold text-arc-300 truncate">{title}</p>
               </div>
-              <div className="rounded border border-arc-500/30 bg-void/80 p-0.5">
+              <div className="rounded bg-void/80 p-0.5">
                 <p className="text-ink-faint text-[6px] uppercase tracking-wider font-bold">CLASS</p>
                 <p className="font-bold text-white truncate">{classTitle}</p>
               </div>

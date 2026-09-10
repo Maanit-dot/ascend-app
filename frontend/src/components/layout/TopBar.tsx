@@ -103,10 +103,10 @@ export function TopBar() {
   const subtitle = pageInfo.subtitle.replace("%NAME%", user.display_name);
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 flex-shrink-0 items-center justify-between border-b border-arc-500/20 bg-[#05030D]/95 px-4 backdrop-blur-xl select-none">
+    <header className="sticky top-0 z-30 flex h-12 flex-shrink-0 items-center justify-between bg-[#05030D]/95 px-4 backdrop-blur-xl select-none">
       {/* ── Page Title Block ── */}
       <div className="flex flex-col min-w-0">
-        <h1 className="font-display text-sm font-bold tracking-[0.25em] text-white leading-none truncate text-glow-arc">
+        <h1 className="font-display text-sm font-bold tracking-[0.2em] text-white leading-none truncate text-glow-arc">
           {pageInfo.title}
         </h1>
         <p className="mt-0.5 font-mono text-[8px] tracking-wider text-arc-400/80 uppercase truncate">
@@ -117,8 +117,8 @@ export function TopBar() {
       {/* ── Center: Live Search Field with CTRL K ── */}
       <div ref={searchRef} className="relative hidden md:block">
         <div className={cn(
-          "flex items-center gap-2 rounded-lg border border-arc-500/30 bg-void/80 px-2.5 py-1 transition-all",
-          isSearchOpen ? "border-arc-400/60 bg-void w-56" : "w-48"
+          "flex items-center gap-2 rounded-lg bg-void/80 px-2.5 py-1 transition-all",
+          isSearchOpen ? "bg-void w-56" : "w-48"
         )}>
           <Search className="h-3 w-3 flex-shrink-0 text-arc-400" />
           <input
@@ -130,14 +130,14 @@ export function TopBar() {
             placeholder="Search anything..."
             className="w-full bg-transparent font-mono text-[9px] text-white placeholder:text-ink-faint focus:outline-none"
           />
-          <span className="rounded bg-arc-500/20 border border-arc-500/30 px-1 py-0.2 font-mono text-[7px] text-arc-300 font-bold flex-shrink-0">
+          <span className="rounded bg-arc-500/20 px-1 py-0.2 font-mono text-[7px] text-arc-300 font-bold flex-shrink-0">
             CTRL K
           </span>
         </div>
 
         {/* Dropdown Suggestions */}
         {isSearchOpen && (
-          <div className="absolute top-full mt-1.5 left-0 w-64 rounded-xl border border-arc-500/30 bg-[#0A051A]/95 p-1 shadow-2xl backdrop-blur-2xl z-50 animate-fade-in">
+          <div className="absolute top-full mt-1.5 left-0 w-64 rounded-xl bg-[#0A051A]/95 p-1 shadow-2xl backdrop-blur-2xl z-50 animate-fade-in">
             {filteredPages.map((page) => (
               <button
                 key={page.href}
@@ -157,19 +157,19 @@ export function TopBar() {
       {/* ── Right Cluster: Date/Time + Streak + Utility Icons + Profile ── */}
       <div className="flex items-center gap-2 flex-shrink-0">
         {/* Date / Day pill */}
-        <div className="hidden xl:flex flex-col text-right font-mono text-[7px] text-ink-secondary leading-tight pr-1 border-r border-arc-500/20">
+        <div className="hidden xl:flex flex-col text-right font-mono text-[7px] text-ink-secondary leading-tight pr-1">
           <span className="text-white font-bold">{dateStr}</span>
           <span className="text-arc-400">{dayStr}</span>
         </div>
 
         {/* Time pill with orange dot */}
-        <div className="hidden sm:flex items-center gap-1 rounded border border-arc-500/30 bg-void/80 px-2 py-0.5 font-mono text-[8px] text-white font-bold">
+        <div className="hidden sm:flex items-center gap-1 rounded bg-void/80 px-2 py-0.5 font-mono text-[8px] text-white font-bold">
           <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
           <span>{timeStr}</span>
         </div>
 
         {/* Dynamic Streak Pill */}
-        <div className="flex items-center gap-1 rounded border border-orange-500/40 bg-orange-950/30 px-2 py-0.5 font-mono text-[8px] text-orange-300 font-bold">
+        <div className="flex items-center gap-1 rounded bg-orange-950/40 px-2 py-0.5 font-mono text-[8px] text-orange-300 font-bold">
           <Flame className="h-2.5 w-2.5 text-orange-400" />
           <span>{character.current_streak_days}D STREAK</span>
         </div>
@@ -177,7 +177,7 @@ export function TopBar() {
         {/* Utility icons */}
         <button
           onClick={() => router.push("/statistics")}
-          className="flex h-6 w-6 items-center justify-center rounded border border-arc-500/20 bg-void/60 text-arc-300 hover:bg-arc-500/20 transition-colors"
+          className="flex h-6 w-6 items-center justify-center rounded bg-void/60 text-arc-300 hover:bg-arc-500/20 transition-colors"
           title="Statistics"
         >
           <BarChart2 className="h-3 w-3" />
@@ -187,7 +187,7 @@ export function TopBar() {
 
         <button
           onClick={() => router.push("/settings")}
-          className="flex h-6 w-6 items-center justify-center rounded border border-arc-500/20 bg-void/60 text-arc-300 hover:bg-arc-500/20 transition-colors"
+          className="flex h-6 w-6 items-center justify-center rounded bg-void/60 text-arc-300 hover:bg-arc-500/20 transition-colors"
           title="Settings"
         >
           <Settings className="h-3 w-3" />
@@ -196,7 +196,7 @@ export function TopBar() {
         {/* Far-right Avatar */}
         <div
           onClick={() => router.push("/character")}
-          className="relative flex h-7 w-7 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg border border-arc-400/50 overflow-hidden bg-void shadow-glow-arc-sm hover:scale-105 transition-transform"
+          className="relative flex h-7 w-7 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg overflow-hidden bg-void shadow-glow-arc-sm hover:scale-105 transition-transform"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

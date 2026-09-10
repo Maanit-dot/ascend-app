@@ -94,7 +94,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
   const storageUsed = Math.min(99, Math.round(30 + xpProgressPercent * 0.25));
 
   return (
-    <div className="hud-panel p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/85 border border-arc-500/30 rounded-xl select-none">
+    <div className="hud-panel p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/85 rounded-xl select-none">
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0">
         <h3 className="font-display text-xs font-bold tracking-wider text-white">SYSTEM OVERVIEW</h3>
@@ -127,7 +127,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
               <span>STORAGE USED</span>
               <span className="text-white font-bold">{storageUsed}%</span>
             </div>
-            <div className="h-1 w-full rounded-full bg-void-deep overflow-hidden border border-arc-500/20">
+            <div className="h-1 w-full rounded-full bg-void-deep overflow-hidden">
               <div
                 className="h-full rounded-full bg-cyan-400 shadow-glow-cyan"
                 style={{ width: `${storageUsed}%` }}
@@ -148,20 +148,20 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       </div>
 
       {/* 4 Telemetry Boxes at Bottom */}
-      <div className="grid grid-cols-4 gap-1 pt-1 border-t border-arc-500/20 flex-shrink-0">
-        <div className="rounded border border-arc-500/20 bg-void/70 p-0.5 text-center">
+      <div className="grid grid-cols-4 gap-1 pt-1 flex-shrink-0">
+        <div className="rounded bg-void/70 p-0.5 text-center">
           <p className="font-mono text-[6px] text-ink-muted uppercase font-semibold">ACTIVE</p>
           <p className="font-mono text-[8px] font-bold text-amber-400 truncate">{activeBoost ?? "2.1x XP"}</p>
         </div>
-        <div className="rounded border border-arc-500/20 bg-void/70 p-0.5 text-center">
+        <div className="rounded bg-void/70 p-0.5 text-center">
           <p className="font-mono text-[6px] text-ink-muted uppercase font-semibold">SERVER</p>
           <p className="font-mono text-[8px] font-bold text-emerald-400 truncate">Online</p>
         </div>
-        <div className="rounded border border-arc-500/20 bg-void/70 p-0.5 text-center">
+        <div className="rounded bg-void/70 p-0.5 text-center">
           <p className="font-mono text-[6px] text-ink-muted uppercase font-semibold">XP%</p>
           <p className="font-mono text-[8px] font-bold text-arc-300 truncate">{Math.round(xpProgressPercent || 74)}%</p>
         </div>
-        <div className="rounded border border-arc-500/20 bg-void/70 p-0.5 text-center">
+        <div className="rounded bg-void/70 p-0.5 text-center">
           <p className="font-mono text-[6px] text-ink-muted uppercase font-semibold">PING</p>
           <p className="font-mono text-[8px] font-bold text-cyan-300 truncate">{ping}</p>
         </div>

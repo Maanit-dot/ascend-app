@@ -29,12 +29,12 @@ export function KpiCard({
   iconBgClass = "from-arc-700 to-arc-900",
 }: KpiCardProps) {
   return (
-    <div className="hud-panel relative flex flex-col justify-between p-2 h-full bg-[#0A051A]/85 border border-arc-500/30 rounded-xl group hover:border-arc-400/50 transition-all duration-200 overflow-hidden select-none">
+    <div className="hud-panel relative flex flex-col justify-between p-2 h-full bg-[#0A051A]/85 rounded-xl group transition-all duration-200 overflow-hidden select-none">
       {/* Top: label + icon */}
       <div className="flex items-center justify-between gap-1">
         <span className="font-mono text-[7px] uppercase tracking-wider text-arc-400/70 truncate font-bold">{label}</span>
         <div className={cn(
-          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br border border-white/10",
+          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br",
           iconBgClass,
           glowClass,
         )}>
