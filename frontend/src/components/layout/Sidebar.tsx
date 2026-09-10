@@ -105,9 +105,17 @@ export function Sidebar() {
   const intVal = character?.stats?.knowledge ?? 4;
 
   return (
-    <aside className="z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden select-none">
+    <aside className="relative z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden select-none">
+      {/* ── User-Provided Background Image ───────── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/sidebar_bg.png"
+        alt="Sidebar Background"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-25 z-0"
+      />
+
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
-      <div className="relative flex h-12 flex-shrink-0 items-center gap-2.5 px-4">
+      <div className="relative z-10 flex h-12 flex-shrink-0 items-center gap-2.5 px-4">
         <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="white" strokeWidth="1.5" fill="rgba(255,255,255,0.15)" />

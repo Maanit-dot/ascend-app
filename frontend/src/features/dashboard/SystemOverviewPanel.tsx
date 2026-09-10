@@ -94,9 +94,17 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
   const storageUsed = Math.min(99, Math.round(30 + xpProgressPercent * 0.25));
 
   return (
-    <div className="hud-panel p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/85 rounded-xl select-none">
+    <div className="hud-panel relative p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/85 rounded-xl select-none">
+      {/* ── User-Provided Background Image ───────── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/ascend_core_bg.png"
+        alt="Ascend Core Background"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-35 z-0"
+      />
+
       {/* Header */}
-      <div className="flex items-center justify-between flex-shrink-0">
+      <div className="relative z-10 flex items-center justify-between flex-shrink-0">
         <h3 className="font-display text-xs font-bold tracking-wider text-white">SYSTEM OVERVIEW</h3>
         <span className="font-mono text-[8px] text-emerald-400 font-semibold flex items-center gap-1">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Online
@@ -104,7 +112,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       </div>
 
       {/* Middle Section: Reactor Core on Left + Telemetry List on Right */}
-      <div className="flex items-center justify-between gap-3 my-auto min-h-0">
+      <div className="relative z-10 flex items-center justify-between gap-3 my-auto min-h-0">
         {/* Core Reactor */}
         <AscendCore xpPercent={xpProgressPercent} questPercent={questPercent} />
 
@@ -148,7 +156,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       </div>
 
       {/* 4 Telemetry Boxes at Bottom */}
-      <div className="grid grid-cols-4 gap-1 pt-1 flex-shrink-0">
+      <div className="relative z-10 grid grid-cols-4 gap-1 pt-1 flex-shrink-0">
         <div className="rounded bg-void/70 p-0.5 text-center">
           <p className="font-mono text-[6px] text-ink-muted uppercase font-semibold">ACTIVE</p>
           <p className="font-mono text-[8px] font-bold text-amber-400 truncate">{activeBoost ?? "2.1x XP"}</p>

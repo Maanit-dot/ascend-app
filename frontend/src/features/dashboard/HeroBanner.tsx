@@ -28,10 +28,10 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
       ref={bannerRef}
       className="hud-panel-elite relative overflow-hidden h-full flex items-center bg-[#03030B] select-none"
     >
-      {/* ── Text-Free Background Image (media_1787827147820.png processed) ───────── */}
+      {/* ── User-Provided Background Image ───────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/hero_banner_textfree_final.png"
+        src="/custom_bg/hero_banner_bg.png"
         alt="Hero Banner Background"
         className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-95"
         style={{ zIndex: 0 }}

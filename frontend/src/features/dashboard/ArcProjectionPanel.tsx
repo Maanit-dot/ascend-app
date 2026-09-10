@@ -9,6 +9,14 @@ export function ArcProjectionPanel() {
 
   return (
     <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-4 py-2 bg-[#060312]/90 rounded-xl select-none">
+      {/* ── User-Provided Background Image ───────── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/arc_projection_bg.png"
+        alt="Arc Projection Background"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-45 z-0"
+      />
+
       {/* Background cyber grid & energy particles */}
       <div className="absolute inset-0 cyber-grid opacity-15 pointer-events-none" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/60 to-transparent pointer-events-none" />

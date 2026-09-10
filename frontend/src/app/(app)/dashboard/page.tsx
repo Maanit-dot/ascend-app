@@ -176,64 +176,78 @@ export default function DashboardPage() {
       </div>
 
       {/* ── ROW 2: 5 KPI METRIC CARDS (Height ~65px, flex-shrink-0) ───── */}
-      <div className="h-[65px] flex-shrink-0 grid grid-cols-5 gap-2">
-        <KpiCard
-          label="QUESTS COMPLETED"
-          value={`${completedCount} / ${totalCount}`}
-          icon={ClipboardList}
-          trend={board ? `${Math.round(board.completion_percent)}% to next` : "22% to next"}
-          trendUp={false}
-          accentClass="text-arc-300"
-          glowClass="shadow-glow-arc-sm"
-          iconBgClass="from-purple-600 to-purple-950"
+      <div className="relative h-[65px] flex-shrink-0 rounded-xl overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/custom_bg/kpi_keys_bg.png"
+          alt="KPI Background"
+          className="absolute inset-0 h-full w-full object-cover pointer-events-none opacity-40 z-0"
         />
-        <KpiCard
-          label="DAILY XP"
-          value={`${character.current_xp.toLocaleString()}`}
-          customIcon={<span className="font-mono text-[9px] font-bold text-blue-300">XP</span>}
-          trend={`↑ ${Math.round(character.xp_progress_percent || 74)}% from yesterday`}
-          trendUp={true}
-          accentClass="text-blue-400"
-          glowClass="shadow-glow-cyan"
-          iconBgClass="from-blue-600 to-blue-950"
-        />
-        <KpiCard
-          label="OVERALL PROGRESS"
-          value={`${Math.round(character.xp_progress_percent || 74)}%`}
-          icon={TrendingUp}
-          trend={`↑ Level ${character.level}`}
-          trendUp={true}
-          accentClass="text-cyan-400"
-          glowClass="shadow-glow-cyan"
-          iconBgClass="from-cyan-600 to-cyan-950"
-        />
-        <KpiCard
-          label="STREAK"
-          value={`${character.current_streak_days} Days`}
-          icon={Flame}
-          trend="Keep it up!"
-          trendUp={true}
-          accentClass="text-amber-400"
-          glowClass="shadow-glow-amber"
-          iconBgClass="from-orange-600 to-orange-950"
-        />
-        <KpiCard
-          label="CREDITS"
-          value="15,850"
-          icon={DollarSign}
-          trend="Unlimited Plan"
-          trendUp={false}
-          accentClass="text-amber-300"
-          glowClass="shadow-glow-amber"
-          iconBgClass="from-amber-600 to-amber-950"
-        />
+        <div className="relative z-10 grid grid-cols-5 gap-2 h-full">
+          <KpiCard
+            label="QUESTS COMPLETED"
+            value={`${completedCount} / ${totalCount}`}
+            icon={ClipboardList}
+            trend={board ? `${Math.round(board.completion_percent)}% to next` : "22% to next"}
+            trendUp={false}
+            accentClass="text-arc-300"
+            glowClass="shadow-glow-arc-sm"
+            iconBgClass="from-purple-600 to-purple-950"
+          />
+          <KpiCard
+            label="DAILY XP"
+            value={`${character.current_xp.toLocaleString()}`}
+            customIcon={<span className="font-mono text-[9px] font-bold text-blue-300">XP</span>}
+            trend={`↑ ${Math.round(character.xp_progress_percent || 74)}% from yesterday`}
+            trendUp={true}
+            accentClass="text-blue-400"
+            glowClass="shadow-glow-cyan"
+            iconBgClass="from-blue-600 to-blue-950"
+          />
+          <KpiCard
+            label="OVERALL PROGRESS"
+            value={`${Math.round(character.xp_progress_percent || 74)}%`}
+            icon={TrendingUp}
+            trend={`↑ Level ${character.level}`}
+            trendUp={true}
+            accentClass="text-cyan-400"
+            glowClass="shadow-glow-cyan"
+            iconBgClass="from-cyan-600 to-cyan-950"
+          />
+          <KpiCard
+            label="STREAK"
+            value={`${character.current_streak_days} Days`}
+            icon={Flame}
+            trend="Keep it up!"
+            trendUp={true}
+            accentClass="text-amber-400"
+            glowClass="shadow-glow-amber"
+            iconBgClass="from-orange-600 to-orange-950"
+          />
+          <KpiCard
+            label="CREDITS"
+            value="15,850"
+            icon={DollarSign}
+            trend="Unlimited Plan"
+            trendUp={false}
+            accentClass="text-amber-300"
+            glowClass="shadow-glow-amber"
+            iconBgClass="from-amber-600 to-amber-950"
+          />
+        </div>
       </div>
 
       {/* ── ROW 3: DAILY QUESTS (57%) + SYSTEM OVERVIEW (43%) (Flex 1) ─ */}
       <div className="flex-1 min-h-[220px] grid grid-cols-12 gap-2 overflow-hidden">
         {/* Daily Quests Panel — 7/12 (~58% width) */}
-        <div className="col-span-7 hud-panel p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
-          <div className="flex flex-col flex-1 min-h-0">
+        <div className="col-span-7 hud-panel relative p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/custom_bg/daily_quests_bg.png"
+            alt="Daily Quests Background"
+            className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-30 z-0"
+          />
+          <div className="relative z-10 flex flex-col flex-1 min-h-0">
             <div className="flex items-center justify-between flex-shrink-0">
               <div>
                 <h2 className="font-display text-xs font-bold tracking-wider text-white">

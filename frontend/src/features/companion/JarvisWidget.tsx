@@ -203,9 +203,17 @@ export function JarvisWidget() {
   const isActive = isListening || isSpeaking;
 
   return (
-    <aside className="z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
+    <aside className="relative z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
+      {/* ── User-Provided Background Image ───────── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/jarvis_bg.png"
+        alt="JARVIS Background"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-30 z-0"
+      />
+
       {/* ── HEADER ──────────────────────────────────────────────── */}
-      <div className="flex h-10 flex-shrink-0 items-center justify-between px-1 pb-1">
+      <div className="relative z-10 flex h-10 flex-shrink-0 items-center justify-between px-1 pb-1">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <h2 className="font-display text-xs font-bold tracking-[0.2em] text-white text-glow-arc">JARVIS AI</h2>
@@ -231,7 +239,9 @@ export function JarvisWidget() {
       </div>
 
       {/* ── HOLOGRAPHIC SOUNDWAVE CORE ─────────────────────────── */}
-      <JarvisHoloReactor active={isActive || isProcessing} />
+      <div className="relative z-10">
+        <JarvisHoloReactor active={isActive || isProcessing} />
+      </div>
 
       {/* ── CHAT MESSAGE TRANSCRIPT ─────────────────────────────── */}
       <div
