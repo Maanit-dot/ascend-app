@@ -172,17 +172,17 @@ export function Sidebar() {
       {/* ── Character Summary Panel (Pinned at bottom, extended upwards without photo) ── */}
       {user && character && (
         <div className="flex-shrink-0 bg-[#0A051A]/95 p-3.5 space-y-2.5">
-          {/* User details strictly left-aligned without photo */}
-          <div className="flex flex-col items-start text-left space-y-1">
-            <div className="flex items-center gap-1.5 font-mono text-[7px] text-emerald-400 font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          {/* User details strictly right-aligned without photo */}
+          <div className="flex flex-col items-end text-right space-y-1">
+            <div className="flex items-center justify-end gap-1.5 font-mono text-[7px] text-emerald-400 font-semibold">
               <span>SYSTEM ONLINE</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
             </div>
-            <div className="w-full text-left">
-              <p className="font-display text-base font-bold text-white leading-tight tracking-wide text-left text-glow-arc truncate">
+            <div className="w-full text-right">
+              <p className="font-display text-base font-bold text-white leading-tight tracking-wide text-right text-glow-arc truncate">
                 {user.display_name}
               </p>
-              <div className="flex items-center gap-1.5 mt-0.5 text-left">
+              <div className="flex items-center justify-end gap-1.5 mt-0.5 text-right">
                 <span className="font-mono text-[8px] text-cyan-300 font-semibold">
                   {currentTitle}
                 </span>
