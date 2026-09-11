@@ -78,7 +78,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         {/* ── RIGHT ZONE (30-35% Width): Dynamic Hunter Info & Level Ring ───── */}
         <div className="flex items-center justify-end gap-3 2xl:gap-5 w-[37%] min-w-0 self-center">
           {/* User Name, XP & Stats column */}
-          <div className="flex flex-col justify-center gap-1 2xl:gap-2 min-w-[130px] 2xl:min-w-[180px] flex-1">
+          <div className="flex flex-col justify-center gap-1 2xl:gap-2 min-w-[130px] 2xl:min-w-[180px] max-w-[240px] 2xl:max-w-[320px]">
             <div>
               <p className="font-mono text-[8px] 2xl:text-[10px] uppercase tracking-widest text-arc-400 font-bold">HUNTER</p>
               <div className="flex items-center gap-1.5">
@@ -124,7 +124,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         {/* ── Level Indicator — absolutely positioned over the background orb ─── */}
         <div
           className="absolute flex flex-col items-center justify-center"
-          style={{ left: "78%", top: "38%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
+          style={{ left: "88%", top: "40%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
         >
           <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
