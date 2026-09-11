@@ -169,21 +169,21 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2.5 select-none min-h-full pb-4">
-      {/* ── ROW 1: CINEMATIC HERO BANNER (Height ~195px, flex-shrink-0) ── */}
-      <div className="h-[195px] flex-shrink-0">
+    <div className="w-full max-w-[864px] 2xl:max-w-[1205px] mx-auto flex flex-col gap-2 2xl:gap-3.5 select-none min-h-full pb-4">
+      {/* ── ROW 1: CINEMATIC HERO BANNER (Normal: 185px | F11: 258px) ── */}
+      <div className="h-[185px] 2xl:h-[258px] flex-shrink-0">
         <HeroBanner user={user} board={board} />
       </div>
 
-      {/* ── ROW 2: 5 KPI METRIC CARDS (Height ~65px, flex-shrink-0) ───── */}
-      <div className="relative h-[65px] flex-shrink-0 rounded-xl overflow-hidden">
+      {/* ── ROW 2: 5 KPI METRIC CARDS (Normal: 60px | F11: 75px) ───── */}
+      <div className="relative h-[60px] 2xl:h-[75px] flex-shrink-0 rounded-xl overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/custom_bg/kpi_keys_bg.png"
           alt="KPI Background"
           className="absolute inset-0 h-full w-full object-cover pointer-events-none opacity-40 z-0"
         />
-        <div className="relative z-10 grid grid-cols-5 gap-2 h-full">
+        <div className="relative z-10 grid grid-cols-5 gap-1.5 2xl:gap-2.5 h-full">
           <KpiCard
             label="QUESTS COMPLETED"
             value={`${completedCount} / ${totalCount}`}
@@ -197,7 +197,7 @@ export default function DashboardPage() {
           <KpiCard
             label="DAILY XP"
             value={`${character.current_xp.toLocaleString()}`}
-            customIcon={<span className="font-mono text-[9px] font-bold text-blue-300">XP</span>}
+            customIcon={<span className="font-mono text-[9px] 2xl:text-[11px] font-bold text-blue-300">XP</span>}
             trend={`↑ ${Math.round(character.xp_progress_percent || 74)}% from yesterday`}
             trendUp={true}
             accentClass="text-blue-400"
@@ -237,10 +237,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ROW 3: DAILY QUESTS (42%) + SYSTEM OVERVIEW (58%) (Flex 1) ─ */}
-      <div className="flex-1 min-h-[220px] grid grid-cols-12 gap-2 overflow-hidden">
-        {/* Daily Quests Panel — 5/12 (~42% width) */}
-        <div className="col-span-5 hud-panel relative p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
+      {/* ── ROW 3: DAILY QUESTS (325px/453px) + SYSTEM OVERVIEW (527px/735px) (Normal: 269px | F11: 375px) ─ */}
+      <div className="h-[269px] 2xl:h-[375px] grid grid-cols-12 gap-2 2xl:gap-3.5 overflow-hidden flex-shrink-0">
+        {/* Daily Quests Panel — 5/12 (~38% width: 325px / 453px) */}
+        <div className="col-span-5 hud-panel relative p-2.5 2xl:p-3.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/custom_bg/daily_quests_bg.png"
@@ -250,27 +250,27 @@ export default function DashboardPage() {
           <div className="relative z-10 flex flex-col flex-1 min-h-0">
             <div className="flex items-center justify-between flex-shrink-0">
               <div>
-                <h2 className="font-display text-xs font-bold tracking-wider text-white">
+                <h2 className="font-display text-xs 2xl:text-sm font-bold tracking-wider text-white">
                   DAILY QUESTS
                 </h2>
-                <p className="font-mono text-[8px] text-arc-400/70 mt-0.5">
+                <p className="font-mono text-[8px] 2xl:text-[10px] text-arc-400/70 mt-0.5">
                   Complete your quests and level up.
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[8px] text-ink-secondary">
+                <span className="font-mono text-[8px] 2xl:text-[10px] text-ink-secondary">
                   {completedCount}/{totalCount} Completed
                 </span>
                 <Link
                   href="/quests"
-                  className="flex items-center gap-1 rounded bg-arc-500/10 px-2 py-0.5 font-mono text-[7px] text-arc-300 hover:bg-arc-500/20"
+                  className="flex items-center gap-1 rounded bg-arc-500/10 px-2 py-0.5 font-mono text-[7px] 2xl:text-[9px] text-arc-300 hover:bg-arc-500/20"
                 >
                   FULL LOG <ArrowRight className="h-2 w-2" />
                 </Link>
               </div>
             </div>
 
-            <div className="mt-1 h-1 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden">
+            <div className="mt-1 2xl:mt-1.5 h-1 2xl:h-1.5 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden">
               <div
                 className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
                 style={{ width: `${board?.completion_percent ?? 22}%` }}
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                 <Loader2 className="h-4 w-4 animate-spin text-arc-400" />
               </div>
             ) : allQuests.length > 0 ? (
-              <div className="mt-1.5 flex-1 min-h-0 space-y-1 overflow-y-auto pr-1 scrollbar-thin">
+              <div className="mt-1.5 2xl:mt-2.5 flex-1 min-h-0 space-y-1 2xl:space-y-1.5 overflow-y-auto pr-1 scrollbar-thin">
                 {allQuests.map((quest) => (
                   <DashboardQuestRow key={quest.id} quest={quest} onLog={handleLog} />
                 ))}
@@ -298,14 +298,14 @@ export default function DashboardPage() {
 
           <Link
             href="/quests"
-            className="block text-center font-mono text-[8px] text-arc-400 hover:text-arc-300 pt-1 flex-shrink-0 mt-1"
+            className="block text-center font-mono text-[8px] 2xl:text-[10px] text-arc-400 hover:text-arc-300 pt-1 flex-shrink-0 mt-1"
           >
             VIEW ALL QUESTS →
           </Link>
         </div>
 
-        {/* System Overview Panel — 7/12 (~58% width) */}
-        <div className="col-span-7 min-h-0 overflow-hidden">
+        {/* System Overview Panel — 7/12 (~62% width: 527px / 735px) */}
+        <div className="col-span-7 min-h-0 overflow-hidden h-full">
           <SystemOverviewPanel
             xpProgressPercent={character.xp_progress_percent}
             activeBoost="2.1x XP"
@@ -313,8 +313,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ROW 4: ARC PROJECTION (Height ~75px, flex-shrink-0) ─────────── */}
-      <div className="h-[75px] flex-shrink-0">
+      {/* ── ROW 4: ARC PROJECTION (Normal: 96px | F11: 134px) ─────────── */}
+      <div className="h-[96px] 2xl:h-[134px] flex-shrink-0">
         <ArcProjectionPanel />
       </div>
 

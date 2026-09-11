@@ -103,13 +103,13 @@ export function TopBar() {
   const subtitle = pageInfo.subtitle.replace("%NAME%", user.display_name);
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 flex-shrink-0 items-center justify-between bg-[#05030D]/95 px-4 backdrop-blur-xl select-none">
+    <header className="sticky top-0 z-30 flex h-[54px] 2xl:h-[75px] flex-shrink-0 items-center justify-between bg-[#05030D]/95 px-4 2xl:px-6 backdrop-blur-xl select-none transition-all">
       {/* ── Page Title Block ── */}
       <div className="flex flex-col min-w-0">
-        <h1 className="font-display text-sm font-bold tracking-[0.2em] text-white leading-none truncate text-glow-arc">
+        <h1 className="font-display text-sm 2xl:text-base font-bold tracking-[0.2em] text-white leading-none truncate text-glow-arc">
           {pageInfo.title}
         </h1>
-        <p className="mt-0.5 font-mono text-[8px] tracking-wider text-arc-400/80 uppercase truncate">
+        <p className="mt-0.5 2xl:mt-1 font-mono text-[8px] 2xl:text-[10px] tracking-wider text-arc-400/80 uppercase truncate">
           {subtitle}
         </p>
       </div>
