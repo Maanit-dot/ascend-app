@@ -123,7 +123,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
           {/* Dynamic Level Indicator — aligned dead-center with the background glowing level sphere */}
           <div
             className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "4px" }}
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "6px" }}
           >
             <div className="relative z-10 flex flex-col items-center justify-center text-center">
               <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
