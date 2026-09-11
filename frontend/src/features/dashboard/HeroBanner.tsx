@@ -124,7 +124,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         {/* ── Level Indicator — absolutely positioned over the background orb ─── */}
         <div
           className="absolute flex flex-col items-center justify-center"
-          style={{ left: "62%", top: "42%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
+          style={{ left: "78%", top: "38%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
         >
           <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
