@@ -73,10 +73,10 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         </div>
 
         {/* ── CENTER ZONE (35-40% Width): Dragon + Hunter Artwork Channel ─────────── */}
-        <div className="w-[38%] h-full pointer-events-none flex-shrink-0" />
+        <div className="w-[35%] h-full pointer-events-none flex-shrink-0" />
 
         {/* ── RIGHT ZONE (30-35% Width): Dynamic Hunter Info & Level Ring ───── */}
-        <div className="flex items-center justify-end gap-3 2xl:gap-5 w-[34%] min-w-0 self-center">
+        <div className="flex items-center justify-end gap-3 2xl:gap-5 w-[37%] min-w-0 self-center">
           {/* User Name, XP & Stats column */}
           <div className="flex flex-col justify-center gap-1 2xl:gap-2 min-w-[130px] 2xl:min-w-[180px] flex-1">
             <div>
