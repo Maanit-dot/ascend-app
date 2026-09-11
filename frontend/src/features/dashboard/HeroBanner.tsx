@@ -123,7 +123,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
           {/* Dynamic Level Ring — self-center so it aligns exactly with the background ring artwork */}
           <div
             className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-2px" }}
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "12px" }}
           >
             {/* Concentric rotating accent rings */}
             <svg className="absolute inset-0" width="84" height="84" viewBox="0 0 84 84">

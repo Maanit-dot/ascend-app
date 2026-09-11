@@ -73,8 +73,8 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       <div
         className="absolute z-10 pointer-events-none"
         style={{
-          top: "49.2%",
-          left: "22.8%",
+          top: "49.4%",
+          left: "55%",
           transform: "translate(-50%, -50%)",
         }}
       >
@@ -83,7 +83,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
 
       {/* Middle Section: Telemetry Stack positioned on the right */}
       <div className="relative z-10 flex items-center justify-end my-auto min-h-0 pointer-events-none">
-        <div className="w-[45%] min-w-0 space-y-1.5 2xl:space-y-2.5 font-mono text-[8px] 2xl:text-[10px] pr-2 pointer-events-auto">
+        <div className="w-[32%] min-w-0 space-y-1.5 2xl:space-y-2.5 font-mono text-[8px] 2xl:text-[10px] pr-2 pointer-events-auto">
           <div>
             <span className="text-ink-muted uppercase tracking-wider block text-[7px] 2xl:text-[8px]">ACTIVE</span>
             <span className="text-emerald-400 font-bold text-[10px] 2xl:text-xs">{activeBoost ?? "2.1x XP"}</span>
