@@ -78,8 +78,8 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       <div
         className="absolute z-10 pointer-events-none"
         style={{
-          top: "45.3cqh",
-          left: "48.2cqh",
+          top: "49%",
+          left: "32.5%",
           transform: "translate(-50%, -50%)",
         }}
       >

@@ -169,7 +169,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col justify-between overflow-hidden gap-2 select-none">
+    <div className="w-full flex flex-col gap-2.5 select-none min-h-full pb-4">
       {/* ── ROW 1: CINEMATIC HERO BANNER (Height ~195px, flex-shrink-0) ── */}
       <div className="h-[195px] flex-shrink-0">
         <HeroBanner user={user} board={board} />

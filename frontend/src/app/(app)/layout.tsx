@@ -87,14 +87,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* ── Central content column (66% width) ── */}
       <div className="relative flex h-full flex-1 min-w-0 flex-col overflow-hidden z-10">
         <TopBar />
-        <main
-          className={cn(
-            "flex-1 min-h-0 p-2 sm:p-2.5",
-            isDashboard
-              ? "overflow-hidden flex flex-col"
-              : "overflow-y-auto scrollbar-thin scrollbar-thumb-arc-900/40"
-          )}
-        >
+        <main className="flex-1 min-h-0 p-2 sm:p-2.5 overflow-y-auto scrollbar-thin scrollbar-thumb-arc-900/40">
           {children}
         </main>
       </div>
