@@ -120,19 +120,11 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
             </div>
           </div>
 
-          {/* Dynamic Level Ring — self-center so it aligns exactly with the background ring artwork */}
+          {/* Dynamic Level Indicator — aligned dead-center with the background glowing level sphere */}
           <div
             className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "12px" }}
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "4px" }}
           >
-            {/* Concentric rotating accent rings */}
-            <svg className="absolute inset-0" width="84" height="84" viewBox="0 0 84 84">
-              <circle cx="42" cy="42" r="39" stroke="rgba(168,85,247,0.45)" strokeWidth="1.5" fill="none"
-                strokeDasharray="4 4" style={{ animation: "energy-rotate 20s linear infinite", transformOrigin: "42px 42px" }} />
-              <circle cx="42" cy="42" r="32" stroke="rgba(192,178,255,0.2)" strokeWidth="1" fill="none"
-                style={{ animation: "energy-rotate-r 15s linear infinite", transformOrigin: "42px 42px" }} />
-            </svg>
-
             <div className="relative z-10 flex flex-col items-center justify-center text-center">
               <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
               <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
