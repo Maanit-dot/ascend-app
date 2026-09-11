@@ -237,10 +237,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ROW 3: DAILY QUESTS (57%) + SYSTEM OVERVIEW (43%) (Flex 1) ─ */}
+      {/* ── ROW 3: DAILY QUESTS (42%) + SYSTEM OVERVIEW (58%) (Flex 1) ─ */}
       <div className="flex-1 min-h-[220px] grid grid-cols-12 gap-2 overflow-hidden">
-        {/* Daily Quests Panel — 7/12 (~58% width) */}
-        <div className="col-span-7 hud-panel relative p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
+        {/* Daily Quests Panel — 5/12 (~42% width) */}
+        <div className="col-span-5 hud-panel relative p-2.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/custom_bg/daily_quests_bg.png"
@@ -304,8 +304,8 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* System Overview Panel — 5/12 (~42% width) */}
-        <div className="col-span-5 min-h-0 overflow-hidden">
+        {/* System Overview Panel — 7/12 (~58% width) */}
+        <div className="col-span-7 min-h-0 overflow-hidden">
           <SystemOverviewPanel
             xpProgressPercent={character.xp_progress_percent}
             activeBoost="2.1x XP"
