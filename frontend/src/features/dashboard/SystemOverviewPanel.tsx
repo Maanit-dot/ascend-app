@@ -68,13 +68,13 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
   const storageUsed = Math.min(99, Math.round(30 + xpProgressPercent * 0.25));
 
   return (
-    <div className="hud-panel relative p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#070314] rounded-xl select-none">
-      {/* ── User-Provided Full Panel Celestial Sphere Background ───────── */}
+    <div className="hud-panel relative p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#020108] rounded-xl select-none">
+      {/* ── User-Provided High-Res Celestial Sphere Background ───────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/custom_bg/ascend_core_full_bg.png"
         alt="Ascend Core Background"
-        className="absolute inset-0 h-full w-full object-cover object-left pointer-events-none opacity-85 z-0"
+        className="absolute inset-0 h-full w-full object-cover object-left pointer-events-none opacity-95 z-0"
       />
 
       {/* Header */}
@@ -88,7 +88,7 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       {/* Middle Section: Reactor Core on Left + Telemetry List on Right */}
       <div className="relative z-10 flex items-center justify-between gap-4 my-auto min-h-0">
         {/* Core Reactor placed concentric over the background glowing sphere */}
-        <div className="w-[46%] flex items-center justify-center flex-shrink-0">
+        <div className="w-[50%] flex items-center justify-center flex-shrink-0">
           <AscendCore xpPercent={xpProgressPercent} questPercent={questPercent} />
         </div>
 
