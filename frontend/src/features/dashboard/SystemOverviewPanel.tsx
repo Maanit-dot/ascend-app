@@ -6,32 +6,32 @@ import { useQuestBoardStore } from "@/store/useQuestBoardStore";
 /** Animated ASCEND CORE reactor orb centered directly inside the glowing background orb */
 function AscendCore({ xpPercent, questPercent }: { xpPercent: number; questPercent: number }) {
   return (
-    <div className="relative flex flex-col items-center justify-center flex-shrink-0 w-[120px] h-[120px] 2xl:w-[150px] 2xl:h-[150px]">
+    <div className="relative flex flex-col items-center justify-center flex-shrink-0 w-[114px] h-[114px] 2xl:w-[144px] 2xl:h-[144px]">
       {/* Dynamic XP/Completion Progress Arc Ring (hugs inner boundary of celestial plasma) */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 124 124" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="62" cy="62" r="48" stroke="rgba(139,92,246,0.18)" strokeWidth="3.5" fill="none" />
+        <circle cx="62" cy="62" r="46" stroke="rgba(139,92,246,0.18)" strokeWidth="3.5" fill="none" />
         <circle
-          cx="62" cy="62" r="48"
+          cx="62" cy="62" r="46"
           stroke="rgba(0,229,255,0.95)"
           strokeWidth="3.5"
           fill="none"
           strokeLinecap="round"
-          strokeDasharray={`${(questPercent / 100) * 301.59} 301.59`}
+          strokeDasharray={`${(questPercent / 100) * 289.02} 289.02`}
           style={{ filter: "drop-shadow(0 0 10px rgba(0,229,255,0.95))", transition: "stroke-dasharray 1s ease" }}
         />
       </svg>
 
       {/* Central Core sphere (Dark void background so the percentage sits inside the dark space) */}
       <div
-        className="relative z-10 flex flex-col items-center justify-center rounded-full text-center w-[74px] h-[74px] 2xl:w-[94px] 2xl:h-[94px]"
+        className="relative z-10 flex flex-col items-center justify-center rounded-full text-center w-[70px] h-[70px] 2xl:w-[88px] 2xl:h-[88px]"
         style={{
           background: "radial-gradient(circle, rgba(10,5,26,0.96) 0%, rgba(15,7,38,0.92) 70%, rgba(0,0,0,0.98) 100%)",
           boxShadow: "inset 0 0 16px rgba(0,229,255,0.4), 0 0 20px rgba(0,0,0,0.8)",
         }}
       >
-        <span className="font-mono text-[7px] 2xl:text-[9px] uppercase tracking-widest text-arc-300 font-bold leading-none">ASCEND CORE</span>
-        <span className="font-mono text-[6px] 2xl:text-[8px] text-emerald-400 font-bold leading-tight mt-0.5">System Online</span>
-        <span className="font-display text-lg 2xl:text-2xl font-bold text-white text-glow-arc leading-none mt-0.5">
+        <span className="font-mono text-[7px] 2xl:text-[8.5px] uppercase tracking-widest text-arc-300 font-bold leading-none">ASCEND CORE</span>
+        <span className="font-mono text-[6px] 2xl:text-[7.5px] text-emerald-400 font-bold leading-tight mt-0.5">System Online</span>
+        <span className="font-display text-lg 2xl:text-xl font-bold text-white text-glow-arc leading-none mt-0.5">
           {Math.round(questPercent || 100)}%
         </span>
       </div>
@@ -53,12 +53,16 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
 
   return (
     <div className="hud-panel relative p-2.5 2xl:p-3.5 h-full flex flex-col justify-between overflow-hidden bg-[#020108] rounded-xl select-none">
-      {/* ── User-Provided High-Res Celestial Sphere Background ───────── */}
+      {/* ── User-Provided High-Res Celestial Sphere Background (Shrunk slightly and shifted right) ───────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/custom_bg/ascend_core_full_bg.png"
         alt="Ascend Core Background"
         className="absolute inset-0 h-full w-full object-cover object-left pointer-events-none opacity-95 z-0"
+        style={{
+          transform: "scale(0.90) translateX(18px)",
+          transformOrigin: "left center",
+        }}
       />
 
       {/* Header */}
@@ -69,12 +73,12 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
         </span>
       </div>
 
-      {/* Concentric Ascend Core Reactor positioned exactly over the celestial orb center (Blueprint: X=910px, Y=512px -> left: 28.5%, top: 50%) */}
+      {/* Concentric Ascend Core Reactor positioned exactly over the shrunk and shifted celestial orb center */}
       <div
         className="absolute z-10 pointer-events-none"
         style={{
           top: "50%",
-          left: "28.5%",
+          left: "30.5%",
           transform: "translate(-50%, -50%)",
         }}
       >
