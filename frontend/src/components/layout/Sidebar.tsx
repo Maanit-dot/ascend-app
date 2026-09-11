@@ -106,14 +106,6 @@ export function Sidebar() {
 
   return (
     <aside className="relative z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden select-none">
-      {/* ── User-Provided Background Image ───────── */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/custom_bg/sidebar_bg.png"
-        alt="Sidebar Background"
-        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-25 z-0"
-      />
-
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
       <div className="relative z-10 flex h-12 flex-shrink-0 items-center gap-2.5 px-4">
         <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">
@@ -177,26 +169,40 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* ── Character Summary Panel (Pinned at bottom, extended upwards without photo) ── */}
+      {/* ── Character Summary Panel (Pinned at bottom, with Hunter Photo on Left & Right-aligned text) ── */}
       {user && character && (
-        <div className="flex-shrink-0 bg-[#0A051A]/95 p-3.5 space-y-2.5">
-          {/* User details strictly right-aligned without photo */}
-          <div className="flex flex-col items-end text-right space-y-1">
-            <div className="flex items-center justify-end gap-1.5 font-mono text-[7px] text-emerald-400 font-semibold">
-              <span>SYSTEM ONLINE</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="flex-shrink-0 bg-[#0A051A]/95 p-3 space-y-2">
+          {/* Header Row: Hunter Man Photo on LEFT + Name/Status on RIGHT */}
+          <div className="flex items-center justify-between gap-2">
+            {/* Hunter Artwork / Photo on the left */}
+            <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-void/80 shadow-glow-arc-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/custom_bg/hunter_sidebar_portrait.png"
+                alt="Hunter Character"
+                className="h-full w-full object-cover object-top"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = user.avatar_url || "/hunter_avatar.jpg";
+                }}
+              />
             </div>
-            <div className="w-full text-right">
-              <p className="font-display text-base font-bold text-white leading-tight tracking-wide text-right text-glow-arc truncate">
+
+            {/* Right-aligned Name, Status, Title, Rank */}
+            <div className="flex-1 min-w-0 flex flex-col items-end text-right space-y-0.5">
+              <div className="flex items-center justify-end gap-1.5 font-mono text-[7px] text-emerald-400 font-semibold">
+                <span>SYSTEM ONLINE</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
+              <p className="font-display text-sm font-bold text-white leading-tight tracking-wide text-right text-glow-arc truncate">
                 {user.display_name}
               </p>
-              <div className="flex items-center justify-end gap-1.5 mt-0.5 text-right">
-                <span className="font-mono text-[8px] text-cyan-300 font-semibold">
+              <div className="flex items-center justify-end gap-1 text-right">
+                <span className="font-mono text-[8px] text-cyan-300 font-semibold truncate">
                   {currentTitle}
                 </span>
                 <span className="text-ink-faint text-[8px]">•</span>
-                <span className="font-mono text-[8px] text-arc-400/90">
-                  Rank {currentRank} Hunter
+                <span className="font-mono text-[8px] text-arc-400/90 flex-shrink-0">
+                  Rank {currentRank}
                 </span>
               </div>
             </div>

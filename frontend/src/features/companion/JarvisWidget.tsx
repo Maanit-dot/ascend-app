@@ -23,47 +23,19 @@ import { useUserStore } from "@/store/useUserStore";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-/* ── Holographic Soundwave Frequency Core (Image 1 Matching) ───── */
+/* ── Holographic Soundwave Frequency Core (Image-based) ───── */
 function JarvisHoloReactor({ active }: { active: boolean }) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-1.5 flex-shrink-0">
-      {/* Outer Glow & Concentric Rings */}
-      <div className="relative flex items-center justify-center" style={{ width: 140, height: 68 }}>
-        <svg className="absolute inset-0" width="140" height="68" viewBox="0 0 140 68" fill="none">
-          {/* Background horizontal axis line */}
-          <line x1="10" y1="34" x2="130" y2="34" stroke="rgba(139,92,246,0.3)" strokeWidth="1" strokeDasharray="2 4" />
-
-          {/* Central concentric energy ellipses */}
-          <ellipse cx="70" cy="34" rx="42" ry="26" stroke="rgba(168,85,247,0.35)" strokeWidth="1" strokeDasharray="4 4" />
-          <ellipse cx="70" cy="34" rx="30" ry="18" stroke="rgba(192,178,255,0.4)" strokeWidth="1" />
-
-          {/* Dynamic Soundwave Frequencies */}
-          <path
-            d="M20 34 Q35 15 45 34 T70 12 T95 48 T105 34 T120 34"
-            stroke="rgba(168,85,247,0.9)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            style={{ animation: active ? "arc-draw 1.5s ease-in-out infinite" : "none", filter: "drop-shadow(0 0 4px #A855F7)" }}
-          />
-          <path
-            d="M30 34 Q45 48 55 34 T80 52 T105 20 T115 34"
-            stroke="rgba(0,229,255,0.85)"
-            strokeWidth="1"
-            strokeLinecap="round"
-            style={{ animation: active ? "arc-draw 2s ease-in-out infinite" : "none", filter: "drop-shadow(0 0 4px #00E5FF)" }}
-          />
-        </svg>
-
-        {/* Center glowing energy sphere */}
-        <div
-          className={cn(
-            "relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-arc-400 via-arc-600 to-arc-950 shadow-glow-arc transition-all duration-500",
-            active && "scale-110 shadow-glow-arc-lg animate-orb-pulse"
-          )}
-        >
-          <div className="h-3 w-3 rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
-        </div>
-      </div>
+    <div className="relative flex flex-col items-center justify-center py-1 flex-shrink-0">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/jarvis_holo_header.png"
+        alt="JARVIS Holographic Reactor"
+        className={cn(
+          "h-16 w-auto object-contain pointer-events-none transition-transform duration-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]",
+          active && "scale-105 drop-shadow-[0_0_14px_#A855F7]"
+        )}
+      />
     </div>
   );
 }
@@ -204,14 +176,6 @@ export function JarvisWidget() {
 
   return (
     <aside className="relative z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
-      {/* ── User-Provided Background Image ───────── */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/custom_bg/jarvis_bg.png"
-        alt="JARVIS Background"
-        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-30 z-0"
-      />
-
       {/* ── HEADER ──────────────────────────────────────────────── */}
       <div className="relative z-10 flex h-10 flex-shrink-0 items-center justify-between px-1 pb-1">
         <div className="flex flex-col">

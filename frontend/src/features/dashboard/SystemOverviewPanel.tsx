@@ -4,73 +4,41 @@ import { useEffect, useState } from "react";
 import { useQuestBoardStore } from "@/store/useQuestBoardStore";
 import { useUserStore } from "@/store/useUserStore";
 
-/** Animated ASCEND CORE reactor orb with 3 orbital rings and electric arcs */
+/** Animated ASCEND CORE reactor orb with user-provided glowing sphere image and electric arcs */
 function AscendCore({ xpPercent, questPercent }: { xpPercent: number; questPercent: number }) {
   return (
-    <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 112, height: 112 }}>
-      {/* Outermost orbital ring with 8 cyan nodes */}
-      <svg className="absolute inset-0 core-ring-outer" width="112" height="112" viewBox="0 0 112 112">
-        <circle cx="56" cy="56" r="52" stroke="rgba(168,85,247,0.35)" strokeWidth="1.2" fill="none" strokeDasharray="4 6" />
-        {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+    <div className="relative flex flex-col items-center justify-center flex-shrink-0" style={{ width: 116, height: 116 }}>
+      {/* ── User-Provided Glowing Blue Sphere Image placed around Core ── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/ascend_core_bg.png"
+        alt="Ascend Core Sphere"
+        className="absolute inset-0 h-full w-full object-contain pointer-events-none drop-shadow-[0_0_14px_rgba(0,229,255,0.7)]"
+      />
+
+      {/* Outermost rotating orbital nodes */}
+      <svg className="absolute inset-0 core-ring-outer" width="116" height="116" viewBox="0 0 116 116">
+        <circle cx="58" cy="58" r="52" stroke="rgba(168,85,247,0.3)" strokeWidth="1" fill="none" strokeDasharray="4 6" />
+        {[0, 90, 180, 270].map((deg) => {
           const r = 52;
           const rad = (deg * Math.PI) / 180;
-          const x = 56 + r * Math.cos(rad);
-          const y = 56 + r * Math.sin(rad);
+          const x = 58 + r * Math.cos(rad);
+          const y = 58 + r * Math.sin(rad);
           return <circle key={deg} cx={x} cy={y} r="2" fill="#00E5FF" style={{ filter: "drop-shadow(0 0 4px #00E5FF)" }} />;
         })}
       </svg>
 
-      {/* XP progress arc ring */}
-      <svg className="absolute inset-0" width="112" height="112" viewBox="0 0 112 112" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx="56" cy="56" r="42" stroke="rgba(139,92,246,0.15)" strokeWidth="3" fill="none" />
-        <circle
-          cx="56" cy="56" r="42"
-          stroke="rgba(139,92,246,0.85)"
-          strokeWidth="3"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={`${(questPercent / 100) * 263.89} 263.89`}
-          style={{ filter: "drop-shadow(0 0 6px rgba(139,92,246,0.9))", transition: "stroke-dasharray 1s ease" }}
-        />
-      </svg>
-
-      {/* Electric arc lightning SVG */}
-      <svg className="absolute inset-0" width="112" height="112" viewBox="0 0 112 112">
-        <path
-          d="M56 14 C68 18 76 32 72 46 C68 58 76 64 72 78"
-          stroke="rgba(0,229,255,0.85)"
-          strokeWidth="1.5"
-          fill="none"
-          strokeDasharray="60"
-          style={{ animation: "arc-draw 2.5s ease-in-out infinite", filter: "drop-shadow(0 0 6px #00E5FF)" }}
-        />
-        <path
-          d="M56 98 C44 94 36 80 40 66 C44 54 36 48 40 34"
-          stroke="rgba(168,85,247,0.85)"
-          strokeWidth="1.5"
-          fill="none"
-          strokeDasharray="60"
-          style={{ animation: "arc-draw 2.5s ease-in-out infinite 1.25s", filter: "drop-shadow(0 0 6px #A855F7)" }}
-        />
-      </svg>
-
-      {/* Inner rotating ring */}
-      <svg className="absolute inset-0 core-ring-inner" width="112" height="112" viewBox="0 0 112 112">
-        <circle cx="56" cy="56" r="32" stroke="rgba(192,178,255,0.4)" strokeWidth="1" fill="none" strokeDasharray="4 2" />
-      </svg>
-
-      {/* Central Core sphere */}
+      {/* Central Core sphere (Dark void background so the percentage sits inside the dark black space) */}
       <div
-        className="relative flex flex-col items-center justify-center rounded-full text-center gpu-accelerate"
+        className="relative z-10 flex flex-col items-center justify-center rounded-full text-center"
         style={{
-          width: 62,
-          height: 62,
-          background: "radial-gradient(circle, rgba(192,178,255,0.95) 0%, rgba(168,85,247,0.8) 30%, rgba(124,58,237,0.6) 60%, rgba(46,16,101,0.95) 100%)",
-          boxShadow: "0 0 28px rgba(168,85,247,0.8), 0 0 54px rgba(139,92,246,0.4), inset 0 0 18px rgba(192,178,255,0.3)",
-          animation: "core-breathe 5s ease-in-out infinite",
+          width: 64,
+          height: 64,
+          background: "radial-gradient(circle, rgba(10,5,26,0.95) 0%, rgba(15,7,38,0.9) 70%, rgba(0,0,0,0.98) 100%)",
+          boxShadow: "inset 0 0 12px rgba(0,229,255,0.35)",
         }}
       >
-        <span className="font-mono text-[7px] uppercase tracking-widest text-white font-bold leading-none">ASCEND CORE</span>
+        <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold leading-none">ASCEND CORE</span>
         <span className="font-mono text-[6px] text-emerald-400 font-bold leading-tight mt-0.5">System Online</span>
         <span className="font-display text-base font-bold text-white text-glow-arc leading-none mt-0.5">
           {Math.round(questPercent || 100)}%
@@ -94,17 +62,9 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
   const storageUsed = Math.min(99, Math.round(30 + xpProgressPercent * 0.25));
 
   return (
-    <div className="hud-panel relative p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/85 rounded-xl select-none">
-      {/* ── User-Provided Background Image ───────── */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/custom_bg/ascend_core_bg.png"
-        alt="Ascend Core Background"
-        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-35 z-0"
-      />
-
+    <div className="hud-panel relative p-2.5 h-full flex flex-col justify-between overflow-hidden bg-[#0A051A]/95 rounded-xl select-none">
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between flex-shrink-0">
+      <div className="flex items-center justify-between flex-shrink-0">
         <h3 className="font-display text-xs font-bold tracking-wider text-white">SYSTEM OVERVIEW</h3>
         <span className="font-mono text-[8px] text-emerald-400 font-semibold flex items-center gap-1">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Online
@@ -112,8 +72,8 @@ export function SystemOverviewPanel({ xpProgressPercent, activeBoost }: SystemOv
       </div>
 
       {/* Middle Section: Reactor Core on Left + Telemetry List on Right */}
-      <div className="relative z-10 flex items-center justify-between gap-3 my-auto min-h-0">
-        {/* Core Reactor */}
+      <div className="flex items-center justify-between gap-3 my-auto min-h-0">
+        {/* Core Reactor surrounded by blue sphere */}
         <AscendCore xpPercent={xpProgressPercent} questPercent={questPercent} />
 
         {/* Telemetry Stack on Right */}
