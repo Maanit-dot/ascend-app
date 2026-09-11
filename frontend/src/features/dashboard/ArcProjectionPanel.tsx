@@ -8,18 +8,18 @@ export function ArcProjectionPanel() {
   const growthRate = character ? Math.min(99, Math.round(character.xp_progress_percent || 78)) : 78;
 
   return (
-    <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-5 2xl:px-8 py-2 2xl:py-4 bg-[#060312]/95 rounded-xl select-none">
-      {/* ── User-Provided Background Image (Darkened) ───────── */}
+    <div className="hud-panel relative overflow-hidden h-full flex items-center justify-between px-5 2xl:px-8 py-2 2xl:py-4 bg-[#03010B] rounded-xl select-none">
+      {/* ── User-Provided High-Res Blue Neon Circuit Background ───────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/custom_bg/arc_projection_bg.png"
         alt="Arc Projection Background"
-        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-20 z-0"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-85 z-0"
       />
 
       {/* Background cyber grid & energy particles */}
       <div className="absolute inset-0 cyber-grid opacity-10 pointer-events-none" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-arc-500/50 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent pointer-events-none" />
 
       {/* Left side: Label + subtitle */}
       <div className="relative z-10 flex flex-col justify-center min-w-[180px] 2xl:min-w-[240px]">
