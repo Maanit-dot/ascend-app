@@ -119,19 +119,19 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Dynamic Level Indicator — aligned dead-center with the background glowing level sphere */}
-          <div
-            className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "6px" }}
-          >
-            <div className="relative z-10 flex flex-col items-center justify-center text-center">
-              <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
-              <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
-              <svg className="h-3 w-6 text-arc-400 mt-0.5" viewBox="0 0 24 10" fill="currentColor">
-                <path d="M12 10L6 0H0L8 7L12 10L16 7L24 0H18L12 10Z" opacity="0.8" />
-              </svg>
-            </div>
+        {/* ── Level Indicator — absolutely positioned over the background orb ─── */}
+        <div
+          className="absolute flex flex-col items-center justify-center"
+          style={{ left: "62%", top: "42%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
+        >
+          <div className="relative z-10 flex flex-col items-center justify-center text-center">
+            <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
+            <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
+            <svg className="h-3 w-6 text-arc-400 mt-0.5" viewBox="0 0 24 10" fill="currentColor">
+              <path d="M12 10L6 0H0L8 7L12 10L16 7L24 0H18L12 10Z" opacity="0.8" />
+            </svg>
           </div>
         </div>
 
