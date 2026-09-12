@@ -15,6 +15,7 @@ interface KpiCardProps {
   glowClass?: string;
   iconBgClass?: string;
   cardBgClass?: string;
+  borderClass?: string;
 }
 
 export function KpiCard({
@@ -29,11 +30,13 @@ export function KpiCard({
   glowClass = "shadow-[0_0_10px_rgba(38,20,223,0.4)]",
   iconBgClass = "from-[#2614DF] to-[#4D30EC]",
   cardBgClass,
+  borderClass,
 }: KpiCardProps) {
   return (
     <div className={cn(
-      "hud-panel relative flex flex-col justify-between p-2 h-full rounded-xl group transition-all duration-200 overflow-hidden select-none border border-[#2614DF]/30 hover:border-[#01C0D7]/60 shadow-[0_0_10px_rgba(12,8,29,0.8)]",
-      cardBgClass ?? "bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#0C081D]/95"
+      "hud-panel relative flex flex-col justify-between p-2 h-full rounded-xl group transition-all duration-200 overflow-hidden select-none",
+      borderClass ?? "border border-[#2614DF]/50 hover:border-[#01C0D7]/80",
+      cardBgClass ?? "bg-black"
     )}>
       {/* Top: label + icon */}
       <div className="flex items-center justify-between gap-1">

@@ -149,9 +149,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── ROW 2: 5 KPI METRIC CARDS (Normal: 60px | F11: 75px) ───── */}
-      <div className="relative h-[60px] 2xl:h-[75px] flex-shrink-0 rounded-xl overflow-hidden p-0.5 bg-gradient-to-r from-[#0C081D] via-[#2614DF]/25 to-[#0C081D] border border-[#2614DF]/40 shadow-[0_0_15px_rgba(38,20,223,0.25)]">
-        {/* Ambient 5-color background glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0C081D]/90 via-[#4D30EC]/20 via-[#2614DF]/25 to-[#01C0D7]/20 pointer-events-none" />
+      <div className="relative h-[60px] 2xl:h-[75px] flex-shrink-0 rounded-xl overflow-hidden bg-black">
         <div className="relative z-10 grid grid-cols-5 gap-1.5 2xl:gap-2.5 h-full">
           <KpiCard
             label="QUESTS COMPLETED"
@@ -162,7 +160,8 @@ export default function DashboardPage() {
             accentClass="text-[#E8EEFF]"
             glowClass="shadow-[0_0_10px_rgba(1,192,215,0.4)]"
             iconBgClass="from-[#2614DF] to-[#01C0D7]"
-            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#2614DF]/15"
+            borderClass="border border-[#01C0D7]/50 hover:border-[#01C0D7] shadow-[0_0_10px_rgba(1,192,215,0.2)]"
+            cardBgClass="bg-black"
           />
           <KpiCard
             label="DAILY XP"
@@ -173,7 +172,8 @@ export default function DashboardPage() {
             accentClass="text-[#00E5FF]"
             glowClass="shadow-[0_0_10px_rgba(38,20,223,0.5)]"
             iconBgClass="from-[#2614DF] to-[#4D30EC]"
-            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#1A0B40]/90 to-[#4D30EC]/20"
+            borderClass="border border-[#2614DF]/60 hover:border-[#2614DF] shadow-[0_0_10px_rgba(38,20,223,0.3)]"
+            cardBgClass="bg-black"
           />
           <KpiCard
             label="OVERALL PROGRESS"
@@ -184,7 +184,8 @@ export default function DashboardPage() {
             accentClass="text-[#E8EEFF]"
             glowClass="shadow-[0_0_10px_rgba(1,192,215,0.5)]"
             iconBgClass="from-[#4D30EC] to-[#01C0D7]"
-            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#01C0D7]/15"
+            borderClass="border border-[#C0BEEF]/50 hover:border-[#C0BEEF] shadow-[0_0_10px_rgba(192,190,239,0.2)]"
+            cardBgClass="bg-black"
           />
           <KpiCard
             label="STREAK"
@@ -195,7 +196,8 @@ export default function DashboardPage() {
             accentClass="text-[#C0BEEF]"
             glowClass="shadow-[0_0_10px_rgba(77,48,236,0.5)]"
             iconBgClass="from-[#4D30EC] to-[#2614DF]"
-            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#4D30EC]/20"
+            borderClass="border border-[#4D30EC]/60 hover:border-[#4D30EC] shadow-[0_0_10px_rgba(77,48,236,0.3)]"
+            cardBgClass="bg-black"
           />
           <KpiCard
             label="TOTAL XP"
@@ -206,7 +208,8 @@ export default function DashboardPage() {
             accentClass="text-[#00E5FF]"
             glowClass="shadow-[0_0_10px_rgba(1,192,215,0.5)]"
             iconBgClass="from-[#01C0D7] to-[#2614DF]"
-            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#1A0B40]/90 to-[#01C0D7]/20"
+            borderClass="border border-[#00E5FF]/50 hover:border-[#00E5FF] shadow-[0_0_10px_rgba(0,229,255,0.25)]"
+            cardBgClass="bg-black"
           />
         </div>
       </div>

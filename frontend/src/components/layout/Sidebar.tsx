@@ -105,7 +105,15 @@ export function Sidebar() {
   const intVal = character?.stats?.knowledge ?? 4;
 
   return (
-    <aside className="relative z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden select-none">
+    <aside className="relative z-40 hidden h-full w-[210px] xl:w-[220px] flex-shrink-0 flex-col bg-black lg:flex overflow-hidden select-none border-r border-arc-500/20">
+      {/* ── User-Provided Full Sidebar Background Image ── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/sidebar_bg.png"
+        alt="Sidebar Background"
+        className="absolute inset-0 h-full w-full object-fill pointer-events-none z-0"
+      />
+
       {/* ── ASCEND Logo ─────────────────────────────────────── */}
       <div className="relative z-10 flex h-12 flex-shrink-0 items-center gap-2.5 px-4">
         <div className="relative flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-arc-500 to-arc-800 shadow-glow-arc">
@@ -125,7 +133,7 @@ export function Sidebar() {
       </div>
 
       {/* ── Navigation Menu ──────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-2 py-1.5 scrollbar-thin">
+      <div className="relative z-10 flex-1 overflow-y-auto min-h-0 px-2 py-1.5 scrollbar-thin">
         <p className="mb-1 px-2 font-mono text-[7px] tracking-widest text-arc-400/60 uppercase font-bold">
           MAIN PORTAL
         </p>
@@ -171,16 +179,16 @@ export function Sidebar() {
 
       {/* ── Character Summary Panel (Pinned at bottom, with Hunter Photo on Left & Right-aligned text) ── */}
       {user && character && (
-        <div className="flex-shrink-0 bg-[#0A051A]/95 p-3 space-y-2">
+        <div className="relative z-10 flex-shrink-0 bg-transparent p-3 space-y-2">
           {/* Header Row: Hunter Man Photo on LEFT + Name/Status on RIGHT */}
           <div className="flex items-center justify-between gap-2">
-            {/* Hunter Artwork / Photo on the left */}
-            <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-void/80 shadow-glow-arc-sm">
+            {/* Hunter Artwork / Photo on the left directly beside the name */}
+            <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/custom_bg/hunter_sidebar_portrait.png"
                 alt="Hunter Character"
-                className="h-full w-full object-cover object-top"
+                className="h-full w-full object-contain"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src = user.avatar_url || "/hunter_avatar.jpg";
                 }}

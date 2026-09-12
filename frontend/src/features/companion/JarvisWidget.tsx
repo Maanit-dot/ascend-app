@@ -44,30 +44,30 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
   return (
     <div className={cn("flex flex-col animate-fade-in", isUser ? "items-end" : "items-start")}>
       <div className={cn("mb-0.5 flex items-center gap-1.5", isUser && "flex-row-reverse")}>
-        <span className="font-mono text-[8px] uppercase tracking-wider text-arc-300 font-bold">
+        <span className="font-mono text-[8px] uppercase tracking-wider text-[#00E5FF] font-bold">
           {isUser ? "You" : "JARVIS 23:02"}
         </span>
-        <span className="font-mono text-[8px] text-ink-faint">{msg.timestamp}</span>
+        <span className="font-mono text-[8px] text-[#C0BEEF]/70">{msg.timestamp}</span>
       </div>
 
       <div
         className={cn(
-          "rounded-lg px-2.5 py-1.5 max-w-[90%] leading-relaxed text-[10px]",
+          "rounded-lg px-2.5 py-1.5 max-w-[95%] leading-relaxed text-[10px] font-body",
           isUser
-            ? "bg-arc-950/80 text-white ml-auto"
-            : "bg-void/80 text-ink-secondary"
+            ? "bg-[#2614DF]/40 border border-[#01C0D7]/40 text-white ml-auto shadow-[0_0_8px_rgba(38,20,223,0.3)]"
+            : "bg-[#0C081D]/85 border border-[#4D30EC]/50 text-white shadow-[0_0_10px_rgba(0,0,0,0.8)]"
         )}
       >
-        <div className="whitespace-pre-line">{msg.text}</div>
+        <div className="whitespace-pre-line text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{msg.text}</div>
 
         {msg.action?.type === "QUEST_MUTATION" && (
-          <div className="mt-1 rounded bg-emerald-950/40 p-1.5">
-            <div className="flex items-center gap-1 font-semibold text-emerald-400 text-[8px] mb-0.5">
+          <div className="mt-1 rounded bg-[#01C0D7]/20 border border-[#01C0D7]/40 p-1.5">
+            <div className="flex items-center gap-1 font-semibold text-[#00E5FF] text-[8px] mb-0.5">
               <CheckCircle2 className="h-2.5 w-2.5" />
               <span>Quest Target Updated</span>
             </div>
             {msg.action.quest_title && (
-              <p className="font-mono text-[7px] text-emerald-300/90">
+              <p className="font-mono text-[7px] text-[#E8EEFF]">
                 {msg.action.quest_title} → <strong className="text-white">{msg.action.new_target}</strong>
               </p>
             )}
@@ -214,19 +214,19 @@ export function JarvisWidget() {
       {/* ── CHAT MESSAGE TRANSCRIPT ─────────────────────────────── */}
       <div
         ref={scrollRef}
-        className="flex-1 space-y-1.5 overflow-y-auto p-1 font-body text-xs min-h-0 scrollbar-thin"
+        className="relative z-10 flex-1 space-y-1.5 overflow-y-auto p-1 font-body text-xs min-h-0 scrollbar-thin"
       >
         {messages.length === 0 ? (
-          <div className="rounded-lg bg-arc-950/30 p-2 text-center space-y-0.5">
-            <p className="font-mono text-[9px] text-arc-300">&quot;How can I assist you, Hunter?&quot;</p>
-            <p className="font-mono text-[8px] text-ink-faint">&quot;What are my quests today?&quot;</p>
+          <div className="rounded-lg bg-[#0C081D]/85 border border-[#4D30EC]/40 p-2.5 text-center space-y-1">
+            <p className="font-mono text-[9px] text-[#00E5FF] font-bold">&quot;How can I assist you, Hunter?&quot;</p>
+            <p className="font-mono text-[8px] text-[#C0BEEF]/80">&quot;What are my quests today?&quot;</p>
           </div>
         ) : (
           messages.map((msg) => <ChatMessage key={msg.id} msg={msg} />)
         )}
 
         {isProcessing && (
-          <div className="flex items-center gap-1.5 text-arc-400 font-mono text-[8px] py-0.5">
+          <div className="flex items-center gap-1.5 text-[#00E5FF] font-mono text-[8px] py-0.5">
             <Loader2 className="h-3 w-3 animate-spin" />
             <span>Processing command...</span>
           </div>
@@ -234,8 +234,8 @@ export function JarvisWidget() {
       </div>
 
       {/* ── SUGGESTED ACTIONS DOCK ───────────────────────────────── */}
-      <div className="flex-shrink-0 space-y-1 pt-1">
-        <p className="font-mono text-[7px] text-arc-400/80 uppercase tracking-widest font-bold px-0.5">
+      <div className="relative z-10 flex-shrink-0 space-y-1 pt-1">
+        <p className="font-mono text-[7px] text-[#00E5FF] uppercase tracking-widest font-bold px-0.5">
           SUGGESTED ACTIONS
         </p>
         <div className="space-y-1">
@@ -244,20 +244,20 @@ export function JarvisWidget() {
               key={i}
               onClick={() => handleCommandSubmit(action.cmd)}
               disabled={isProcessing}
-              className="flex w-full items-center justify-between rounded bg-void/80 px-2 py-1 text-left font-mono text-[8px] text-ink-secondary hover:bg-arc-950/40 hover:text-white transition-all group disabled:opacity-50"
+              className="flex w-full items-center justify-between rounded-lg bg-[#0C081D]/85 border border-[#2614DF]/40 px-2.5 py-1.5 text-left font-mono text-[8px] text-[#E8EEFF] hover:bg-[#2614DF]/30 hover:border-[#01C0D7]/60 hover:text-white transition-all group disabled:opacity-50 shadow-[0_0_8px_rgba(0,0,0,0.6)]"
             >
               <div className="flex items-center gap-1.5 truncate">
-                <action.icon className="h-2.5 w-2.5 text-arc-400 group-hover:text-arc-300 flex-shrink-0" />
+                <action.icon className="h-2.5 w-2.5 text-[#00E5FF] group-hover:text-white flex-shrink-0" />
                 <span className="truncate">{action.label}</span>
               </div>
-              <ArrowRight className="h-2.5 w-2.5 text-arc-500 group-hover:translate-x-0.5 group-hover:text-arc-300 transition-all flex-shrink-0 ml-1" />
+              <ArrowRight className="h-2.5 w-2.5 text-[#00E5FF] group-hover:translate-x-0.5 group-hover:text-white transition-all flex-shrink-0 ml-1" />
             </button>
           ))}
         </div>
       </div>
 
       {/* ── VOICE MIC BUTTON & INPUT ─────────────────────────────── */}
-      <div className="flex-shrink-0 space-y-1.5 pt-1">
+      <div className="relative z-10 flex-shrink-0 space-y-1.5 pt-1">
         <div className="flex flex-col items-center gap-0.5">
           <button
             type="button"
@@ -266,13 +266,13 @@ export function JarvisWidget() {
               "relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 shadow-glow-arc-lg",
               isListening
                 ? "bg-crimson-500/25 text-crimson-400 shadow-glow-crimson animate-pulse"
-                : "bg-gradient-to-br from-arc-500 via-arc-700 to-arc-950 text-white hover:scale-105"
+                : "bg-gradient-to-br from-[#2614DF] via-[#4D30EC] to-[#01C0D7] text-white hover:scale-105 shadow-[0_0_12px_rgba(0,229,255,0.6)]"
             )}
             title={isListening ? "Stop Listening" : "Tap to speak"}
           >
             <Mic className="h-4 w-4" />
           </button>
-          <span className="font-mono text-[7px] text-ink-muted">Tap to speak</span>
+          <span className="font-mono text-[7px] text-[#C0BEEF]/80">Tap to speak</span>
         </div>
 
         <form onSubmit={handleFormSubmit} className="relative flex items-center">
@@ -282,12 +282,12 @@ export function JarvisWidget() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your command..."
             disabled={isProcessing}
-            className="w-full rounded bg-void/90 px-2.5 py-1 pr-7 font-mono text-[9px] text-ink-primary placeholder:text-ink-faint focus:outline-none disabled:opacity-50"
+            className="w-full rounded-lg bg-[#0C081D]/90 border border-[#2614DF]/40 px-2.5 py-1.5 pr-7 font-mono text-[9px] text-white placeholder:text-[#C0BEEF]/50 focus:outline-none focus:border-[#00E5FF] disabled:opacity-50 shadow-[0_0_8px_rgba(0,0,0,0.6)]"
           />
           <button
             type="submit"
             disabled={!input.trim() || isProcessing}
-            className="absolute right-1 flex h-5 w-5 items-center justify-center rounded bg-arc-600 text-white hover:bg-arc-500 disabled:opacity-30 transition-colors"
+            className="absolute right-1 flex h-5 w-5 items-center justify-center rounded bg-[#2614DF] text-white hover:bg-[#00E5FF] hover:text-black disabled:opacity-30 transition-colors"
           >
             <Send className="h-2.5 w-2.5" />
           </button>
@@ -295,8 +295,8 @@ export function JarvisWidget() {
       </div>
 
       {/* ── RECENT ACHIEVEMENT CARD ─────────────────────────────── */}
-      <div className="flex-shrink-0 pt-0.5">
-        <div className="rounded-lg bg-amber-950/20 p-1.5 flex items-center justify-between gap-2">
+      <div className="relative z-10 flex-shrink-0 pt-0.5">
+        <div className="rounded-lg bg-[#0C081D]/85 border border-[#4D30EC]/40 p-1.5 flex items-center justify-between gap-2 shadow-[0_0_10px_rgba(0,0,0,0.6)]">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-amber-500/25 text-amber-300">
               <Trophy className="h-3.5 w-3.5" />

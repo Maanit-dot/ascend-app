@@ -12,21 +12,20 @@ function AscendCore({ xpPercent, questPercent }: { xpPercent: number; questPerce
         <circle cx="62" cy="62" r="46" stroke="rgba(139,92,246,0.18)" strokeWidth="3.5" fill="none" />
         <circle
           cx="62" cy="62" r="46"
-          stroke="rgba(0,229,255,0.95)"
+          stroke="#2614DF"
           strokeWidth="3.5"
           fill="none"
           strokeLinecap="round"
           strokeDasharray={`${(questPercent / 100) * 289.02} 289.02`}
-          style={{ filter: "drop-shadow(0 0 10px rgba(0,229,255,0.95))", transition: "stroke-dasharray 1s ease" }}
+          style={{ filter: "drop-shadow(0 0 10px rgba(38,20,223,0.95))", transition: "stroke-dasharray 1s ease" }}
         />
       </svg>
 
-      {/* Central Core sphere (Dark void background so the percentage sits inside the dark space) */}
+      {/* Central Core sphere (Transparent so the dark celestial void shines through naturally) */}
       <div
         className="relative z-10 flex flex-col items-center justify-center rounded-full text-center w-[70px] h-[70px] 2xl:w-[88px] 2xl:h-[88px]"
         style={{
-          background: "radial-gradient(circle, rgba(10,5,26,0.96) 0%, rgba(15,7,38,0.92) 70%, rgba(0,0,0,0.98) 100%)",
-          boxShadow: "inset 0 0 16px rgba(0,229,255,0.4), 0 0 20px rgba(0,0,0,0.8)",
+          background: "transparent",
         }}
       >
         <span className="font-mono text-[7px] 2xl:text-[8.5px] uppercase tracking-widest text-arc-300 font-bold leading-none">ASCEND CORE</span>
