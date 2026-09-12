@@ -10,7 +10,6 @@ import {
   TrendingUp,
   Zap,
   BarChart2,
-  DollarSign,
   ClipboardList,
 } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
@@ -22,11 +21,11 @@ import { SystemOverviewPanel } from "@/features/dashboard/SystemOverviewPanel";
 import { ArcProjectionPanel } from "@/features/dashboard/ArcProjectionPanel";
 
 import { resolveIcon } from "@/lib/icon-map";
-import { formatQuestValue } from "@/lib/format";
+import { formatQuestValue, getHunterRank } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { QuestInstance } from "@/types";
 
-/* ── Inline Quest Row (reference-style compact quest card with Done button) ─────── */
+/* ── Inline Quest Row (styled with cohesive 5-color Ascend Sphere palette) ─────── */
 function DashboardQuestRow({
   quest,
   onLog,
@@ -36,40 +35,14 @@ function DashboardQuestRow({
 }) {
   const Icon = resolveIcon(quest.template.icon_key);
   const percent = Math.min(100, (quest.current_value / quest.target_value) * 100);
-  const catClass = `quest-card-${quest.template.category}` as string;
-
-  const CATEGORY_COLORS: Record<string, string> = {
-    study: "from-arc-500/20 to-arc-900/5",
-    strength: "from-crimson-500/15 to-arc-900/5",
-    cardio: "from-cyan-500/15 to-arc-900/5",
-    mobility: "from-cyan-400/15 to-arc-900/5",
-    core: "from-crimson-400/15 to-arc-900/5",
-    recovery: "from-amber-400/15 to-arc-900/5",
-    sport: "from-arc-400/15 to-arc-900/5",
-    hidden: "from-amber-500/15 to-arc-900/5",
-  };
-
-  const BAR_COLORS: Record<string, string> = {
-    study: "bg-arc-500 shadow-glow-arc-sm",
-    strength: "bg-crimson-500 shadow-glow-crimson",
-    cardio: "bg-cyan-500 shadow-glow-cyan",
-    mobility: "bg-cyan-400 shadow-glow-cyan",
-    core: "bg-crimson-400 shadow-glow-crimson",
-    recovery: "bg-amber-400 shadow-glow-amber",
-    sport: "bg-arc-400 shadow-glow-arc-sm",
-    hidden: "bg-amber-500 shadow-glow-amber",
-  };
-
-  const gradClass = CATEGORY_COLORS[quest.template.category] ?? CATEGORY_COLORS.study;
-  const barClass = BAR_COLORS[quest.template.category] ?? "bg-arc-500";
 
   return (
     <div
       className={cn(
-        "relative group rounded-lg bg-gradient-to-r px-2 py-1 transition-all duration-200 select-none",
-        gradClass,
-        catClass,
-        quest.is_completed && "opacity-80"
+        "relative group rounded-lg px-2 py-1 transition-all duration-200 select-none border",
+        "bg-gradient-to-r from-[#0C081D]/95 via-[#160B35]/90 to-[#0C081D]/95",
+        "border-[#2614DF]/30 hover:border-[#01C0D7]/60 shadow-[0_0_8px_rgba(38,20,223,0.12)] hover:shadow-[0_0_12px_rgba(1,192,215,0.25)]",
+        quest.is_completed && "opacity-75 border-[#2614DF]/20"
       )}
     >
       <div className="flex items-center gap-2">
@@ -79,10 +52,10 @@ function DashboardQuestRow({
           onClick={() => !quest.is_completed && onLog(quest.id, quest.target_value - quest.current_value)}
           disabled={quest.is_completed}
           className={cn(
-            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg transition-all",
+            "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg transition-all border",
             quest.is_completed
-              ? "bg-emerald-500/20 text-emerald-400"
-              : "bg-void/70 text-arc-300 hover:bg-arc-500/20 cursor-pointer"
+              ? "bg-[#01C0D7]/20 border-[#01C0D7]/50 text-[#00E5FF] shadow-[0_0_8px_rgba(1,192,215,0.3)]"
+              : "bg-[#0C081D] border-[#2614DF]/40 text-[#00E5FF] hover:bg-[#2614DF]/30 hover:border-[#01C0D7]/60 hover:text-[#E8EEFF] cursor-pointer shadow-[0_0_6px_rgba(38,20,223,0.25)]"
           )}
           title={quest.is_completed ? "Quest Completed" : "Click to mark Done"}
         >
@@ -98,26 +71,26 @@ function DashboardQuestRow({
             <p
               className={cn(
                 "font-display text-[10px] font-semibold truncate",
-                quest.is_completed ? "text-ink-muted line-through" : "text-white"
+                quest.is_completed ? "text-[#C0BEEF]/50 line-through" : "text-white group-hover:text-[#E8EEFF]"
               )}
             >
               {quest.template.name}
             </p>
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <span className="font-mono text-[8px] font-bold text-amber-400">
+              <span className="font-mono text-[8px] font-bold text-[#00E5FF] bg-[#2614DF]/25 border border-[#01C0D7]/30 px-1.5 py-0.5 rounded shadow-[0_0_6px_rgba(1,192,215,0.2)]">
                 +{quest.xp_reward} XP
               </span>
 
               {/* Done / Complete Action Button */}
               {quest.is_completed ? (
-                <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 font-mono text-[7px] text-emerald-400 font-bold flex items-center gap-0.5">
+                <span className="rounded bg-[#01C0D7]/20 border border-[#01C0D7]/40 px-1.5 py-0.5 font-mono text-[7px] text-[#00E5FF] font-bold flex items-center gap-0.5 shadow-[0_0_6px_rgba(1,192,215,0.25)]">
                   ✓ Done
                 </span>
               ) : (
                 <button
                   type="button"
                   onClick={() => onLog(quest.id, quest.target_value - quest.current_value)}
-                  className="rounded bg-arc-500/25 px-1.5 py-0.5 font-mono text-[7px] text-arc-300 font-bold hover:bg-arc-500/40 hover:text-white transition-all shadow-glow-arc-sm"
+                  className="rounded bg-gradient-to-r from-[#2614DF]/60 to-[#4D30EC]/60 px-1.5 py-0.5 font-mono text-[7px] text-[#E8EEFF] font-bold border border-[#01C0D7]/40 hover:from-[#2614DF] hover:to-[#01C0D7] hover:text-white transition-all shadow-[0_0_8px_rgba(38,20,223,0.4)] cursor-pointer"
                 >
                   Done
                 </button>
@@ -125,13 +98,13 @@ function DashboardQuestRow({
             </div>
           </div>
 
-          <div className="mt-0.5 flex items-center justify-between font-mono text-[7px] text-ink-faint">
+          <div className="mt-0.5 flex items-center justify-between font-mono text-[7px] text-[#C0BEEF]/70">
             <span>{formatQuestValue(quest.current_value, quest.template.unit)} / {formatQuestValue(quest.target_value, quest.template.unit)}</span>
           </div>
 
-          <div className="mt-0.5 h-1 w-full rounded-full bg-void-deep/90 overflow-hidden">
+          <div className="mt-0.5 h-1 w-full rounded-full bg-[#0C081D] border border-[#2614DF]/25 overflow-hidden">
             <div
-              className={cn("h-full rounded-full transition-all duration-500", barClass)}
+              className="h-full rounded-full bg-gradient-to-r from-[#2614DF] via-[#4D30EC] to-[#01C0D7] shadow-[0_0_6px_rgba(1,192,215,0.6)] transition-all duration-500"
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -176,13 +149,9 @@ export default function DashboardPage() {
       </div>
 
       {/* ── ROW 2: 5 KPI METRIC CARDS (Normal: 60px | F11: 75px) ───── */}
-      <div className="relative h-[60px] 2xl:h-[75px] flex-shrink-0 rounded-xl overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/custom_bg/kpi_keys_bg.png"
-          alt="KPI Background"
-          className="absolute inset-0 h-full w-full object-cover pointer-events-none opacity-40 z-0"
-        />
+      <div className="relative h-[60px] 2xl:h-[75px] flex-shrink-0 rounded-xl overflow-hidden p-0.5 bg-gradient-to-r from-[#0C081D] via-[#2614DF]/25 to-[#0C081D] border border-[#2614DF]/40 shadow-[0_0_15px_rgba(38,20,223,0.25)]">
+        {/* Ambient 5-color background glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0C081D]/90 via-[#4D30EC]/20 via-[#2614DF]/25 to-[#01C0D7]/20 pointer-events-none" />
         <div className="relative z-10 grid grid-cols-5 gap-1.5 2xl:gap-2.5 h-full">
           <KpiCard
             label="QUESTS COMPLETED"
@@ -190,19 +159,21 @@ export default function DashboardPage() {
             icon={ClipboardList}
             trend={board ? `${Math.round(board.completion_percent)}% to next` : "22% to next"}
             trendUp={false}
-            accentClass="text-arc-300"
-            glowClass="shadow-glow-arc-sm"
-            iconBgClass="from-purple-600 to-purple-950"
+            accentClass="text-[#E8EEFF]"
+            glowClass="shadow-[0_0_10px_rgba(1,192,215,0.4)]"
+            iconBgClass="from-[#2614DF] to-[#01C0D7]"
+            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#2614DF]/15"
           />
           <KpiCard
             label="DAILY XP"
             value={`${character.current_xp.toLocaleString()}`}
-            customIcon={<span className="font-mono text-[9px] 2xl:text-[11px] font-bold text-blue-300">XP</span>}
+            customIcon={<span className="font-mono text-[9px] 2xl:text-[11px] font-bold text-[#E8EEFF]">XP</span>}
             trend={`↑ ${Math.round(character.xp_progress_percent || 74)}% from yesterday`}
             trendUp={true}
-            accentClass="text-blue-400"
-            glowClass="shadow-glow-cyan"
-            iconBgClass="from-blue-600 to-blue-950"
+            accentClass="text-[#00E5FF]"
+            glowClass="shadow-[0_0_10px_rgba(38,20,223,0.5)]"
+            iconBgClass="from-[#2614DF] to-[#4D30EC]"
+            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#1A0B40]/90 to-[#4D30EC]/20"
           />
           <KpiCard
             label="OVERALL PROGRESS"
@@ -210,9 +181,10 @@ export default function DashboardPage() {
             icon={TrendingUp}
             trend={`↑ Level ${character.level}`}
             trendUp={true}
-            accentClass="text-cyan-400"
-            glowClass="shadow-glow-cyan"
-            iconBgClass="from-cyan-600 to-cyan-950"
+            accentClass="text-[#E8EEFF]"
+            glowClass="shadow-[0_0_10px_rgba(1,192,215,0.5)]"
+            iconBgClass="from-[#4D30EC] to-[#01C0D7]"
+            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#01C0D7]/15"
           />
           <KpiCard
             label="STREAK"
@@ -220,19 +192,21 @@ export default function DashboardPage() {
             icon={Flame}
             trend="Keep it up!"
             trendUp={true}
-            accentClass="text-amber-400"
-            glowClass="shadow-glow-amber"
-            iconBgClass="from-orange-600 to-orange-950"
+            accentClass="text-[#C0BEEF]"
+            glowClass="shadow-[0_0_10px_rgba(77,48,236,0.5)]"
+            iconBgClass="from-[#4D30EC] to-[#2614DF]"
+            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#160B35]/90 to-[#4D30EC]/20"
           />
           <KpiCard
-            label="CREDITS"
-            value="15,850"
-            icon={DollarSign}
-            trend="Unlimited Plan"
-            trendUp={false}
-            accentClass="text-amber-300"
-            glowClass="shadow-glow-amber"
-            iconBgClass="from-amber-600 to-amber-950"
+            label="TOTAL XP"
+            value={`${(character.total_xp_earned || (character.current_xp + (character.level - 1) * 1500)).toLocaleString()}`}
+            icon={Zap}
+            trend={`Rank ${getHunterRank(character.level)} Hunter`}
+            trendUp={true}
+            accentClass="text-[#00E5FF]"
+            glowClass="shadow-[0_0_10px_rgba(1,192,215,0.5)]"
+            iconBgClass="from-[#01C0D7] to-[#2614DF]"
+            cardBgClass="bg-gradient-to-br from-[#0C081D]/95 via-[#1A0B40]/90 to-[#01C0D7]/20"
           />
         </div>
       </div>
@@ -240,7 +214,7 @@ export default function DashboardPage() {
       {/* ── ROW 3: DAILY QUESTS (325px/453px) + SYSTEM OVERVIEW (527px/735px) (Normal: 269px | F11: 375px) ─ */}
       <div className="h-[269px] 2xl:h-[375px] grid grid-cols-12 gap-2 2xl:gap-3.5 overflow-hidden flex-shrink-0">
         {/* Daily Quests Panel — 5/12 (~38% width: 325px / 453px) */}
-        <div className="col-span-5 hud-panel relative p-2.5 2xl:p-3.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0A051A]/85 rounded-xl" id="daily-quests">
+        <div className="col-span-5 hud-panel relative p-2.5 2xl:p-3.5 flex flex-col justify-between min-h-0 overflow-hidden bg-[#0C081D]/95 rounded-xl border border-[#2614DF]/30 shadow-[0_0_15px_rgba(38,20,223,0.15)]" id="daily-quests">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/custom_bg/daily_quests_bg.png"
@@ -270,9 +244,9 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="mt-1 2xl:mt-1.5 h-1 2xl:h-1.5 w-full flex-shrink-0 rounded-full bg-void-deep overflow-hidden">
+            <div className="mt-1 2xl:mt-1.5 h-1 2xl:h-1.5 w-full flex-shrink-0 rounded-full bg-[#0C081D] border border-[#2614DF]/30 overflow-hidden">
               <div
-                className="h-full rounded-full bg-stat-bar-arc shadow-glow-arc-sm transition-all duration-700"
+                className="h-full rounded-full bg-gradient-to-r from-[#2614DF] via-[#4D30EC] to-[#01C0D7] shadow-[0_0_10px_rgba(1,192,215,0.6)] transition-all duration-700"
                 style={{ width: `${board?.completion_percent ?? 22}%` }}
               />
             </div>
