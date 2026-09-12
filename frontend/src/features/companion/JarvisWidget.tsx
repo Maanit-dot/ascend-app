@@ -23,19 +23,16 @@ import { useUserStore } from "@/store/useUserStore";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-/* ── Holographic Soundwave Frequency Core (Image-based) ───── */
+/* ── Holographic Soundwave Frequency Core (Aligned with background) ───── */
 function JarvisHoloReactor({ active }: { active: boolean }) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-1 flex-shrink-0">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/custom_bg/jarvis_holo_header.png"
-        alt="JARVIS Holographic Reactor"
-        className={cn(
-          "h-16 w-auto object-contain pointer-events-none transition-transform duration-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.6)]",
-          active && "scale-105 drop-shadow-[0_0_14px_#A855F7]"
-        )}
-      />
+    <div className="relative flex flex-col items-center justify-center h-20 2xl:h-24 w-full flex-shrink-0 pointer-events-none">
+      {active && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="h-16 w-16 rounded-full bg-arc-500/30 animate-ping" />
+          <span className="h-20 w-20 rounded-full bg-arc-400/20 animate-pulse" />
+        </div>
+      )}
     </div>
   );
 }
@@ -175,7 +172,14 @@ export function JarvisWidget() {
   const isActive = isListening || isSpeaking;
 
   return (
-    <aside className="relative z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#05030D]/95 lg:flex overflow-hidden p-2 gap-2 select-none">
+    <aside className="relative z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#03010B] lg:flex overflow-hidden p-2.5 gap-1.5 select-none">
+      {/* ── User-Provided Full Holographic Frame Background Image ─────────── */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/custom_bg/jarvis_bg.png"
+        alt="JARVIS AI Holographic Background"
+        className="absolute inset-0 h-full w-full object-fill pointer-events-none opacity-95 z-0"
+      />
       {/* ── HEADER ──────────────────────────────────────────────── */}
       <div className="relative z-10 flex h-10 flex-shrink-0 items-center justify-between px-1 pb-1">
         <div className="flex flex-col">

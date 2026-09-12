@@ -14,7 +14,7 @@ export function ArcProjectionPanel() {
       <img
         src="/custom_bg/arc_projection_bg.png"
         alt="Arc Projection Background"
-        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-85 z-0"
+        className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none opacity-95 z-0"
       />
 
       {/* Background cyber grid & energy particles */}
