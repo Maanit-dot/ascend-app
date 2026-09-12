@@ -73,12 +73,12 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
         </div>
 
         {/* ── CENTER ZONE (35-40% Width): Dragon + Hunter Artwork Channel ─────────── */}
-        <div className="w-[35%] h-full pointer-events-none flex-shrink-0" />
+        <div className="w-[38%] h-full pointer-events-none flex-shrink-0" />
 
         {/* ── RIGHT ZONE (30-35% Width): Dynamic Hunter Info & Level Ring ───── */}
-        <div className="flex items-center justify-end gap-3 2xl:gap-5 w-[37%] min-w-0 self-center">
+        <div className="flex items-center justify-end gap-3 2xl:gap-5 w-[34%] min-w-0 self-center">
           {/* User Name, XP & Stats column */}
-          <div className="flex flex-col justify-center gap-1 2xl:gap-2 min-w-[130px] 2xl:min-w-[180px] max-w-[240px] 2xl:max-w-[320px]">
+          <div className="flex flex-col justify-center gap-1 2xl:gap-2 min-w-[130px] 2xl:min-w-[180px] flex-1">
             <div>
               <p className="font-mono text-[8px] 2xl:text-[10px] uppercase tracking-widest text-arc-400 font-bold">HUNTER</p>
               <div className="flex items-center gap-1.5">
@@ -119,19 +119,19 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Level Indicator — absolutely positioned over the background orb ─── */}
-        <div
-          className="absolute flex flex-col items-center justify-center"
-          style={{ left: "88%", top: "40%", transform: "translate(-50%, -50%)", width: 84, height: 84, zIndex: 3 }}
-        >
-          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
-            <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
-            <svg className="h-3 w-6 text-arc-400 mt-0.5" viewBox="0 0 24 10" fill="currentColor">
-              <path d="M12 10L6 0H0L8 7L12 10L16 7L24 0H18L12 10Z" opacity="0.8" />
-            </svg>
+          {/* Dynamic Level Indicator */}
+          <div
+            className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "4px" }}
+          >
+            <div className="relative z-10 flex flex-col items-center justify-center text-center">
+              <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
+              <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
+              <svg className="h-3 w-6 text-arc-400 mt-0.5" viewBox="0 0 24 10" fill="currentColor">
+                <path d="M12 10L6 0H0L8 7L12 10L16 7L24 0H18L12 10Z" opacity="0.8" />
+              </svg>
+            </div>
           </div>
         </div>
 
