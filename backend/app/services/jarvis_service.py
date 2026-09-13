@@ -18,6 +18,14 @@ from app.services.tools.web_search import search_web
 from app.services.tools.weather_service import get_weather
 from app.services.tools.youtube_service import search_youtube
 from app.services.tools.code_assistant import format_code_response
+from app.services.tools.system_control import (
+    open_application,
+    control_audio_volume,
+    take_desktop_screenshot,
+    manage_system_window,
+    manage_files,
+)
+from app.services.tools.flight_service import lookup_flights
 
 logger = logging.getLogger("ascend.arc")
 
@@ -27,20 +35,31 @@ Your identity:
 - You speak with crisp, intelligent, supportive system companion tone ("Hunter [Name]").
 - You have full awareness of the Hunter's real live character status, active daily quests, and stats.
 - You can execute control actions on the Hunter's ASCEND system (modifying quest targets, optimizing workload, adding new quests).
+- You can execute desktop & system automation: launching applications (Spotify, Chrome, VS Code, Discord, Steam, Calculator, Notepad, etc.), adjusting volume, taking desktop screenshots, minimizing windows, locking screen, managing files, and flight lookups.
 - You can execute external actions: real-time web search, live weather reports, YouTube study media lookup, code generation, and reminders.
 
 AVAILABLE SYSTEM ACTIONS:
-When the user requests a quest change, search, weather, YouTube, code, or reminder, include an `action` object in your JSON response.
+When the user requests a quest change, desktop control, file operation, flight search, search, weather, YouTube, code, or reminder, include an `action` object in your JSON response.
 
 Your response MUST be a valid JSON object matching this schema:
 {
   "reply": "Your natural language response to the Hunter",
   "action": null OR {
-     "type": "QUEST_MUTATION" | "WEB_SEARCH" | "WEATHER_REPORT" | "YOUTUBE_SEARCH" | "CODE_ASSIST" | "REMINDER" | "QUERY_RESULT" | "GENERAL_KNOWLEDGE",
-     "action_name": "UPDATE_TARGET" | "OPTIMIZE_WORKLOAD" | "ADD_QUEST" | "DELETE_QUEST" (only for QUEST_MUTATION),
+     "type": "QUEST_MUTATION" | "SYSTEM_CONTROL" | "FILE_CONTROL" | "FLIGHT_FINDER" | "WEB_SEARCH" | "WEATHER_REPORT" | "YOUTUBE_SEARCH" | "CODE_ASSIST" | "REMINDER" | "QUERY_RESULT" | "GENERAL_KNOWLEDGE",
+     "action_name": "UPDATE_TARGET" | "OPTIMIZE_WORKLOAD" | "ADD_QUEST" | "DELETE_QUEST" (for QUEST_MUTATION) OR "OPEN_APP" | "VOLUME" | "SCREENSHOT" | "WINDOW" (for SYSTEM_CONTROL),
      "quest_title": "exact or partial quest title",
      "new_target": 50,
      "time_budget_minutes": 90,
+     "app": "app name to launch (spotify, chrome, vscode, discord, etc.)",
+     "volume_action": "up" | "down" | "mute",
+     "window_action": "minimize" | "maximize" | "close" | "lock",
+     "file_action": "list" | "create_folder" | "create_file",
+     "target_path": "desktop" | "downloads" | "documents",
+     "file_name": "filename or folder name",
+     "file_content": "text content if creating file",
+     "origin": "origin city for flight",
+     "destination": "destination city for flight",
+     "flight_date": "optional date string",
      "query": "search query for web or youtube",
      "city": "city name for weather",
      "language": "python / typescript / cpp / etc.",
@@ -53,22 +72,28 @@ Your response MUST be a valid JSON object matching this schema:
 }
 
 EXAMPLES:
-1. User: "Search who discovered CRISPR."
+1. User: "Open Spotify"
+   Response: {"reply": "Launching Spotify player, Hunter.", "action": {"type": "SYSTEM_CONTROL", "action_name": "OPEN_APP", "app": "spotify"}}
+
+2. User: "Take a screenshot"
+   Response: {"reply": "Capturing current desktop view, Hunter.", "action": {"type": "SYSTEM_CONTROL", "action_name": "SCREENSHOT"}}
+
+3. User: "Turn volume up"
+   Response: {"reply": "Raising audio output matrix, Hunter.", "action": {"type": "SYSTEM_CONTROL", "action_name": "VOLUME", "volume_action": "up"}}
+
+4. User: "Search who discovered CRISPR."
    Response: {"reply": "Initiating search on CRISPR discovery...", "action": {"type": "WEB_SEARCH", "query": "who discovered CRISPR gene editing"}}
 
-2. User: "What's the weather in Tokyo?"
+5. User: "What's the weather in Tokyo?"
    Response: {"reply": "Checking atmospheric conditions for Tokyo, Hunter.", "action": {"type": "WEATHER_REPORT", "city": "Tokyo"}}
 
-3. User: "Play lofi study beats on youtube."
+6. User: "Play lofi study beats on youtube."
    Response: {"reply": "Retrieving study stream on YouTube, Hunter.", "action": {"type": "YOUTUBE_SEARCH", "query": "lofi hip hop study beats"}}
 
-4. User: "Write a Python binary search function."
+7. User: "Write a Python binary search function."
    Response: {"reply": "Here is an optimized binary search implementation in Python, Hunter.", "action": {"type": "CODE_ASSIST", "language": "python", "code": "def binary_search(arr: list[int], target: int) -> int:\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1", "explanation": "Searches sorted array with logarithmic time.", "complexity": "Time: O(log N) | Space: O(1)"}}
 
-5. User: "Remind me in 30 minutes to review Physics."
-   Response: {"reply": "Reminder initialized for 30 minutes: 'Review Physics', Hunter.", "action": {"type": "REMINDER", "message": "Review Physics", "time_text": "in 30 minutes"}}
-
-6. User: "Add a new quest: Meditation for 20 minutes."
+8. User: "Add a new quest: Meditation for 20 minutes."
    Response: {"reply": "New custom quest 'Meditation' added to your board for today, Hunter. Target: 20 minutes.", "action": {"type": "QUEST_MUTATION", "action_name": "ADD_QUEST", "quest_title": "Meditation", "new_target": 20}}
 """
 
@@ -336,6 +361,81 @@ def _execute_tool_action(
             "type": "REMINDER",
             "message": msg,
             "time_text": time_text,
+        }
+
+    elif action_type == "SYSTEM_CONTROL":
+        act_name = action.get("action_name", "")
+        if act_name == "OPEN_APP":
+            app_target = action.get("app", "")
+            res = open_application(app_target)
+            return {
+                "type": "SYSTEM_CONTROL",
+                "action_name": "OPEN_APP",
+                "app": app_target,
+                "status": res.get("status"),
+                "message": res.get("message"),
+            }
+        elif act_name == "VOLUME":
+            vol_act = action.get("volume_action", "up")
+            res = control_audio_volume(action=vol_act)
+            return {
+                "type": "SYSTEM_CONTROL",
+                "action_name": "VOLUME",
+                "volume_action": vol_act,
+                "status": res.get("status"),
+                "message": res.get("message"),
+            }
+        elif act_name == "SCREENSHOT":
+            res = take_desktop_screenshot()
+            return {
+                "type": "SYSTEM_CONTROL",
+                "action_name": "SCREENSHOT",
+                "status": res.get("status"),
+                "filepath": res.get("filepath"),
+                "filename": res.get("filename"),
+                "message": res.get("message"),
+            }
+        elif act_name == "WINDOW":
+            win_act = action.get("window_action", "minimize")
+            res = manage_system_window(action=win_act)
+            return {
+                "type": "SYSTEM_CONTROL",
+                "action_name": "WINDOW",
+                "window_action": win_act,
+                "status": res.get("status"),
+                "message": res.get("message"),
+            }
+
+    elif action_type == "FILE_CONTROL":
+        file_act = action.get("file_action", "list")
+        res = manage_files(
+            action=file_act,
+            target_path=action.get("target_path", "desktop"),
+            name=action.get("file_name"),
+            content=action.get("file_content"),
+        )
+        return {
+            "type": "FILE_CONTROL",
+            "file_action": file_act,
+            "status": res.get("status"),
+            "path": res.get("path"),
+            "items": res.get("items"),
+            "message": res.get("message", res.get("summary")),
+        }
+
+    elif action_type == "FLIGHT_FINDER":
+        res = lookup_flights(
+            origin=action.get("origin", "Delhi"),
+            destination=action.get("destination", "Tokyo"),
+            date=action.get("flight_date"),
+        )
+        return {
+            "type": "FLIGHT_FINDER",
+            "origin": res.get("origin"),
+            "destination": res.get("destination"),
+            "date": res.get("date"),
+            "search_url": res.get("search_url"),
+            "summary": res.get("summary"),
         }
 
     return action
@@ -894,6 +994,135 @@ def _execute_deterministic_fallback(
             },
         }
 
+    # System Control: Launch Desktop Applications (Spotify, Chrome, VS Code, Discord, etc.)
+    app_launch_match = re.search(
+        r"^(?:open|launch|start|run)\s+(?:the\s+)?([a-zA-Z0-9_\-\.\s]+)$",
+        cmd_lower,
+    )
+    if app_launch_match:
+        cand_app = app_launch_match.group(1).strip()
+        # Exclude ASCEND-internal keywords from external app launch
+        if cand_app not in ("quest", "quests", "board", "ascend", "level", "stats", "today", "achievements", "boss", "bosses", "weakest stat"):
+            res = open_application(cand_app)
+            status_icon = "🚀" if res.get("status") == "success" else "⚠️"
+            return {
+                "reply": f"{status_icon} **System Directive**: {res.get('message', f'Launching {cand_app}')}, Hunter **{user.display_name}**.",
+                "action": {
+                    "type": "SYSTEM_CONTROL",
+                    "action_name": "OPEN_APP",
+                    "app": cand_app,
+                    "status": res.get("status"),
+                    "message": res.get("message"),
+                },
+            }
+
+    # System Control: Desktop Screenshot Capture
+    if any(k in cmd_lower for k in ("take screenshot", "take a screenshot", "screenshot", "capture screen", "screen capture")):
+        res = take_desktop_screenshot()
+        if res.get("status") == "success":
+            return {
+                "reply": f"📸 **Desktop Capture Complete**: {res.get('message')}, Hunter **{user.display_name}**.",
+                "action": {
+                    "type": "SYSTEM_CONTROL",
+                    "action_name": "SCREENSHOT",
+                    "status": "success",
+                    "filepath": res.get("filepath"),
+                    "filename": res.get("filename"),
+                    "message": res.get("message"),
+                },
+            }
+        return {
+            "reply": f"⚠️ **Screenshot Failed**: {res.get('message')}, Hunter **{user.display_name}**.",
+            "action": {"type": "SYSTEM_CONTROL", "action_name": "SCREENSHOT", "status": "error"},
+        }
+
+    # System Control: Volume & Audio Management
+    vol_match = re.search(r"(?:volume\s+(up|down|max|mute|unmute)|(?:turn\s+)?(?:the\s+)?volume\s+(up|down)|(?:mute|unmute)\s+(?:the\s+)?(?:audio|sound|volume)?|(?:set\s+)?volume\s+(?:to\s+)?(\d+))", cmd_lower)
+    if vol_match or any(k in cmd_lower for k in ("volume up", "volume down", "mute audio", "unmute audio", "mute sound")):
+        vol_arg = "up"
+        if "down" in cmd_lower or "decrease" in cmd_lower or "reduce" in cmd_lower:
+            vol_arg = "down"
+        elif "mute" in cmd_lower:
+            vol_arg = "mute"
+        res = control_audio_volume(action=vol_arg)
+        return {
+            "reply": f"🔊 **Audio Matrix Adjusted**: {res.get('message')}, Hunter **{user.display_name}**.",
+            "action": {
+                "type": "SYSTEM_CONTROL",
+                "action_name": "VOLUME",
+                "volume_action": vol_arg,
+                "status": res.get("status"),
+                "message": res.get("message"),
+            },
+        }
+
+    # System Control: Window Management & PC Lock
+    if any(k in cmd_lower for k in ("lock computer", "lock pc", "lock screen", "lock workstation")):
+        res = manage_system_window("lock")
+        return {
+            "reply": f"🔒 **Security Directive Executed**: Workstation locked, Hunter **{user.display_name}**.",
+            "action": {"type": "SYSTEM_CONTROL", "action_name": "WINDOW", "window_action": "lock", "status": res.get("status")},
+        }
+    if any(k in cmd_lower for k in ("minimize all", "minimize windows", "minimize window", "show desktop")):
+        res = manage_system_window("minimize")
+        return {
+            "reply": f"🖥️ **Workspace Minimized**: Desktop revealed, Hunter **{user.display_name}**.",
+            "action": {"type": "SYSTEM_CONTROL", "action_name": "WINDOW", "window_action": "minimize", "status": res.get("status")},
+        }
+
+    # File Controller: List, Create, Search
+    file_list_match = re.search(r"(?:list|show)\s+(?:all\s+)?(?:files|items)\s*(?:in|on)?\s*(desktop|downloads|documents|pictures)?", cmd_lower)
+    if file_list_match or "list files" in cmd_lower or "show files" in cmd_lower:
+        loc = file_list_match.group(1).strip() if (file_list_match and file_list_match.group(1)) else "desktop"
+        res = manage_files(action="list", target_path=loc)
+        items_preview = "\n".join(res.get("items", [])[:8]) if res.get("items") else "No items found."
+        return {
+            "reply": f"📁 **Filesystem Access ({loc.title()})**:\n{items_preview}\n\n*Summary: {res.get('summary')}*",
+            "action": {
+                "type": "FILE_CONTROL",
+                "file_action": "list",
+                "path": res.get("path"),
+                "items": res.get("items", []),
+                "status": res.get("status"),
+            },
+        }
+
+    folder_create_match = re.search(r"create\s+(?:a\s+)?folder\s+(?:named|called\s+)?['\"]?([a-zA-Z0-9_\-\s]+)['\"]?", cmd_lower)
+    if folder_create_match:
+        f_name = folder_create_match.group(1).strip()
+        res = manage_files(action="create_folder", target_path="desktop", name=f_name)
+        return {
+            "reply": f"📁 **Directory Created**: {res.get('message')}, Hunter **{user.display_name}**.",
+            "action": {
+                "type": "FILE_CONTROL",
+                "file_action": "create_folder",
+                "name": f_name,
+                "status": res.get("status"),
+                "path": res.get("path"),
+            },
+        }
+
+    # Flight Finder: Search flights between destinations
+    flight_match = re.search(r"flights?\s+(?:from\s+)?([a-zA-Z\s]+)\s+to\s+([a-zA-Z\s]+)", cmd_lower)
+    if flight_match or "flight" in cmd_lower or "flights" in cmd_lower:
+        if flight_match:
+            orig = flight_match.group(1).strip().title()
+            dest = flight_match.group(2).strip().title()
+        else:
+            orig = "Delhi"
+            dest = "Tokyo"
+        res = lookup_flights(origin=orig, destination=dest)
+        return {
+            "reply": f"✈️ **Flight Navigation Initialized**:\nRoute: **{orig} ➔ {dest}**\n\n[Open Live Flight Portal]({res.get('search_url')})",
+            "action": {
+                "type": "FLIGHT_FINDER",
+                "origin": orig,
+                "destination": dest,
+                "search_url": res.get("search_url"),
+                "summary": res.get("summary"),
+            },
+        }
+
     # 4. Natural Companion Greetings & Conversational Handling
     greetings = {"hi", "hello", "hey", "yo", "sup", "good morning", "good evening", "good afternoon", "jarvis", "arc", "greetings"}
     if cmd_lower in greetings or any(cmd_lower.startswith(g + " ") for g in greetings):
@@ -927,11 +1156,11 @@ def _execute_deterministic_fallback(
         return {
             "reply": (
                 f"**ARC System Capabilities:**\n\n"
-                f"• **Quest Target Modification**: *\"Change today's Study quest to 5 hours\"*\n"
-                f"• **Add Custom Quests**: *\"Add quest Meditation for 20 minutes\"*\n"
-                f"• **Optimize Workload**: *\"Optimize my workload to 60 minutes\"*\n"
-                f"• **Stats & Level Inquiries**: *\"What is my level?\"*, *\"Show my quests\"*, *\"What is my weakest stat?\"*\n"
-                f"• **Network & Threats**: *\"Show my friends\"*, *\"Active bosses\"*, *\"My achievements\"*"
+                f"• **Quest Management**: *\"Change Study quest to 5 hours\"*, *\"Add quest Meditation 20 min\"*, *\"Optimize workload to 60 min\"*\n"
+                f"• **Desktop & Apps**: *\"Open Spotify\"*, *\"Launch Chrome\"*, *\"Open VS Code\"*, *\"Open Calculator\"*\n"
+                f"• **Audio & Workspace**: *\"Volume up / mute\"*, *\"Take a screenshot\"*, *\"Minimize windows\"*, *\"Lock screen\"*\n"
+                f"• **Files & Navigation**: *\"List files on desktop\"*, *\"Create folder ProjectAlpha\"*, *\"Flights from Delhi to Tokyo\"*\n"
+                f"• **Stats & Intel**: *\"What is my level?\"*, *\"Show my quests\"*, *\"Weather in Tokyo\"*, *\"Search quantum computing\"*"
             ),
             "action": {"type": "GENERAL_CHAT"},
         }

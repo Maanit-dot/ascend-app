@@ -34,6 +34,22 @@ export interface JarvisAction {
   complexity?: string;
   message?: string;
   time_text?: string;
+  // SYSTEM_CONTROL (desktop automation) fields
+  app?: string;
+  status?: string;
+  filepath?: string;
+  filename?: string;
+  volume_action?: string;
+  window_action?: string;
+  // FILE_CONTROL fields
+  file_action?: string;
+  path?: string;
+  items?: string[];
+  // FLIGHT_FINDER fields
+  origin?: string;
+  destination?: string;
+  date?: string;
+  search_url?: string;
 }
 
 export interface JarvisResponse {

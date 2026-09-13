@@ -14,6 +14,11 @@ import {
   Zap,
   Target,
   BarChart2,
+  Monitor,
+  FolderOpen,
+  PlaneTakeoff,
+  Camera,
+  ExternalLink,
 } from "lucide-react";
 import { jarvisApi, type JarvisAction } from "@/lib/api/jarvis";
 import { jarvisSpeech } from "@/lib/speech";
@@ -60,6 +65,7 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
       >
         <div className="whitespace-pre-line text-white font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{msg.text}</div>
 
+        {/* Quest Mutation Badge */}
         {msg.action?.type === "QUEST_MUTATION" && (
           <div className="mt-1 rounded bg-[#01C0D7]/20 border border-[#01C0D7]/40 p-1.5">
             <div className="flex items-center gap-1 font-semibold text-[#00E5FF] text-[8px] mb-0.5">
@@ -70,6 +76,82 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
               <p className="font-mono text-[7px] text-[#E8EEFF]">
                 {msg.action.quest_title} → <strong className="text-white">{msg.action.new_target}</strong>
               </p>
+            )}
+          </div>
+        )}
+
+        {/* SYSTEM_CONTROL Badge — App Launch, Screenshot, Volume, Window */}
+        {msg.action?.type === "SYSTEM_CONTROL" && (
+          <div className={cn(
+            "mt-1 rounded border p-1.5",
+            msg.action.status === "success"
+              ? "bg-emerald-500/15 border-emerald-500/40"
+              : "bg-red-500/15 border-red-500/40"
+          )}>
+            <div className="flex items-center gap-1 font-semibold text-[8px] mb-0.5"
+              style={{ color: msg.action.status === "success" ? "#34d399" : "#f87171" }}>
+              <Monitor className="h-2.5 w-2.5" />
+              <span>
+                {msg.action.action_name === "OPEN_APP" && `App Launched: ${msg.action.app}`}
+                {msg.action.action_name === "SCREENSHOT" && "Desktop Captured"}
+                {msg.action.action_name === "VOLUME" && `Volume: ${msg.action.volume_action}`}
+                {msg.action.action_name === "WINDOW" && `Window: ${msg.action.window_action}`}
+              </span>
+            </div>
+            {msg.action.action_name === "SCREENSHOT" && msg.action.filename && (
+              <p className="font-mono text-[7px] text-[#E8EEFF]">
+                <Camera className="inline h-2 w-2 mr-0.5" />
+                {msg.action.filename}
+              </p>
+            )}
+            {msg.action.message && (
+              <p className="font-mono text-[7px] text-[#C0BEEF]/80">{msg.action.message}</p>
+            )}
+          </div>
+        )}
+
+        {/* FILE_CONTROL Badge — list, create_folder */}
+        {msg.action?.type === "FILE_CONTROL" && (
+          <div className="mt-1 rounded bg-amber-500/15 border border-amber-500/40 p-1.5">
+            <div className="flex items-center gap-1 font-semibold text-amber-300 text-[8px] mb-0.5">
+              <FolderOpen className="h-2.5 w-2.5" />
+              <span>
+                {msg.action.file_action === "list" ? "Directory Scan" : "File Operation"}
+              </span>
+            </div>
+            {msg.action.items && msg.action.items.length > 0 && (
+              <div className="space-y-0.5">
+                {msg.action.items.slice(0, 5).map((item, i) => (
+                  <p key={i} className="font-mono text-[7px] text-[#E8EEFF]">{item}</p>
+                ))}
+                {msg.action.items.length > 5 && (
+                  <p className="font-mono text-[7px] text-[#C0BEEF]/60">+{msg.action.items.length - 5} more...</p>
+                )}
+              </div>
+            )}
+            {msg.action.message && (
+              <p className="font-mono text-[7px] text-amber-200/80 mt-0.5">{msg.action.message}</p>
+            )}
+          </div>
+        )}
+
+        {/* FLIGHT_FINDER Badge */}
+        {msg.action?.type === "FLIGHT_FINDER" && (
+          <div className="mt-1 rounded bg-sky-500/15 border border-sky-500/40 p-1.5">
+            <div className="flex items-center gap-1 font-semibold text-sky-300 text-[8px] mb-0.5">
+              <PlaneTakeoff className="h-2.5 w-2.5" />
+              <span>{msg.action.origin} ➔ {msg.action.destination}</span>
+            </div>
+            {msg.action.search_url && (
+              <a
+                href={msg.action.search_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-0.5 font-mono text-[7px] text-sky-400 hover:text-sky-200 underline"
+              >
+                <ExternalLink className="h-2 w-2" />
+                Open Flight Portal
+              </a>
             )}
           </div>
         )}
@@ -164,9 +246,11 @@ export function JarvisWidget() {
 
   const SUGGESTED_ACTIONS = [
     { label: "Optimize today's quests", cmd: "Optimize my workload to 60 minutes", icon: Zap },
-    { label: "Analyze weak subjects", cmd: "What is my weakest stat and subject?", icon: Target },
-    { label: "Generate new quest", cmd: "Add a new quest: Meditation for 20 minutes", icon: Sparkles },
+    { label: "Open Spotify", cmd: "Open Spotify", icon: Monitor },
+    { label: "Take a screenshot", cmd: "Take a screenshot", icon: Camera },
     { label: "Show progress report", cmd: "Show my quests", icon: BarChart2 },
+    { label: "Generate new quest", cmd: "Add a new quest: Meditation for 20 minutes", icon: Sparkles },
+    { label: "Analyze weak subjects", cmd: "What is my weakest stat and subject?", icon: Target },
   ];
 
   const isActive = isListening || isSpeaking;
