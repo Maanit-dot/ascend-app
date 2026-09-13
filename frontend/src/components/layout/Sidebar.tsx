@@ -180,20 +180,10 @@ export function Sidebar() {
       {/* ── Character Summary Panel (Pinned at bottom, with Hunter Photo on Left & Right-aligned text) ── */}
       {user && character && (
         <div className="relative z-10 flex-shrink-0 bg-transparent p-3 space-y-2">
-          {/* Header Row: Hunter Man Photo on LEFT + Name/Status on RIGHT */}
+          {/* Header Row: Hunter Man in background on LEFT + Name/Status on RIGHT */}
           <div className="flex items-center justify-between gap-2">
-            {/* Hunter Artwork / Photo on the left directly beside the name */}
-            <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/custom_bg/hunter_sidebar_portrait.png"
-                alt="Hunter Character"
-                className="h-full w-full object-contain"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = user.avatar_url || "/hunter_avatar.jpg";
-                }}
-              />
-            </div>
+            {/* Left transparent slot allowing background hunter artwork to show through beside name */}
+            <div className="w-16 h-12 flex-shrink-0 pointer-events-none" />
 
             {/* Right-aligned Name, Status, Title, Rank */}
             <div className="flex-1 min-w-0 flex flex-col items-end text-right space-y-0.5">

@@ -120,11 +120,25 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
             </div>
           </div>
 
-          {/* Dynamic Level Indicator */}
+          {/* Dynamic Level Indicator with Dark Blue Circular Progress Bar */}
           <div
             className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "17px" }}
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "51px" }}
           >
+            {/* Dark Blue Circular Progress Bar matching Ascend Core */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="50" cy="50" r="38" stroke="rgba(38,20,223,0.2)" strokeWidth="3" fill="none" />
+              <circle
+                cx="50" cy="50" r="38"
+                stroke="#2614DF"
+                strokeWidth="3"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={`${((character.xp_progress_percent || 0) / 100) * 238.76} 238.76`}
+                style={{ filter: "drop-shadow(0 0 8px rgba(38,20,223,0.95))", transition: "stroke-dasharray 1s ease" }}
+              />
+            </svg>
+
             <div className="relative z-10 flex flex-col items-center justify-center text-center">
               <span className="font-mono text-[7px] uppercase tracking-widest text-arc-300 font-bold drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">LEVEL</span>
               <span className="font-display text-2xl font-bold text-white text-glow-arc leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">{character.level}</span>
