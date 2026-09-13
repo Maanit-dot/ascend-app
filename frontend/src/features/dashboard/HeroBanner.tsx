@@ -123,7 +123,7 @@ export function HeroBanner({ user, board }: HeroBannerProps) {
           {/* Dynamic Level Indicator with Dark Blue Circular Progress Bar */}
           <div
             className="relative flex flex-col items-center justify-center flex-shrink-0 self-center"
-            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "40px" }}
+            style={{ width: 84, height: 84, marginTop: "-8px", marginRight: "17px" }}
           >
             {/* Dark Blue Circular Progress Bar matching Ascend Core */}
             <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" style={{ transform: "rotate(-90deg)" }}>
