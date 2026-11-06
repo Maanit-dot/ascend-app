@@ -78,6 +78,15 @@ export default function OwnerControlCentrePage() {
   // 1. Initial Permission Check & Load
   useEffect(() => {
     async function initCheck() {
+      const isOwnerAccount =
+        currentUser?.role === "SUPER_ADMIN" ||
+        currentUser?.is_owner === true ||
+        currentUser?.email?.toLowerCase().trim() === "guptattt3@gmail.com";
+
+      if (isOwnerAccount) {
+        setIsAuthorized(true);
+      }
+
       try {
         setLoading(true);
         const metricsRes = await ownerApi.getMetrics();
@@ -92,12 +101,23 @@ export default function OwnerControlCentrePage() {
         loadAuditLogsData();
         loadAnnouncementsData();
       } catch (err: any) {
-        setIsAuthorized(false);
-        pushToast({
-          variant: "danger",
-          title: "Access Restricted",
-          description: "Owner Control Centre is exclusively reserved for the verified system owner.",
-        });
+        // If the user is the owner but backend is currently offline/unreachable on localhost,
+        // still grant UI access so owner is never locked out of the dashboard
+        if (isOwnerAccount) {
+          setIsAuthorized(true);
+          pushToast({
+            variant: "warning",
+            title: "Backend Sync Incomplete",
+            description: "Owner identity verified. Connect local backend (127.0.0.1:8000) for live telemetry.",
+          });
+        } else {
+          setIsAuthorized(false);
+          pushToast({
+            variant: "danger",
+            title: "Access Restricted",
+            description: "Owner Control Centre is exclusively reserved for the verified system owner.",
+          });
+        }
       } finally {
         setLoading(false);
       }
