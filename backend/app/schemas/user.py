@@ -46,13 +46,53 @@ class UserOut(BaseModel):
 
     id: uuid.UUID
     email: EmailStr
+    username: Optional[str] = None
     display_name: str
-    avatar_url: Optional[str]
+    avatar_url: Optional[str] = None
+    role: str = "USER"
+    is_owner: bool = False
+    is_suspended: bool = False
+    is_banned: bool = False
     is_onboarded: bool
     timezone: str
     primary_track: str
     created_at: datetime
     character: CharacterProfileOut
+
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=6, max_length=128)
+    username: Optional[str] = Field(default=None, min_length=3, max_length=32)
+    display_name: Optional[str] = Field(default=None, max_length=64)
+    client_type: str = "website"
+    device_name: str = "Browser"
+    device_id: Optional[str] = None
+
+
+class LoginRequest(BaseModel):
+    login: str = Field(description="Email or ASCEND username")
+    password: str = Field(min_length=1)
+    client_type: str = "website"
+    device_name: str = "Browser"
+    device_id: Optional[str] = None
+
+
+class AuthTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut
+
+
+class SessionOut(BaseModel):
+    id: uuid.UUID
+    client_type: str
+    device_name: str
+    ip_address: Optional[str] = None
+    last_active_at: datetime
+    created_at: datetime
+    is_revoked: bool
+    is_current: bool = False
 
 
 class OnboardingRequest(BaseModel):

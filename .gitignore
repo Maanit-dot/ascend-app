@@ -18,7 +18,12 @@ venv/
 # VS Code
 .vscode/
 
-# Logs
+# Build artifacts & Dist
+backend/build/
+backend/dist/
+frontend/dist/
+*.spec
+
 *.log
 
 # Databases

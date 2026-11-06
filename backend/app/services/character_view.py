@@ -40,3 +40,29 @@ def to_character_profile_out(character: CharacterProfile) -> CharacterProfileOut
         difficulty_multiplier=character.difficulty_multiplier,
         burnout_risk_score=character.burnout_risk_score,
     )
+
+
+def to_user_out(user: "User") -> "UserOut":
+    from app.core.config import settings
+    from app.schemas.user import UserOut
+
+    is_owner = (
+        (user.email or "").lower().strip() == settings.OWNER_EMAIL.lower().strip()
+        or user.role == "SUPER_ADMIN"
+    )
+    return UserOut(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+        display_name=user.display_name,
+        avatar_url=user.avatar_url,
+        role=user.role,
+        is_owner=is_owner,
+        is_suspended=user.is_suspended,
+        is_banned=user.is_banned,
+        is_onboarded=user.is_onboarded,
+        timezone=user.timezone,
+        primary_track=user.primary_track,
+        created_at=user.created_at,
+        character=to_character_profile_out(user.character),
+    )

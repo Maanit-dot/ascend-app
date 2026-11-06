@@ -20,10 +20,10 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     DEBUG: bool = True
     API_V1_PREFIX: str = "/api/v1"
-    SECRET_KEY: str = Field(..., description="Used for internal token signing / CSRF")
+    SECRET_KEY: str = Field("ascend-local-secret-desktop-prod", description="Used for internal token signing / CSRF")
 
     # --- Database ---
-    DATABASE_URL: str
+    DATABASE_URL: str = "sqlite:///./ascend.db"
 
     # --- Redis ---
     REDIS_URL: str = "redis://localhost:6379/0"
@@ -53,6 +53,11 @@ class Settings(BaseSettings):
     # --- Misc ---
     ENVIRONMENT: str = "local"
     LOG_LEVEL: str = "INFO"
+
+    # --- Owner / Super Admin ---
+    OWNER_EMAIL: str = "guptattt3@gmail.com"
+    SUPER_ADMIN_EMAILS: str = "guptattt3@gmail.com"
+    ACCESS_TOKEN_EXPIRE_DAYS: int = 30
 
     @field_validator("DATABASE_URL")
     @classmethod

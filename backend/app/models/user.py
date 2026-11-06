@@ -23,17 +23,30 @@ if TYPE_CHECKING:
     from app.models.achievement import UserAchievement, UserTitle
     from app.models.story import StoryProgress
     from app.models.story import Notification
+    from app.models.session import UserSession
+    from app.models.desktop import DesktopInstallation
+    from app.models.integration import AppIntegration
 
 
 class User(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "users"
 
-    firebase_uid: Mapped[str] = mapped_column(String(128), unique=True, index=True)
+    firebase_uid: Mapped[Optional[str]] = mapped_column(String(128), unique=True, index=True, nullable=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    username: Mapped[Optional[str]] = mapped_column(String(64), unique=True, index=True, nullable=True)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     display_name: Mapped[str] = mapped_column(String(64))
     avatar_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
 
+    role: Mapped[str] = mapped_column(String(32), default="USER")  # "SUPER_ADMIN" | "ADMIN" | "USER"
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_suspended: Mapped[bool] = mapped_column(Boolean, default=False)
+    suspension_reason: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    is_banned: Mapped[bool] = mapped_column(Boolean, default=False)
+    ban_reason: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    banned_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    last_platform: Mapped[Optional[str]] = mapped_column(String(32), default="website")  # "website" | "desktop"
+
     is_onboarded: Mapped[bool] = mapped_column(Boolean, default=False)
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Kolkata")
 
@@ -56,6 +69,9 @@ class User(Base, UUIDMixin, TimestampMixin):
         back_populates="user", uselist=False, cascade="all, delete-orphan"
     )
     notifications: Mapped[list["Notification"]] = relationship(back_populates="user")
+    sessions: Mapped[list["UserSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    installations: Mapped[list["DesktopInstallation"]] = relationship(back_populates="user")
+    app_integrations: Mapped[list["AppIntegration"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class CharacterProfile(Base, UUIDMixin, TimestampMixin):

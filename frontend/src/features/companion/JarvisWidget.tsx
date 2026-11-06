@@ -19,6 +19,7 @@ import {
   PlaneTakeoff,
   Camera,
   ExternalLink,
+  Maximize2,
 } from "lucide-react";
 import { jarvisApi, type JarvisAction } from "@/lib/api/jarvis";
 import { jarvisSpeech } from "@/lib/speech";
@@ -29,15 +30,46 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 /* ── Holographic Soundwave Frequency Core (Aligned with background) ───── */
-function JarvisHoloReactor({ active }: { active: boolean }) {
+function JarvisHoloReactor({ state }: { state: "idle" | "listening" | "thinking" | "speaking" | "error" }) {
   return (
     <div className="relative flex flex-col items-center justify-center h-20 2xl:h-24 w-full flex-shrink-0 pointer-events-none">
-      {active && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="h-16 w-16 rounded-full bg-arc-500/30 animate-ping" />
-          <span className="h-20 w-20 rounded-full bg-arc-400/20 animate-pulse" />
-        </div>
-      )}
+      {/* State Glow Rings */}
+      <div
+        className={cn(
+          "absolute h-16 w-16 rounded-full transition-all duration-300",
+          state === "listening" && "bg-cyan-500/30 scale-110 animate-ping",
+          state === "thinking" && "bg-purple-500/35 scale-105 animate-pulse",
+          state === "speaking" && "bg-[#00E5FF]/40 scale-125 animate-pulse",
+          state === "error" && "bg-rose-500/30",
+          state === "idle" && "bg-[#2614DF]/20"
+        )}
+      />
+
+      {/* Center Core Arc */}
+      <div
+        className={cn(
+          "relative h-12 w-12 rounded-full flex flex-col items-center justify-center transition-all duration-200 border shadow-lg",
+          state === "listening" && "bg-cyan-500/20 border-[#00E5FF] shadow-[0_0_20px_#00E5FF]",
+          state === "thinking" && "bg-purple-600/30 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.6)]",
+          state === "speaking" && "bg-[#2614DF]/40 border-[#01C0D7] shadow-[0_0_25px_#00E5FF]",
+          state === "error" && "bg-rose-950/40 border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]",
+          state === "idle" && "bg-[#0C081D]/80 border-[#2614DF]/60 shadow-[0_0_10px_rgba(38,20,223,0.3)]"
+        )}
+      >
+        <Sparkles
+          className={cn(
+            "h-5 w-5 transition-colors duration-200",
+            state === "listening" && "text-[#00E5FF] animate-pulse",
+            state === "thinking" && "text-purple-300 animate-spin",
+            state === "speaking" && "text-cyan-300",
+            state === "error" && "text-rose-400",
+            state === "idle" && "text-[#C0BEEF]/70"
+          )}
+        />
+        <span className="font-mono text-[6px] tracking-widest font-bold uppercase mt-0.5 text-white/90">
+          {state}
+        </span>
+      </div>
     </div>
   );
 }
@@ -160,6 +192,8 @@ function ChatMessage({ msg }: { msg: JarvisMessage }) {
   );
 }
 
+import { ConfirmDialog } from "@/features/companion/ConfirmDialog";
+
 /* ── Jarvis Main Widget Export ──────────────────────────────────── */
 export function JarvisWidget() {
   const {
@@ -167,7 +201,14 @@ export function JarvisWidget() {
     isProcessing,
     isSpeaking,
     voiceEnabled,
+    aiState,
+    isBackendOnline,
+    checkBackendHealth,
     messages,
+    telemetry,
+    fetchTelemetry,
+    pendingConfirmation,
+    setPendingConfirmation,
     setListening,
     setProcessing,
     setSpeaking,
@@ -180,22 +221,31 @@ export function JarvisWidget() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    fetchTelemetry();
+    const interval = setInterval(fetchTelemetry, 6000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
   }, [messages, isProcessing]);
 
-  async function handleCommandSubmit(commandText: string) {
+  async function handleCommandSubmit(commandText: string, confirmAnswer?: string) {
     const trimmed = commandText.trim();
     if (!trimmed || isProcessing) return;
 
-    addMessage({ role: "user", text: trimmed });
+    if (!confirmAnswer) {
+      addMessage({ role: "user", text: trimmed });
+    }
     setInput("");
     setProcessing(true);
 
     try {
       const historyPayload = messages.slice(-6).map((m) => ({ role: m.role, text: m.text }));
-      const response = await jarvisApi.sendCommand(trimmed, historyPayload);
+      const response = await jarvisApi.sendCommand(trimmed, confirmAnswer, historyPayload);
 
       if (response.action?.type === "QUEST_MUTATION") {
         if (response.action.action_name === "UPDATE_TARGET" && response.action.new_target) {
@@ -211,6 +261,10 @@ export function JarvisWidget() {
 
       addMessage({ role: "jarvis", text: response.reply, action: response.action });
 
+      if (response.confirmation_required && response.confirmation) {
+        setPendingConfirmation(response.confirmation);
+      }
+
       if (voiceEnabled) {
         setSpeaking(true);
         jarvisSpeech.speak(response.reply, () => setSpeaking(false));
@@ -223,6 +277,13 @@ export function JarvisWidget() {
     } finally {
       setProcessing(false);
     }
+  }
+
+  async function handleConfirm(ans: "yes" | "no") {
+    if (!pendingConfirmation) return;
+    const conf = pendingConfirmation;
+    setPendingConfirmation(null);
+    handleCommandSubmit(ans === "yes" ? `Confirm ${conf.action_name}` : "Cancel action", ans);
   }
 
   function handleFormSubmit(e: FormEvent) {
@@ -257,6 +318,12 @@ export function JarvisWidget() {
 
   return (
     <aside className="relative z-40 hidden h-full w-[270px] xl:w-[285px] flex-shrink-0 flex-col bg-[#03010B] lg:flex overflow-hidden p-2.5 gap-1.5 select-none">
+      {pendingConfirmation && (
+        <ConfirmDialog
+          prompt={`Confirm ${pendingConfirmation.action_name} ${pendingConfirmation.target || ""}?`}
+          onConfirm={handleConfirm}
+        />
+      )}
       {/* ── User-Provided Full Holographic Frame Background Image ─────────── */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -273,10 +340,35 @@ export function JarvisWidget() {
           <span className="font-mono text-[7px] tracking-widest text-arc-400/80 uppercase">AI SYSTEM ASSISTANT</span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-[8px] uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> ONLINE
-          </span>
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/jarvis"
+            className="flex items-center gap-1 rounded bg-[#2614DF]/30 border border-[#01C0D7]/40 px-1.5 py-0.5 font-mono text-[7px] font-bold text-[#00E5FF] hover:bg-[#2614DF] hover:text-white transition-all shadow-[0_0_6px_rgba(1,192,215,0.3)]"
+            title="Open Full JARVIS Command Center"
+          >
+            <Maximize2 className="h-2.5 w-2.5" />
+            <span>EXPAND</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              checkBackendHealth();
+              fetchTelemetry();
+            }}
+            className={cn(
+              "font-mono text-[8px] uppercase tracking-wider flex items-center gap-1 cursor-pointer transition-opacity hover:opacity-80",
+              isBackendOnline ? "text-emerald-400" : "text-rose-400"
+            )}
+            title={isBackendOnline ? "JARVIS Backend Connected (Click to test)" : "JARVIS Backend Offline (Click to reconnect)"}
+          >
+            <span
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                isBackendOnline ? "bg-emerald-400 animate-pulse" : "bg-rose-500"
+              )}
+            />
+            {isBackendOnline ? "ONLINE" : "OFFLINE"}
+          </button>
           <button
             onClick={toggleVoice}
             className={cn(
@@ -290,9 +382,41 @@ export function JarvisWidget() {
         </div>
       </div>
 
+      {/* ── MINI HARDWARE TELEMETRY STRIP ─────────────────────────── */}
+      {isBackendOnline && telemetry ? (
+        <div className="relative z-10 flex items-center justify-between rounded-lg bg-[#0C081D]/80 border border-[#2614DF]/30 px-2 py-1 font-mono text-[8px]">
+          <div className="flex items-center gap-1">
+            <span className="text-[#00E5FF] font-bold">CPU:</span>
+            <span className="text-white">{telemetry.cpu_percent}%</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-purple-400 font-bold">RAM:</span>
+            <span className="text-white">{telemetry.ram_percent}%</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-emerald-400 font-bold">GPU:</span>
+            <span className="text-white">{telemetry.gpu_percent ?? "N/A"}%</span>
+          </div>
+        </div>
+      ) : !isBackendOnline ? (
+        <div className="relative z-10 flex items-center justify-between rounded-lg bg-rose-950/40 border border-rose-500/30 px-2 py-1 font-mono text-[8px] text-rose-300">
+          <span>Backend offline (127.0.0.1:8000)</span>
+          <button
+            type="button"
+            onClick={() => {
+              checkBackendHealth();
+              fetchTelemetry();
+            }}
+            className="text-[#00E5FF] underline font-bold cursor-pointer hover:text-white ml-1"
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
+
       {/* ── HOLOGRAPHIC SOUNDWAVE CORE ─────────────────────────── */}
       <div className="relative z-10">
-        <JarvisHoloReactor active={isActive || isProcessing} />
+        <JarvisHoloReactor state={aiState} />
       </div>
 
       {/* ── CHAT MESSAGE TRANSCRIPT ─────────────────────────────── */}

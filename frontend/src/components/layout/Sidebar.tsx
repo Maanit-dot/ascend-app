@@ -19,6 +19,9 @@ import {
   Users,
   Calendar,
   Medal,
+  Sparkles,
+  Layers,
+  ShieldAlert,
 } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { getHunterTitle, getHunterRank } from "@/lib/format";
@@ -33,6 +36,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/app-hub", label: "App Hub", icon: Layers, badge: "HUB" },
   { href: "/character", label: "Character Sheet", icon: Shield },
   { href: "/quests", label: "Daily Quests", icon: Swords },
   { href: "/social", label: "Hunter Network", icon: Users, badge: "NEW" },
@@ -92,8 +96,16 @@ function VitalBar({
 }
 
 export function Sidebar() {
-  const pathname = usePathname();
   const user = useUserStore((s) => s.user);
+  const isOwner = user?.is_owner || user?.role === "SUPER_ADMIN" || user?.email?.toLowerCase() === "guptattt3@gmail.com";
+  const itemsToRender = isOwner
+    ? [
+        ...NAV_ITEMS.slice(0, 3),
+        { href: "/owner", label: "Owner Centre", icon: ShieldAlert, badge: "OWNER" },
+        ...NAV_ITEMS.slice(3),
+      ]
+    : NAV_ITEMS;
+  const pathname = usePathname();
 
   const character = user?.character;
 
@@ -138,7 +150,7 @@ export function Sidebar() {
           MAIN PORTAL
         </p>
         <nav className="space-y-0.5">
-          {NAV_ITEMS.map((item) => {
+          {itemsToRender.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
             const Icon = item.icon;
             return (

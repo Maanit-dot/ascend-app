@@ -39,13 +39,116 @@ export interface CharacterProfile {
 export interface AscendUser {
   id: string;
   email: string;
+  username?: string | null;
   display_name: string;
   avatar_url: string | null;
+  role?: string;
+  is_owner?: boolean;
+  is_suspended?: boolean;
+  is_banned?: boolean;
+  last_platform?: string;
   is_onboarded: boolean;
   timezone: string;
   primary_track: PrimaryTrack;
   created_at: string;
   character: CharacterProfile;
+}
+
+export interface UserSessionItem {
+  id: string;
+  client_type: string;
+  device_name: string;
+  ip_address: string | null;
+  last_active_at: string;
+  created_at: string;
+  is_revoked: boolean;
+  is_current?: boolean;
+}
+
+export interface AppModuleAction {
+  id: string;
+  name: string;
+  description: string;
+  requires_confirmation?: boolean;
+}
+
+export interface AppModule {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  icon: string;
+  color: string;
+  auth_type: "oauth2" | "api_key" | "embedded" | "local_rpc";
+  is_installed: boolean;
+  is_enabled: boolean;
+  is_connected: boolean;
+  account_identifier?: string | null;
+  last_synced_at?: string | null;
+  supported_actions: AppModuleAction[];
+  default_settings?: Record<string, any>;
+  user_settings?: Record<string, any>;
+}
+
+export interface OwnerMetrics {
+  total_registered_users: number;
+  active_users_15m: number;
+  active_website_users: number;
+  active_desktop_users: number;
+  total_desktop_installations: number;
+  blocked_installations: number;
+  suspended_or_banned_users: number;
+  server_uptime_seconds: number;
+  timestamp: string;
+}
+
+export interface OwnerUserItem {
+  id: string;
+  email: string;
+  username?: string | null;
+  display_name: string;
+  role: string;
+  is_suspended: boolean;
+  suspension_reason?: string | null;
+  is_banned: boolean;
+  ban_reason?: string | null;
+  last_login_at?: string | null;
+  last_platform?: string | null;
+  created_at: string;
+  level: number;
+  total_xp: number;
+}
+
+export interface OwnerInstallation {
+  id: string;
+  device_id: string;
+  user_id?: string | null;
+  user_email?: string | null;
+  hostname: string;
+  os_version: string;
+  app_version: string;
+  is_blocked: boolean;
+  blocked_reason?: string | null;
+  first_installed_at: string;
+  last_seen_at: string;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  actor_email: string;
+  action: string;
+  target_type?: string | null;
+  target_id?: string | null;
+  details?: string | null;
+  ip_address?: string | null;
+  created_at: string;
+}
+
+export interface SystemAnnouncement {
+  title: string;
+  message: string;
+  variant: "info" | "warning" | "alert";
+  updated_at?: string;
 }
 
 export type QuestCategory =

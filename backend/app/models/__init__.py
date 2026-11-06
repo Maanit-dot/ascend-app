@@ -24,3 +24,8 @@ from app.models.story import (  # noqa: F401
     StoryProgress,
 )
 from app.models.social import HunterFriend, HunterChatMessage  # noqa: F401
+from app.models.session import UserSession  # noqa: F401
+from app.models.desktop import DesktopInstallation  # noqa: F401
+from app.models.audit import SystemAuditLog  # noqa: F401
+from app.models.system import SystemConfig  # noqa: F401
+from app.models.integration import AppIntegration  # noqa: F401
